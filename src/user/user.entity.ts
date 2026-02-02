@@ -65,10 +65,10 @@ export class User {
   email_verified: boolean;
 
   // check if this is the correct way to implement it
-  @Column('timestamp', { default: "now()"})
+  @Column('timestamp')
   created_at: Timestamp;
 
-  @Column('timestamp', { default: "on update now()"})
+  @Column('timestamp')
   modified_at: Timestamp;
 
   @Column('timestamp')
