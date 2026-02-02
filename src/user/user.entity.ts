@@ -1,12 +1,27 @@
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
-import { MinLength, IsString, IsEmail, IsEmpty } from 'class-validator';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Timestamp,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
+// import {
+//   MinLength,
+//   IsString,
+//   IsEmail,
+//   IsEmpty,
+//   IsNotEmpty,
+// } from 'class-validator';
 
 export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
 }
 
-export enum status {
+export enum Status {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted',
@@ -15,16 +30,16 @@ export enum status {
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn(`uuid`)
-  id: number;
+  @PrimaryGeneratedColumn(`uuid`) // if uuid is used, id cannot be a number, it should be a string
+  id: string;
 
-  @MinLength(2)
-  @IsString()
+  // @MinLength(2)
+  // @IsString()
   @Column('varchar', { length: 30 })
   display_name: string;
 
-  @MinLength(2)
-  @IsString()
+  // @MinLength(2)
+  // @IsString()
   @Column('varchar', { length: 30, unique: true })
   user_name: string;
 
@@ -37,13 +52,13 @@ export class User {
   @Column('text')
   bio: string;
 
-  @IsEmail()
+  // @IsEmail()
   @Column('varchar', { length: 320, unique: true })
   email: string;
 
-  @IsEmpty()
-  @MinLength(8)
-  @Column('varchar', { length: 255 })
+  // @IsNotEmpty()
+  // @MinLength(8)
+  @Column('varchar', { length: 255 }) // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
   password: string;
 
   @Column({
@@ -56,21 +71,24 @@ export class User {
   // active by default because different from email verification status
   @Column({
     type: 'enum',
-    enum: status,
-    default: status.ACTIVE,
+    enum:Status,
+    default: Status.ACTIVE,
   })
-  status: status;
+  status: Status;
 
   @Column('boolean', { default: false })
   email_verified: boolean;
 
-  // check if this is the correct way to implement it
-  @Column('timestamp')
-  created_at: Timestamp;
+  // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
+  @CreateDateColumn()
+  created_at: Date;
 
-  @Column('timestamp')
-  modified_at: Timestamp;
+  @UpdateDateColumn()
+  modified_at: Date;
 
-  @Column('timestamp')
-    deleted_at: Timestamp;
+  @DeleteDateColumn()
+  deleted_at: Date;
 }
+
+
+// validators should only be used in DTO's files not in the entity file!
