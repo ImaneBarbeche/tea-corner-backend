@@ -8,7 +8,7 @@ import { DataSource } from 'typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // ← VERY IMPORTANT
+      isGlobal: true, 
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

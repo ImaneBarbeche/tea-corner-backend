@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
 import { MinLength, IsString, IsEmail, IsEmpty } from 'class-validator';
 
 export enum UserRole {
@@ -10,6 +10,7 @@ export enum status {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
   DELETED = 'deleted',
+  ARCHIVED = 'archived',
 }
 
 @Entity()
@@ -43,7 +44,7 @@ export class User {
   @IsEmpty()
   @MinLength(8)
   @Column('varchar', { length: 255 })
-  password;
+  password: string;
 
   @Column({
     type: 'enum',
@@ -52,5 +53,24 @@ export class User {
   })
   role: UserRole;
 
-  status;
+  // active by default because different from email verification status
+  @Column({
+    type: 'enum',
+    enum: status,
+    default: status.ACTIVE,
+  })
+  status: status;
+
+  @Column('boolean', { default: false })
+  email_verified: boolean;
+
+  // check if this is the correct way to implement it
+  @Column('timestamp', { default: "now()"})
+  created_at: Timestamp;
+
+  @Column('timestamp', { default: "on update now()"})
+  modified_at: Timestamp;
+
+  @Column('timestamp')
+    deleted_at: Timestamp;
 }
