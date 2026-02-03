@@ -10,4 +10,15 @@ export class UserService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  findAll(): Promise<User[]> {
+    return this.usersRepository.find();
+  }
+
+  findOne(id:string): Promise<User | null> {
+    return this.usersRepository.findOneBy({id});
+  }
+  async remove(id:string): Promise<void> {
+    await this.usersRepository.delete(id);
+  }
 }
