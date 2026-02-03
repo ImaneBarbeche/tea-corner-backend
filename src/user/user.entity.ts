@@ -39,13 +39,13 @@ export class User {
   @Column('varchar', { length: 30, unique: true })
   user_name: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10 })
+  @Column('varchar', { length: 10 }) // can add a default color if necessary
   banner_color: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   bio: string;
 
   @Column('varchar', { length: 320, unique: true })
