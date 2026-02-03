@@ -44,13 +44,30 @@ export class AuthService {
   }
 
   async signUp(createUserDto: CreateUserDto) {
-    // Hasher avec Argon2
+    // Hash with Argon2
     const hashedPassword = await argon2.hash(createUserDto.password);
 
     const data = {
       ...createUserDto,
       password: hashedPassword,
     };
-    return this.userService.create(data);
+
+    // creating the user
+    const user = await this.userService.create(data);
+
+    // creating the jwt payload
+    const payload = {
+      sub: user.id,
+      username: user.user_name,
+      role: user.role,
+    };
+
+    // exclude password from answer and return the jwt token
+    const { password, ...userWithoutPassword } = user;
+
+    return {
+      access_token: await this.jwtService.signAsync(payload), // ✅ IMPORTANT
+      user: userWithoutPassword,
+    };
   }
 }
