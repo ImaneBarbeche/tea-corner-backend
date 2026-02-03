@@ -33,13 +33,9 @@ export class User {
   @PrimaryGeneratedColumn(`uuid`) // if uuid is used, id cannot be a number, it should be a string
   id: string;
 
-  // @MinLength(2)
-  // @IsString()
   @Column('varchar', { length: 30 })
   display_name: string;
 
-  // @MinLength(2)
-  // @IsString()
   @Column('varchar', { length: 30, unique: true })
   user_name: string;
 
@@ -52,13 +48,10 @@ export class User {
   @Column('text')
   bio: string;
 
-  // @IsEmail()
   @Column('varchar', { length: 320, unique: true })
   email: string;
 
-  // @IsNotEmpty()
-  // @MinLength(8)
-  @Column('varchar', { length: 255 }) // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
+  @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
   password: string;
 
   @Column({
