@@ -33,7 +33,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.user_name,
-      role: user.role,
+      role: user.roles,
     };
 
     return {
@@ -59,7 +59,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.user_name,
-      role: user.role,
+      role: user.roles,
     };
 
     // // exclude password from answer and return the jwt token

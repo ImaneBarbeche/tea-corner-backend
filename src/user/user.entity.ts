@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Role } from 'src/auth/role.enum';
 import {
   Entity,
   Column,
@@ -17,10 +18,10 @@ import {
 //   IsNotEmpty,
 // } from 'class-validator';
 
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+// export enum UserRole {
+//   USER = 'user',
+//   ADMIN = 'admin',
+// }
 
 export enum Status {
   ACTIVE = 'active',
@@ -58,10 +59,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
+    enum: Role,
+    default: Role.User,
   })
-  role: UserRole;
+  roles: Role[];
 
   // active by default because different from email verification status
   @Column({
