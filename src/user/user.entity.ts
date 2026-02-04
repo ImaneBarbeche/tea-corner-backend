@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -42,15 +43,17 @@ export class User {
   @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user 
+  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user
   banner_color: string;
 
   @Column('text', { nullable: true })
   bio: string;
 
+  @Exclude()
   @Column('varchar', { length: 320, unique: true })
   email: string;
 
+  @Exclude()
   @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
   password: string;
 
@@ -64,7 +67,7 @@ export class User {
   // active by default because different from email verification status
   @Column({
     type: 'enum',
-    enum:Status,
+    enum: Status,
     default: Status.ACTIVE,
   })
   status: Status;
@@ -82,6 +85,5 @@ export class User {
   @DeleteDateColumn()
   deleted_at: Date;
 }
-
 
 // validators should only be used in DTO's files not in the entity file!

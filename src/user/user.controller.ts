@@ -1,18 +1,18 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 
 @Controller('user')
 export class UserController {
-    constructor(private userService: UserService){}
+  constructor(private userService: UserService) {}
 
-    @Get(':id')
-    findOne(@Param('id') id: string): string {
-        
-        return `This action returns a #${id} cat`
-        // return 'This action returns a user';
-    }
-    
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':username')
+  findOneByUsername(@Param('username') username: string): Promise<User | null> {
+    const user = this.userService.findByUsername(username);
+    return user;
+  }
 }
 
 // FindOneParams, like a DTO, is simply a class that defines validation rules using class-validator
