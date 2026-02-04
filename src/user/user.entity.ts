@@ -9,25 +9,8 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-// import {
-//   MinLength,
-//   IsString,
-//   IsEmail,
-//   IsEmpty,
-//   IsNotEmpty,
-// } from 'class-validator';
-
-export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin',
-}
-
-export enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
-  ARCHIVED = 'archived',
-}
+import { Role } from 'src/enums/role.enum';
+import { Status } from 'src/enums/status.enum';
 
 @Entity()
 export class User {
@@ -59,10 +42,10 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
+    enum: Role,
+    default: Role.USER,
   })
-  role: UserRole;
+  role: Role[];
 
   // active by default because different from email verification status
   @Column({
