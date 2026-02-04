@@ -10,8 +10,8 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guards';
-import { RolesGuard } from './auth/roles.guard';
+import { AuthGuard } from './guards/auth.guards';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [

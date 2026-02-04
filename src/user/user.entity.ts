@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/auth/role.enum';
+import { Role } from 'src/enums/role.enum';
 import {
   Entity,
   Column,

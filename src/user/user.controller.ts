@@ -8,12 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Role } from 'src/auth/role.enum';
-import { Roles } from 'src/auth/roles.decorator';
+import { Role } from 'src/enums/role.enum';
+import { Roles } from '../decorators/roles.decorator';
 import { User } from './user.entity';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { Public } from 'src/auth/auth.decorator';
-import { AuthGuard } from 'src/auth/auth.guards';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { AuthGuard } from 'src/guards/auth.guards';
 
 @Controller('user')
 export class UserController {
