@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -51,6 +52,7 @@ export class User {
   @Column('varchar', { length: 320, unique: true })
   email: string;
 
+  @Exclude()
   @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
   password: string;
 

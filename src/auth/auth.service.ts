@@ -62,12 +62,12 @@ export class AuthService {
       role: user.role,
     };
 
-    // exclude password from answer and return the jwt token
-    const { password, ...userWithoutPassword } = user;
+    // // exclude password from answer and return the jwt token
+    // const { password, ...userWithoutPassword } = user;
 
     return {
       access_token: await this.jwtService.signAsync(payload), // IMPORTANT
-      user: userWithoutPassword,
+      user
     };
   }
 }
