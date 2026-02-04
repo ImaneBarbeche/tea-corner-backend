@@ -66,7 +66,7 @@ export class AuthService {
     const { password, ...userWithoutPassword } = user;
 
     return {
-      access_token: await this.jwtService.signAsync(payload), // ✅ IMPORTANT
+      access_token: await this.jwtService.signAsync(payload), // IMPORTANT
       user: userWithoutPassword,
     };
   }
