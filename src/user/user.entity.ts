@@ -44,7 +44,7 @@ export class User {
   @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user 
+  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user
   banner_color: string;
 
   @Column('text', { nullable: true })
@@ -62,12 +62,12 @@ export class User {
     enum: Role,
     default: Role.User,
   })
-  roles: Role[];
+  role: Role;
 
   // active by default because different from email verification status
   @Column({
     type: 'enum',
-    enum:Status,
+    enum: Status,
     default: Status.ACTIVE,
   })
   status: Status;
@@ -85,6 +85,5 @@ export class User {
   @DeleteDateColumn()
   deleted_at: Date;
 }
-
 
 // validators should only be used in DTO's files not in the entity file!

@@ -33,7 +33,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.user_name,
-      role: user.roles,
+      role: user.role,
     };
 
     return {
@@ -59,7 +59,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.user_name,
-      role: user.roles,
+      role: user.role,
     };
 
     // // exclude password from answer and return the jwt token
@@ -67,7 +67,7 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload), // IMPORTANT
-      user
+      user,
     };
   }
 }
