@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role } from 'src/enums/role.enum';
@@ -21,27 +22,14 @@ import { Public } from 'src/decorators/auth.decorator';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Public()
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`User with id '${id}' not found`);
-    }
-    return user;
-  }
-
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':username')
+  @Get('/profile')
+  // user needs to be logged in
   @UseGuards(AuthGuard)
-  async findOneByUsername(
-    @Param('username') username: string,
-  ): Promise<User | null> {
-    const user = await this.userService.findByUsername(username);
+  async findUserProfile(@Request() req): Promise<User> {
+    // using the request to get the user
+    const user = await this.userService.findByUsername(req.user.username);
     if (!user) {
-      throw new NotFoundException(`User with id '${username}' not found`);
+      throw new NotFoundException(`User not found`);
     }
     return user;
   }
@@ -59,10 +47,21 @@ export class UserController {
     return users;
   }
 
-  // TODO: Check that the user is logged in
-  @Get('/profile')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<User> {
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with id '${id}' not found`);
+    }
+    return user;
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':username')
   @UseGuards(AuthGuard)
-  async findUserProfile(
+  async findOneByUsername(
     @Param('username') username: string,
   ): Promise<User | null> {
     const user = await this.userService.findByUsername(username);
