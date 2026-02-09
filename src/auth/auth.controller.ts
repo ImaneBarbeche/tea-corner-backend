@@ -1,25 +1,75 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, UseInterceptors, ClassSerializerInterceptor, Request, UseGuards, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Request,
+  UseGuards,
+  Res,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/create-user.dto';
 import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
-import type { Response } from 'express';
+import type { Response, Request as ExpressRequest } from 'express';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtRefreshAuthGuard } from './jwt-refresh-auth.guard';
+import { User } from 'src/user/user.entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signIn(@Body() signInDto: SignInDto, @Res() response: Response) {
-    return this.authService.signIn(signInDto.username, signInDto.password, response);
+  async signIn(
+    @Body() signInDto: SignInDto, 
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.signIn(
+      signInDto.username,
+      signInDto.password,
+      response,
+    );
   }
 
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('signup')
-  async signUp(@Body() payload: CreateUserDto, @Res() response: Response) {
+  async signUp(
+    @Body() payload: CreateUserDto, 
+    @Res({ passthrough: true }) response: Response,
+  ) {
     return this.authService.signUp(payload, response);
+  }
+
+  // @UseGuards(LocalAuthGuard)
+  // @Post('logout')
+  // async logout(@Request() req: ExpressRequest) {
+  //   return req.logout();
+  // }
+
+  @UseGuards(JwtRefreshAuthGuard)
+  @Post('refresh-tokens')
+  async refreshTokens(
+    @Req() req: ExpressRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const payload = req.user as { user: User; refreshTokenExpiresAt: Date };
+    const { user, refreshTokenExpiresAt } = payload;
+    const currentRefreshToken = req.headers.authorization?.split(' ')[1];
+
+    return this.authService.refreshTokens(
+      user.id,
+      currentRefreshToken!,
+      refreshTokenExpiresAt,
+      res,
+    );
   }
 }

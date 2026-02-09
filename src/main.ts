@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 
 async function bootstrap() {
@@ -34,7 +34,9 @@ async function bootstrap() {
     getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
   });
 
+  if (process.env.NODE_ENV === 'production') {
   app.use(doubleCsrfProtection);
+}
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);

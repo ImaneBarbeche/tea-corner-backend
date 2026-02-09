@@ -12,7 +12,7 @@ import { Role } from 'src/enums/role.enum';
 import { Roles } from '../decorators/roles.decorator';
 import { User } from './user.entity';
 import { RolesGuard } from 'src/guards/roles.guard';
-import { AuthGuard } from 'src/guards/auth.guards';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('user')
 export class UserController {

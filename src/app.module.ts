@@ -10,8 +10,9 @@ import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guards';
+import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { AuthRefreshToken } from './auth/auth-refresh-token.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { RolesGuard } from './guards/roles.guard';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, AuthRefreshToken],
       synchronize: true,
       autoLoadEntities: true,
     }),
