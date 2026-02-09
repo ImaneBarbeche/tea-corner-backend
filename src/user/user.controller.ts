@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role } from 'src/enums/role.enum';
@@ -17,6 +18,7 @@ import { User } from './user.entity';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { AuthGuard } from 'src/guards/auth.guards';
 import { Public } from 'src/decorators/auth.decorator';
+import { UpdateUserDto } from './update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -34,6 +36,16 @@ export class UserController {
     return user;
   }
 
+  @Patch('/profile')
+  @UseGuards(AuthGuard)
+  async updateProfile(
+    @Request() req,
+    @Body() UpdateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    console.log(req.user);
+    return this.userService.update(req.user.sub, UpdateUserDto);
+  }
+
   @Get('/user-management/all')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
@@ -47,16 +59,16 @@ export class UserController {
     return users;
   }
 
-  @Roles(Role.Admin)
-  @UseGuards(AuthGuard, RolesGuard)
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`User with id '${id}' not found`);
-    }
-    return user;
-  }
+  // @Roles(Role.Admin)
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Get(':id')
+  // async findOne(@Param('id') id: string): Promise<User> {
+  //   const user = await this.userService.findOne(id);
+  //   if (!user) {
+  //     throw new NotFoundException(`User with id '${id}' not found`);
+  //   }
+  //   return user;
+  // }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':username')
@@ -66,7 +78,7 @@ export class UserController {
   ): Promise<User | null> {
     const user = await this.userService.findByUsername(username);
     if (!user) {
-      throw new NotFoundException(`User with id '${username}' not found`);
+      throw new NotFoundException(`User with username '${username}' not found`);
     }
     return user;
   }

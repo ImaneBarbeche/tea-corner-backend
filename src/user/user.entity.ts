@@ -32,7 +32,7 @@ export enum Status {
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn(`uuid`) // if uuid is used, id cannot be a number, it should be a string
+  @PrimaryGeneratedColumn('uuid') // if uuid is used, id cannot be a number, it should be a string
   id: string;
 
   @Column('varchar', { length: 30 })
