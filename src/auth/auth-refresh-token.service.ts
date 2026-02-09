@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
 import { AuthRefreshToken } from './auth-refresh-token.entity';
 import { User } from '../user/user.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 // import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
@@ -77,10 +78,10 @@ export class AuthRefreshTokenService {
     };
   }
 
-//   @Cron(CronExpression.EVERY_DAY_AT_2AM)
-//   async clearExpiredRefreshTokens() {
-//     await this.authRefreshTokenRepository.delete({
-//       expiresAt: LessThanOrEqual(new Date()),
-//     });
-//   }
+  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  async clearExpiredRefreshTokens() {
+    await this.authRefreshTokenRepository.delete({
+      expiresAt: LessThanOrEqual(new Date()),
+    });
+  }
 }
