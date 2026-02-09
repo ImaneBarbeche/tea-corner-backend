@@ -1,4 +1,3 @@
-// auth-refresh-token.service.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,7 +5,6 @@ import { Repository, LessThanOrEqual } from 'typeorm';
 import { AuthRefreshToken } from './auth-refresh-token.entity';
 import { User } from '../user/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-// import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class AuthRefreshTokenService {

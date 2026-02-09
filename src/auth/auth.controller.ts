@@ -6,10 +6,11 @@ import {
   HttpStatus,
   UseInterceptors,
   ClassSerializerInterceptor,
-  Request,
   UseGuards,
   Res,
   Req,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/create-user.dto';
@@ -29,7 +30,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('signin')
   async signIn(
-    @Body() signInDto: SignInDto, 
+    @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.signIn(
@@ -43,7 +44,7 @@ export class AuthController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('signup')
   async signUp(
-    @Body() payload: CreateUserDto, 
+    @Body() payload: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.signUp(payload, response);
@@ -71,5 +72,11 @@ export class AuthController {
       refreshTokenExpiresAt,
       res,
     );
+  }
+
+  @Public()
+  @Get('verify-email')
+  async verifyEmail(@Query('token') token: string) {
+    return this.authService.verifyEmail(token);
   }
 }
