@@ -7,7 +7,6 @@ import {
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from 'src/user/create-user.dto';
 import * as argon2 from 'argon2';
-import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
 import { User } from 'src/user/user.entity';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
@@ -21,7 +20,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class AuthService {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService,
     private authRefreshTokenService: AuthRefreshTokenService,
   ) {}
 
@@ -113,14 +111,26 @@ export class AuthService {
       currentRefreshTokenExpiresAt,
     );
 
+    // creates new access token
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
     });
+    // creates new refresh token
+    response.cookie('refresh_token', tokens.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-    return tokens;
+    // only return tokens in dev mode, for postman testing
+    if (process.env.NODE_ENV === 'development') {
+      return tokens;
+    }
+    return { message: 'Tokens refreshed' };
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
