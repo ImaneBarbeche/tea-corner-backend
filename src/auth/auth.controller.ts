@@ -50,11 +50,10 @@ export class AuthController {
     return this.authService.signUp(payload, response);
   }
 
-  // @UseGuards(LocalAuthGuard)
-  // @Post('logout')
-  // async logout(@Request() req: ExpressRequest) {
-  //   return req.logout();
-  // }
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    return this.authService.logout(response);
+  }
 
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-tokens')

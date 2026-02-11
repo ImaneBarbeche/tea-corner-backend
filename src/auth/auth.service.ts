@@ -173,4 +173,9 @@ export class AuthService {
       throw new BadRequestException('Token invalide ou expiré');
     }
   }
+
+  async logout(response: any) {
+    response.clearCookie('refresh_token');
+    return { message: 'Logout successful' };
+  }
 }
