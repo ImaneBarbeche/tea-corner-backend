@@ -1,7 +1,17 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, UseInterceptors, ClassSerializerInterceptor, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guards';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/user/create-user.dto';
+import { CreateUserDto } from '../user/create-user.dto';
 import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
 

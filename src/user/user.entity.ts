@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/enums/role.enum';
+import { Role } from '../enums/role.enum';
 import {
   Entity,
   Column,
@@ -74,6 +74,9 @@ export class User {
 
   @Column('boolean', { default: false })
   email_verified: boolean;
+
+  @CreateDateColumn({ nullable: true })
+  username_last_changed: Date;
 
   // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
   @CreateDateColumn()

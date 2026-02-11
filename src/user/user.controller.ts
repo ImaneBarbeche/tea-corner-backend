@@ -12,13 +12,14 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Role } from 'src/enums/role.enum';
+import { Role } from '../enums/role.enum';
 import { Roles } from '../decorators/roles.decorator';
 import { User } from './user.entity';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { AuthGuard } from 'src/guards/auth.guards';
-import { Public } from 'src/decorators/auth.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { AuthGuard } from '../guards/auth.guards';
+import { Public } from '../decorators/auth.decorator';
 import { UpdateUserDto } from './update-user.dto';
+import { UpdateUsernameDto } from './update-username.dto';
 
 @Controller('user')
 export class UserController {
@@ -44,6 +45,25 @@ export class UserController {
   ): Promise<User> {
     console.log(req.user);
     return this.userService.update(req.user.sub, UpdateUserDto);
+  }
+
+  @Patch('/username')
+  @UseGuards(AuthGuard)
+  async updateUsername(
+    @Request() req,
+    @Body() UpdateUsernameDto: UpdateUsernameDto,
+  ): Promise<{ message: string }> {
+    console.log(req.user);
+    try {
+      await this.userService.updateUserName(
+        req.user.sub,
+        UpdateUsernameDto.user_name,
+      );
+      return { message: 'username updated successfully' };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   @Get('/user-management/all')
