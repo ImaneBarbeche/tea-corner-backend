@@ -3,9 +3,20 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('TeaCorner Api')
+    .setDescription('Documentation de l/API TeaCorner ')
+    .setVersion('1.0')
+    .addCookieAuth('acces_token') // allows swagger to handle auth
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document); // documentation available at backend address
 
   app.use(cookieParser());
 
@@ -35,8 +46,8 @@ async function bootstrap() {
   });
 
   if (process.env.NODE_ENV === 'production') {
-  app.use(doubleCsrfProtection);
-}
+    app.use(doubleCsrfProtection);
+  }
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);
