@@ -20,7 +20,15 @@ import type { Response, Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { User } from 'src/user/user.entity';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -29,6 +37,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('signin')
+  @ApiOperation({ summary: 'Connexion utilisateur' })
+  @ApiResponse({ status: 200, description: 'Connexion réussie' })
+  @ApiResponse({ status: 401, description: 'Identifiants invalides' })
   async signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) response: Response,
@@ -43,6 +54,9 @@ export class AuthController {
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('signup')
+  @ApiOperation({ summary: 'Création d’un nouvel utilisateur' })
+  @ApiResponse({ status: 201, description: 'Utilisateur créé avec succès' })
+  @ApiResponse({ status: 400, description: 'Données invalides' })
   async signUp(
     @Body() payload: CreateUserDto,
     @Res({ passthrough: true }) response: Response,
@@ -50,13 +64,20 @@ export class AuthController {
     return this.authService.signUp(payload, response);
   }
 
+  @ApiCookieAuth() // indicate to swagger that this route needs an auth cookie
   @Post('logout')
+  @ApiOperation({ summary: 'Déconnexion de l’utilisateur' })
+  @ApiResponse({ status: 200, description: 'Déconnexion réussie' })
   async logout(@Res({ passthrough: true }) response: Response) {
     return this.authService.logout(response);
   }
 
+  @ApiCookieAuth() // needs refresh token
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-tokens')
+  @ApiOperation({ summary: 'Rafraîchit les tokens d’authentification' })
+  @ApiResponse({ status: 200, description: 'Tokens rafraîchis avec succès' })
+  @ApiResponse({ status: 401, description: 'Refresh token invalide ou expiré' })
   async refreshTokens(
     @Req() req: ExpressRequest,
     @Res({ passthrough: true }) res: Response,
@@ -75,6 +96,14 @@ export class AuthController {
 
   @Public()
   @Get('verify-email')
+  @ApiOperation({ summary: 'Vérifie l’adresse email d’un utilisateur' })
+  @ApiQuery({
+    name: 'token',
+    required: true,
+    description: 'Token de vérification envoyé par email',
+  })
+  @ApiResponse({ status: 200, description: 'Email vérifié avec succès' })
+  @ApiResponse({ status: 400, description: 'Token invalide ou expiré' })
   async verifyEmail(@Query('token') token: string) {
     return this.authService.verifyEmail(token);
   }
