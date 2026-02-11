@@ -10,7 +10,9 @@ export class JwtRefreshStrategy extends PassportStrategy(
 ) {
   constructor(private userService: UserService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req) => req?.cookies?.refresh_token,
+      ]), // extract token from cookies
       ignoreExpiration: false,
       secretOrKey: process.env.SECRET || 'fallback-secret-key',
     });

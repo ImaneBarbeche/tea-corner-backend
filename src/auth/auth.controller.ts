@@ -18,8 +18,8 @@ import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
 import type { Response, Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { JwtRefreshAuthGuard } from './jwt-refresh-auth.guard';
 import { User } from 'src/user/user.entity';
+import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -63,7 +63,7 @@ export class AuthController {
   ) {
     const payload = req.user as { user: User; refreshTokenExpiresAt: Date };
     const { user, refreshTokenExpiresAt } = payload;
-    const currentRefreshToken = req.headers.authorization?.split(' ')[1];
+    const currentRefreshToken = req.cookies['refresh_token'];
 
     return this.authService.refreshTokens(
       user.id,

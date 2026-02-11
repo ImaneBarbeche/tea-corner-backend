@@ -8,6 +8,9 @@ import { LocalStrategy } from '../auth/local-strategy';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import { AuthRefreshTokenModule } from './auth-refresh-token.module';
+import { EmailVerificationToken } from './email-verification-token.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthRefreshToken } from './auth-refresh-token.entity';
 
 @Module({
   imports: [
@@ -20,7 +23,8 @@ import { AuthRefreshTokenModule } from './auth-refresh-token.module';
           expiresIn: process.env.JWT_EXPIRES as any || '1h' },
       }),
     }),
-    AuthRefreshTokenModule,
+    AuthRefreshTokenModule, 
+    TypeOrmModule.forFeature([ AuthRefreshToken, EmailVerificationToken, ]),
   ],
   providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService],
   controllers: [AuthController],

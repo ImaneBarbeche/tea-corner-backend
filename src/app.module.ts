@@ -37,7 +37,6 @@ import { ScheduleModule } from '@nestjs/schedule';
   controllers: [AppController, AuthController],
   providers: [
     AppService,
-    AuthService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
