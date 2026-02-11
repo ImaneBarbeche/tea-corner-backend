@@ -42,6 +42,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Connexion utilisateur' })
   @ApiResponse({ status: 200, description: 'Connexion réussie' })
   @ApiResponse({ status: 401, description: 'Identifiants invalides' })
+  @ApiResponse({ status: 429, description: 'Trop de requêtes — rate limit dépassé' })
   async signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) response: Response,
@@ -81,6 +82,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Rafraîchit les tokens d’authentification' })
   @ApiResponse({ status: 200, description: 'Tokens rafraîchis avec succès' })
   @ApiResponse({ status: 401, description: 'Refresh token invalide ou expiré' })
+  @ApiResponse({ status: 429, description: 'Trop de requêtes — rate limit dépassé' })
   async refreshTokens(
     @Req() req: ExpressRequest,
     @Res({ passthrough: true }) res: Response,
@@ -108,6 +110,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 200, description: 'Email vérifié avec succès' })
   @ApiResponse({ status: 400, description: 'Token invalide ou expiré' })
+  @ApiResponse({ status: 429, description: 'Trop de requêtes — rate limit dépassé' })
   async verifyEmail(@Query('token') token: string) {
     return this.authService.verifyEmail(token);
   }
