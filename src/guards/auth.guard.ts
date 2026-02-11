@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
     if (isPublic) {
-      // See this condition
+      // Skip authentication for public routes (other guards will still execute)
       return true;
     }
 

@@ -27,6 +27,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -36,6 +37,7 @@ export class AuthController {
   @Public()
   @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests/min
   @Post('signin')
   @ApiOperation({ summary: 'Connexion utilisateur' })
   @ApiResponse({ status: 200, description: 'Connexion réussie' })
@@ -74,6 +76,7 @@ export class AuthController {
 
   @ApiCookieAuth() // needs refresh token
   @UseGuards(JwtRefreshAuthGuard)
+  @Throttle({ default: { limit: 20, ttl: 60 } })
   @Post('refresh-tokens')
   @ApiOperation({ summary: 'Rafraîchit les tokens d’authentification' })
   @ApiResponse({ status: 200, description: 'Tokens rafraîchis avec succès' })
@@ -95,6 +98,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Get('verify-email')
   @ApiOperation({ summary: 'Vérifie l’adresse email d’un utilisateur' })
   @ApiQuery({
