@@ -77,7 +77,7 @@ export class AuthController {
 
   @ApiCookieAuth() // needs refresh token
   @UseGuards(JwtRefreshAuthGuard)
-  @Throttle({ default: { limit: 20, ttl: 60 } })
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh-tokens')
   @ApiOperation({ summary: 'Rafraîchit les tokens d’authentification' })
   @ApiResponse({ status: 200, description: 'Tokens rafraîchis avec succès' })
