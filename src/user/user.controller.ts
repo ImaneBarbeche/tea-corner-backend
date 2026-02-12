@@ -16,7 +16,7 @@ import { Role } from '../enums/role.enum';
 import { Roles } from '../decorators/roles.decorator';
 import { User } from './user.entity';
 import { RolesGuard } from '../guards/roles.guard';
-import { AuthGuard } from '../guards/auth.guards';
+import { AuthGuard } from '../guards/auth.guard';
 import { Public } from '../decorators/auth.decorator';
 import { UpdateUserDto } from './update-user.dto';
 import { UpdateUsernameDto } from './update-username.dto';

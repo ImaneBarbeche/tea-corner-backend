@@ -14,7 +14,6 @@ export class AuthRefreshTokenService {
     private authRefreshTokenRepository: Repository<AuthRefreshToken>,
   ) {}
 
-  
   async generateRefreshToken(
     userId: string,
     currentRefreshToken?: string,
@@ -22,9 +21,9 @@ export class AuthRefreshTokenService {
   ): Promise<string> {
     const newRefreshToken = this.jwtService.sign(
       { sub: userId },
-      { 
-        secret: process.env.JWT_REFRESH_SECRET, 
-        expiresIn: '7d' 
+      {
+        secret: process.env.JWT_REFRESH_SECRET,
+        expiresIn: '7d',
       },
     );
 
@@ -58,15 +57,15 @@ export class AuthRefreshTokenService {
     currentRefreshToken?: string,
     currentRefreshTokenExpiresAt?: Date,
   ) {
-    const payload = { 
-      sub: user.id, 
-      username: user.user_name, 
-      role: user.roles 
+    const payload = {
+      sub: user.id,
+      username: user.user_name,
+      role: user.role,
     };
 
     return {
       access_token: this.jwtService.sign(payload, {
-        expiresIn: '15m', 
+        expiresIn: '15m',
       }),
       refresh_token: await this.generateRefreshToken(
         user.id,

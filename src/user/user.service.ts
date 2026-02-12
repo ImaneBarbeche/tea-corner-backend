@@ -86,4 +86,8 @@ export class UserService {
     user.user_name = newUsername;
     return await this.userRepository.save(user);
   }
+
+  async save(user: User): Promise<User> {
+    return this.userRepository.save(user);
+  }
 }
