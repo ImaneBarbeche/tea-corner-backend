@@ -20,11 +20,16 @@ import { AuthGuard } from '../guards/auth.guard';
 import { Public } from '../decorators/auth.decorator';
 import { UpdateUserDto } from './update-user.dto';
 import { UpdateUsernameDto } from './update-username.dto';
+import { ApiCookieAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'User profile' })
+  @ApiResponse({ status: 200, description: 'A user object' })
+  // @ApiResponse({ status: 401, description: 'Identifiants invalides' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/profile')
   // user needs to be logged in
@@ -38,6 +43,8 @@ export class UserController {
     return user;
   }
 
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Update user profile' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/profile')
   @UseGuards(AuthGuard)
@@ -49,6 +56,8 @@ export class UserController {
     return this.userService.update(req.user.sub, UpdateUserDto);
   }
 
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Update username' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/username')
   @UseGuards(AuthGuard)
@@ -69,6 +78,8 @@ export class UserController {
     }
   }
 
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Get all users' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/user-management/all')
   @Roles(Role.Admin)
@@ -94,6 +105,8 @@ export class UserController {
   //   return user;
   // }
 
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Get user by username' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':username')
   @UseGuards(AuthGuard)
