@@ -153,12 +153,12 @@ export class AuthService {
   async generateEmailVerificationToken(user: User) {
     const token = crypto.randomBytes(32).toString('hex'); //token send in the email
     const hashToken = await argon2.hash(token); // token stored in the db
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1h
+    const expires_at = new Date(Date.now() + 1000 * 60 * 60); // 1h
 
     await this.emailVerificationTokenRepository.insert({
-      emailToken: hashToken,
-      userId: user.id,
-      expiresAt,
+      email_token: hashToken,
+      user_id: user.id,
+      expires_at,
       used: false,
     });
 
@@ -185,7 +185,7 @@ export class AuthService {
     // take unused tokens
     const tokens = await this.emailVerificationTokenRepository.find({
       where: { used: false },
-      order: { createdAt: 'DESC' },
+      order: { created_at: 'DESC' },
     });
     // if no tokens, send error
     if (!tokens.length) {
@@ -197,7 +197,7 @@ export class AuthService {
 
     for (const t of tokens) {
       // argon2.verify compare brut token with hashed token
-      const isMatch = await argon2.verify(t.emailToken, token);
+      const isMatch = await argon2.verify(t.email_token, token);
 
       if (isMatch) {
         tokenRecord = t; // change the value because the token is found
@@ -210,12 +210,12 @@ export class AuthService {
     }
 
     // verify expiration
-    if (tokenRecord.expiresAt < new Date()) {
+    if (tokenRecord.expires_at < new Date()) {
       throw new BadRequestException('Token expiré');
     }
 
     // get the associated user
-    const user = await this.userService.findOne(tokenRecord.userId);
+    const user = await this.userService.findOne(tokenRecord.user_id);
 
     if (!user) {
       throw new NotFoundException('Utilisateur introuvable');

@@ -10,17 +10,17 @@ export class EmailVerificationToken {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'email_token', length: 500, unique: true })
-  emailToken: string;
+  @Column({ length: 500, unique: true })
+  email_token: string;
 
-  @Column({ name: 'user_id', type: 'uuid' })
-  userId: string;
+  @Column({ type: 'uuid' })
+  user_id: string;
 
-  @Column({ name: 'expires_at', type: 'timestamp' })
-  expiresAt: Date;
+  @Column({ type: 'timestamp' })
+  expires_at: Date;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
   @Column({ default: false })
   used: boolean
