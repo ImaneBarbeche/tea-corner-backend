@@ -25,6 +25,7 @@ import { UpdateUsernameDto } from './update-username.dto';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/profile')
   // user needs to be logged in
   @UseGuards(AuthGuard)
@@ -37,6 +38,7 @@ export class UserController {
     return user;
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/profile')
   @UseGuards(AuthGuard)
   async updateProfile(
@@ -47,6 +49,7 @@ export class UserController {
     return this.userService.update(req.user.sub, UpdateUserDto);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/username')
   @UseGuards(AuthGuard)
   async updateUsername(
@@ -66,6 +69,7 @@ export class UserController {
     }
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/user-management/all')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
