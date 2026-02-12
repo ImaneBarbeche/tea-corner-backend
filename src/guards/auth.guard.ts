@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
+import type { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
     if (isPublic) {
-      // See this condition
+      // Skip authentication for public routes (other guards will still execute)
       return true;
     }
 
@@ -43,7 +43,6 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    return request.cookies.access_token;
   }
 }

@@ -7,17 +7,26 @@ import { DataSource } from 'typeorm';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthController } from './auth/auth.controller';
-import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './guards/auth.guards';
+import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
+import { AuthRefreshToken } from './auth/auth-refresh-token.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // 60s window
+        limit: 10, // 10 request max per minute
+      },
+    ]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -25,7 +34,7 @@ import { RolesGuard } from './guards/roles.guard';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, AuthRefreshToken],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -35,7 +44,9 @@ import { RolesGuard } from './guards/roles.guard';
   controllers: [AppController, AuthController],
   providers: [
     AppService,
-    AuthService,
+    { provide: APP_GUARD, 
+      useClass: ThrottlerGuard 
+    },
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
