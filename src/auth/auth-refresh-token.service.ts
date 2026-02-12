@@ -61,7 +61,7 @@ export class AuthRefreshTokenService {
     const payload = { 
       sub: user.id, 
       username: user.user_name, 
-      role: user.roles 
+      role: user.role 
     };
 
     return {

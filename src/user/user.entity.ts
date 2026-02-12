@@ -62,7 +62,7 @@ export class User {
     enum: Role,
     default: Role.User,
   })
-  roles: Role[];
+  role: Role;
 
   // active by default because different from email verification status
   @Column({
