@@ -20,7 +20,7 @@ import { AuthRefreshToken } from './auth-refresh-token.entity';
       useFactory: () => ({
         secret: process.env.JWT_SECRET || 'fallback-secret-key',
         signOptions: { 
-          expiresIn: process.env.JWT_EXPIRES as any || '1h' },
+          expiresIn: process.env.JWT_EXPIRES as any || '15m' },
       }),
     }),
     AuthRefreshTokenModule, 

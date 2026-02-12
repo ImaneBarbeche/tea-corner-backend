@@ -12,7 +12,7 @@ async function bootstrap() {
     .setTitle('TeaCorner Api')
     .setDescription('Documentation de l/API TeaCorner ')
     .setVersion('1.0')
-    .addCookieAuth('acces_token') // allows swagger to handle auth
+    .addCookieAuth('access_token') // allows swagger to document auth with cookies
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -21,17 +21,17 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: 'http://localhost:5173',
-    credentials: true,
+    origin: 'http://localhost:5173', // front url
+    credentials: true, // allows cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
   });
 
   // simple csrf token, without using sessions
   const { doubleCsrfProtection } = doubleCsrf({
-    getSecret: () => 'VotreSuperSecretIci123',
+    getSecret: () => process.env.CSRF_SECRET || 'fallback-secret',
     getSessionIdentifier: (req) => {
-      return req.ip || 'anonymous';
+      return req.ip || 'anonymous'; // uses the ip adress as session id
     },
     cookieName: 'csrf-token',
     cookieOptions: {
