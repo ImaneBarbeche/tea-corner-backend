@@ -10,6 +10,7 @@ import {
 import { User } from 'src/user/user.entity';
 import { TeaType } from 'src/enums/teaType.enum';
 import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
+import { TeaStyle } from 'src/tea-style/tea-style.entity';
 
 @Entity()
 export class Tea {
@@ -29,8 +30,8 @@ export class Tea {
   })
   type: TeaType;
 
-  //   @ManyToOne(() => ) TODO: Add tea style table
-  // tea_style
+  @ManyToOne(() => TeaStyle, (style) => style.teas)
+  style: TeaStyle;
 
   @Column('text', { nullable: true })
   description: string;

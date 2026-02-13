@@ -17,6 +17,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TeaController } from './tea/tea.controller';
 import { TeaService } from './tea/tea.service';
 import { TeaModule } from './tea/tea.module';
+import { TeaStyleController } from './tea-style/tea-style.controller';
+import { TeaStyleService } from './tea-style/tea-style.service';
+import { TeaStyleModule } from './tea-style/tea-style.module';
 
 @Module({
   imports: [
@@ -44,8 +47,9 @@ import { TeaModule } from './tea/tea.module';
     UserModule,
     AuthModule,
     TeaModule,
+    TeaStyleModule,
   ],
-  controllers: [AppController, AuthController, TeaController],
+  controllers: [AppController, AuthController, TeaController, TeaStyleController],
   providers: [
     AppService,
     { provide: APP_GUARD, 
@@ -60,6 +64,7 @@ import { TeaModule } from './tea/tea.module';
       useClass: RolesGuard,
     },
     TeaService,
+    TeaStyleService,
   ],
 })
 export class AppModule {
