@@ -12,11 +12,10 @@ describe('Auth E2E', () => {
   let userRepo: Repository<User>;
 
   beforeAll(async () => {
-    // 1) Créer le module de test
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    // 2) Initialiser l'app Nest
+    // Nest init
     app = moduleRef.createNestApplication();
     await app.init();
 
@@ -24,25 +23,24 @@ describe('Auth E2E', () => {
   });
 
   it('should sign in and return cookies', async () => {
-    // 1) Créer un user dans la DB
+    // create user in database
     const hashed = await argon2.hash('12345678');
     await userRepo.save({
       user_name: 'test',
       password: hashed,
       email_verified: true,
     });
-    // 2) Appeler POST /auth/signin
+    // call the api route
     const res = await request(app.getHttpServer())
       .post('/auth/signin')
       .send({ user_name: 'test', password: '12345678' });
-    // 3) Vérifier status
+    // check for status
     expect(res.status).toBe(200);
-    // 4) Vérifier cookies
+    // check cookies
     expect(res.headers['set-cookie']).toBeDefined();
   });
 
   afterAll(async () => {
-    // fermer l'app
     await app.close();
   });
 });
