@@ -51,7 +51,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.signIn(
-      signInDto.username,
+      signInDto.user_name,
       signInDto.password,
       response,
     );

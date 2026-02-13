@@ -71,7 +71,7 @@ export class AuthService {
     message: string;
   }> {
     // Hash with Argon2
-    const hashedPassword = await argon2.hash(createUserDto.password);
+    const hashedPassword = await this.hashPassword(createUserDto.password);
 
     const data = {
       ...createUserDto,
@@ -236,5 +236,9 @@ export class AuthService {
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
     return { message: 'Logout successful' };
+  }
+
+  async hashPassword(password: string) {
+    return argon2.hash(password)
   }
 }
