@@ -14,6 +14,9 @@ import { RolesGuard } from './guards/roles.guard';
 import { AuthRefreshToken } from './auth/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TeaController } from './tea/tea.controller';
+import { TeaService } from './tea/tea.service';
+import { TeaModule } from './tea/tea.module';
 
 @Module({
   imports: [
@@ -40,8 +43,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     }),
     UserModule,
     AuthModule,
+    TeaModule,
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController, AuthController, TeaController],
   providers: [
     AppService,
     { provide: APP_GUARD, 
@@ -55,6 +59,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    TeaService,
   ],
 })
 export class AppModule {

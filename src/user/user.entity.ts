@@ -9,7 +9,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Tea } from 'src/tea/tea.entity';
 // import {
 //   MinLength,
 //   IsString,
@@ -77,6 +79,9 @@ export class User {
 
   @CreateDateColumn({ nullable: true })
   username_last_changed: Date;
+
+  @OneToMany(() => Tea, (tea) => tea.author)
+  teas: Tea[];
 
   // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
   @CreateDateColumn()
