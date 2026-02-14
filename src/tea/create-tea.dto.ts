@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEnum,
   IsInt,
   IsOptional,
@@ -17,7 +18,8 @@ export class createTeaDto {
     description: 'The user (or admin) who created the tea',
   })
   @IsUUID()
-  author_id: string;
+  @IsOptional()
+  author_id?: string;
 
   @ApiProperty({ example: 'matcha', description: 'Tea name' })
   @MinLength(2)
@@ -109,4 +111,8 @@ export class createTeaDto {
   })
   @IsString()
   source: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_public?: boolean;
 }

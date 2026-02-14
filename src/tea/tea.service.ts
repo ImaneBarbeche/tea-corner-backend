@@ -1,7 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tea } from './tea.entity';
-import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { IsNull, Not, Repository } from 'typeorm';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { createTeaDto } from './create-tea.dto';
 
 @Injectable()
@@ -11,12 +15,45 @@ export class TeaService {
     private teaRepository: Repository<Tea>,
   ) {}
 
-  findAll(): Promise<Tea[]> {
-    return this.teaRepository.find();
+  // admin
+  async findAll(): Promise<Tea[]> {
+    return await this.teaRepository.find();
   }
 
-  findOne(id: string): Promise<Tea | null> {
-    return this.teaRepository.findOneBy({ id });
+  async findSystemTeas(): Promise<Tea[]> {
+    return this.teaRepository.find({
+      where: { author: IsNull() },
+      relations: ['style'],
+    });
+  }
+
+  async findPublicTeas(): Promise<Tea[]> {
+    return this.teaRepository.find({
+      where: { is_public: true, author: Not(IsNull()) },
+      relations: ['style', 'author'],
+    });
+  }
+
+  async findOne(id: string, userId?: string): Promise<Tea | null> {
+    const tea = await this.teaRepository.findOne({
+      where: { id },
+      relations: ['style', 'author'],
+    });
+
+    if (!tea) {
+      throw new NotFoundException(`Tea with ID ${id} not found`);
+    }
+
+    // Check access permissions
+    const isSystemTea = !tea.author;
+    const isOwnTea = tea.author && userId && tea.author.id === userId;
+    const isPublicTea = tea.is_public;
+
+    if (!isSystemTea && !isOwnTea && !isPublicTea) {
+      throw new ForbiddenException('This tea is private');
+    }
+
+    return tea;
   }
 
   async remove(id: string): Promise<void> {

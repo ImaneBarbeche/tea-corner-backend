@@ -17,7 +17,7 @@ export class Tea {
   @PrimaryGeneratedColumn('uuid') // if uuid is used, id cannot be a number, it should be a string
   id: string;
 
-  @ManyToOne(() => User, (user) => user.teas)
+  @ManyToOne(() => User, (user) => user.teas, { nullable: true })
   author: User;
 
   @Column('varchar', { length: 30 })
@@ -72,6 +72,9 @@ export class Tea {
 
   @Column('text', { nullable: true })
   source: string;
+
+  @Column('boolean', { default: false })
+  is_public: boolean;
 
   @CreateDateColumn()
   created_at: Date;
