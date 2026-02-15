@@ -10,18 +10,6 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-// import {
-//   MinLength,
-//   IsString,
-//   IsEmail,
-//   IsEmpty,
-//   IsNotEmpty,
-// } from 'class-validator';
-
-// export enum UserRole {
-//   USER = 'user',
-//   ADMIN = 'admin',
-// }
 
 export enum Status {
   ACTIVE = 'active',

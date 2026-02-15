@@ -4,17 +4,24 @@ import { AuthController } from './auth.controller';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from '../auth/local-strategy';
-import { JwtRefreshStrategy } from './jwt-refresh.strategy';
+import { LocalStrategy } from '../strategies/local-strategy';
+import { JwtRefreshStrategy } from '../strategies/jwt-refresh.strategy';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import { AuthRefreshTokenModule } from './auth-refresh-token.module';
-import { EmailVerificationToken } from './email-verification-token.entity';
+import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthRefreshToken } from './auth-refresh-token.entity';
+import { AuthRefreshToken } from '../entities/auth-refresh-token.entity';
+import { EmailService } from './email.service';
+import { PasswordResetToken } from '../entities/password-reset-token.entity';
 
 @Module({
   imports: [
     PassportModule,
+    TypeOrmModule.forFeature([
+      EmailVerificationToken,
+      PasswordResetToken,      
+      AuthRefreshToken,
+    ]),
     forwardRef(() => UserModule),
     JwtModule.registerAsync({
       useFactory: () => ({
@@ -23,10 +30,8 @@ import { AuthRefreshToken } from './auth-refresh-token.entity';
           expiresIn: process.env.JWT_EXPIRES as any || '15m' },
       }),
     }),
-    AuthRefreshTokenModule, 
-    TypeOrmModule.forFeature([ AuthRefreshToken, EmailVerificationToken, ]),
   ],
-  providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService],
+  providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService, EmailService,],
   controllers: [AuthController],
   exports: [AuthService, JwtModule, AuthRefreshTokenService],
 })

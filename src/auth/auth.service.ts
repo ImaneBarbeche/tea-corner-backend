@@ -12,19 +12,54 @@ import { User } from 'src/user/user.entity';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import * as nodemailer from 'nodemailer';
 import * as crypto from 'crypto';
-import { Repository } from 'typeorm';
-import { EmailVerificationToken } from './email-verification-token.entity';
+import { MoreThan, Repository } from 'typeorm';
+import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PasswordResetToken } from '../entities/password-reset-token.entity';
+import { EmailService } from './email.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private authRefreshTokenService: AuthRefreshTokenService,
+    private emailService: EmailService,
+    @InjectRepository(EmailVerificationToken)
+    private emailVerificationTokenRepository: Repository<EmailVerificationToken>,
+    @InjectRepository(PasswordResetToken)
+    private passwordResetRepository: Repository<PasswordResetToken>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  @InjectRepository(EmailVerificationToken)
-  private emailVerificationTokenRepository: Repository<EmailVerificationToken>;
+  async signUp(
+    createUserDto: CreateUserDto,
+    response: Response,
+  ): Promise<{
+    message: string;
+  }> {
+    // Hash with Argon2
+    const hashedPassword = await this.hashPassword(createUserDto.password);
+
+    const data = {
+      ...createUserDto,
+      password: hashedPassword,
+      email_verified: false,
+    };
+
+    // creating the user
+    const user = await this.userService.create(data);
+
+    // generating token verification email
+    const emailToken = await this.generateEmailVerificationToken(user);
+
+    // sending the email
+    await this.emailService.sendVerificationEmail(user, emailToken);
+
+    return {
+      message: 'Compte créé. Vérifiez votre email pour activer votre compte.',
+    };
+  }
 
   async signIn(
     username: string,
@@ -62,35 +97,6 @@ export class AuthService {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
     });
     return tokens;
-  }
-
-  async signUp(
-    createUserDto: CreateUserDto,
-    response: Response,
-  ): Promise<{
-    message: string;
-  }> {
-    // Hash with Argon2
-    const hashedPassword = await this.hashPassword(createUserDto.password);
-
-    const data = {
-      ...createUserDto,
-      password: hashedPassword,
-      email_verified: false,
-    };
-
-    // creating the user
-    const user = await this.userService.create(data);
-
-    // generating token verification email
-    const emailToken = await this.generateEmailVerificationToken(user);
-
-    // sending the email
-    await this.sendVerificationEmail(user, emailToken);
-
-    return {
-      message: 'Compte créé. Vérifiez votre email pour activer votre compte.',
-    };
   }
 
   async refreshTokens(
@@ -157,7 +163,7 @@ export class AuthService {
 
     await this.emailVerificationTokenRepository.insert({
       email_token: hashToken,
-      user_id: user.id,
+      user: user,
       expires_at,
       used: false,
     });
@@ -165,27 +171,12 @@ export class AuthService {
     return token;
   }
 
-  async sendVerificationEmail(user: User, token: string) {
-    const url = `${process.env.BACKEND_URL}/auth/verify-email?token=${token}`;
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
-      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
-    });
-    await transporter.sendMail({
-      from: '"TeaCorner" <no-reply@teacorner.com>',
-      to: user.email,
-      subject: 'Vérifiez votre email',
-      html: ` <h1>Bienvenue sur TeaCorner!</h1> <p>Cliquez sur le lien ci-dessous pour vérifier votre email :</p> <a href="${url}">${url}</a> `,
-    });
-    console.log('Email envoyé à :', user.email);
-  }
-
   async verifyEmail(token: string) {
     // take unused tokens
     const tokens = await this.emailVerificationTokenRepository.find({
       where: { used: false },
       order: { created_at: 'DESC' },
+      relations: ['user'],
     });
     // if no tokens, send error
     if (!tokens.length) {
@@ -215,7 +206,7 @@ export class AuthService {
     }
 
     // get the associated user
-    const user = await this.userService.findOne(tokenRecord.user_id);
+    const user = tokenRecord.user;
 
     if (!user) {
       throw new NotFoundException('Utilisateur introuvable');
@@ -239,6 +230,61 @@ export class AuthService {
   }
 
   async hashPassword(password: string) {
-    return argon2.hash(password)
+    return argon2.hash(password);
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) return; // do not reveal if the email exists
+
+    const rawToken = crypto.randomBytes(32).toString('hex'); //token send in the email
+    const hashedToken = await argon2.hash(rawToken); // token stored in the db
+    const expires_at = new Date(Date.now() + 1000 * 60 * 15); // 15 min
+
+    await this.passwordResetRepository.insert({
+      password_token: hashedToken,
+      user: user,
+      expires_at,
+    });
+
+    await this.emailService.sendResetEmail(user, rawToken);
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    if (!newPassword) {
+      throw new BadRequestException('New password is required');
+    }
+    // get non expired tokens
+    const resets = await this.passwordResetRepository.find({
+      where: {
+        expires_at: MoreThan(new Date()), // filters expired tokens
+      },
+      relations: ['user'],
+    });
+
+    let resetRecord: PasswordResetToken | null = null;
+
+    // compare raw tokens with hashed tokens
+    for (const r of resets) {
+      const match = await argon2.verify(r.password_token, token);
+      if (match) {
+        resetRecord = r;
+        break;
+      }
+    }
+    if (!resetRecord) {
+      throw new BadRequestException('Invalid token');
+    }
+
+    if (resetRecord.expires_at < new Date()) {
+      throw new BadRequestException('Token expired');
+    }
+    // update password
+    resetRecord.user.password = await this.hashPassword(newPassword);
+
+    await this.userRepository.save(resetRecord.user);
+    await this.passwordResetRepository.delete(resetRecord.id);
+
+    return { message: 'Password updated successfully' };
   }
 }

@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
-import { AuthRefreshToken } from './auth-refresh-token.entity';
+import { AuthRefreshToken } from '../entities/auth-refresh-token.entity';
 import { User } from '../user/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 

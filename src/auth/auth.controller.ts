@@ -123,4 +123,24 @@ export class AuthController {
   async verifyEmail(@Query('token') token: string) {
     return this.authService.verifyEmail(token);
   }
+
+  @Public()
+  @Throttle({ default: { limit: 3, ttl: 60000 } })
+  @HttpCode(HttpStatus.OK)
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    await this.authService.forgotPassword(email);
+    return { message: 'If this email exists, a reset link was sent' };
+  }
+  
+  @Public() 
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) 
+  @HttpCode(HttpStatus.OK)
+  @Post('reset-password')
+  async resetPassword(
+    @Body('token') token: string,
+    @Body('password') newPassword: string,
+  ) {
+    return this.authService.resetPassword(token, newPassword);
+  }
 }

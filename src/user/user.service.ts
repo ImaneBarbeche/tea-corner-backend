@@ -13,6 +13,7 @@ import { UpdateUsernameDto } from './update-username.dto';
 
 @Injectable()
 export class UserService {
+  
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -29,6 +30,12 @@ export class UserService {
   async findByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOneBy({ user_name: username });
   }
+
+  async findByEmail(email: string): Promise<User | null> {
+    if (!email) return null;
+  return this.userRepository.findOneBy({ email });
+}
+
 
   async remove(id: string): Promise<void> {
     await this.userRepository.delete(id);
