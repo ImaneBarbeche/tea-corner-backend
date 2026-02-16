@@ -36,7 +36,6 @@ export class AuthController {
 
   @Public()
   @UseGuards(LocalAuthGuard)
-  @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests/min
   @Post('signin')
   @ApiOperation({ summary: 'Connexion utilisateur' })
@@ -126,8 +125,9 @@ export class AuthController {
 
   @Public()
   @Throttle({ default: { limit: 3, ttl: 60000 } })
-  @HttpCode(HttpStatus.OK)
   @Post('forgot-password')
+  @ApiOperation({ summary: 'Demande de réinitialisation du mot de passe' })
+  @ApiResponse({ status: 200, description: 'Si cet email existe, un lien de réinitialisation a été envoyé', }) @ApiResponse({ status: 400, description: 'Email invalide', })
   async forgotPassword(@Body('email') email: string) {
     await this.authService.forgotPassword(email);
     return { message: 'If this email exists, a reset link was sent' };
@@ -135,8 +135,8 @@ export class AuthController {
   
   @Public() 
   @Throttle({ default: { limit: 5, ttl: 60000 } }) 
-  @HttpCode(HttpStatus.OK)
   @Post('reset-password')
+  @ApiOperation({ summary: 'Réinitialise le mot de passe via un token reçu par email' }) @ApiResponse({ status: 200, description: 'Mot de passe réinitialisé avec succès', }) @ApiResponse({ status: 400, description: 'Token invalide ou expiré', }) 
   async resetPassword(
     @Body('token') token: string,
     @Body('password') newPassword: string,
