@@ -9,6 +9,8 @@ import {
   Request,
   Delete,
   ForbiddenException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
@@ -56,6 +58,7 @@ export class TeaController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get tea by ID' })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UseGuards(AuthGuard)
   async findTeaById(@Param('id') id: string, @Request() req): Promise<Tea> {
