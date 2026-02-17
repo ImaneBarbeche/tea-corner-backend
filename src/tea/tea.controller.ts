@@ -11,6 +11,7 @@ import {
   ForbiddenException,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Patch,
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
@@ -20,6 +21,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
+import { UpdateTeaDto } from './update-tea.dto';
 
 @Controller('tea')
 export class TeaController {
@@ -93,26 +95,24 @@ export class TeaController {
   @UseGuards(AuthGuard, RolesGuard)
   async deleteTea(@Param('id') id: string, @Request() req): Promise<void> {
     const tea = await this.teaService.findOne(id, req.user.sub);
-    // const isAdmin = req.user.role === Role.Admin;
 
     if (!tea) {
       throw new NotFoundException(`Tea with ID ${id} could not be found`);
     }
 
-    // // 1. Identify if the user is the owner
-    // const isOwner = tea.author && tea.author.id === req.user.sub;
-
-    // // 2. Define the only two groups allowed to delete:
-    // //    Group A: Admins (can delete anything)
-    // //    Group B: The Author (can only delete their own tea)
-    // if (!isAdmin && !isOwner) {
-    //   // This catches regular users trying to delete system teas (no author)
-    //   // and regular users trying to delete other people's teas.
-    //   throw new ForbiddenException(
-    //     'You do not have permission to delete this tea',
-    //   );
-    // }
-
     await this.teaService.remove(id);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Delete a tea' })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  async updateTea(
+    @Param('id') id: string,
+    @Body() updateTeaDto: UpdateTeaDto,
+    @Request() req,
+  ): Promise<Tea> {
+    return await this.teaService.update(id, updateTeaDto, req.user.sub);
   }
 }

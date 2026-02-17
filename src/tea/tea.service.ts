@@ -7,6 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateTeaDto } from './create-tea.dto';
+import { UpdateTeaDto } from './update-tea.dto';
 
 @Injectable()
 export class TeaService {
@@ -50,19 +51,6 @@ export class TeaService {
     const isOwnTea = tea.author && userId && tea.author.id === userId;
     const isPublicTea = tea.is_public;
 
-    console.log('isSystemTea');
-    console.log(isSystemTea);
-    console.log('isOwnTea');
-    console.log(isOwnTea);
-    // console.log('tea.author.id === userId');
-    // console.log(tea.author.id === userId);
-    // console.log('tea.author.id');
-    // console.log(tea.author.id);
-    console.log('userId');
-    console.log(userId);
-    console.log('isPublicTea');
-    console.log(isPublicTea);
-
     if (!isSystemTea && !isOwnTea && !isPublicTea) {
       throw new ForbiddenException('This tea is private');
     }
@@ -79,4 +67,33 @@ export class TeaService {
 
     return await this.teaRepository.save(tea);
   }
+
+  async update(
+    id: string,
+    updateTeaDto: UpdateTeaDto,
+    userId: string,
+  ): Promise<Tea> {
+    const tea = await this.findOne(id, userId);
+
+    if (!tea?.author) {
+      throw new ForbiddenException('System teas can only be updated by admins');
+    }
+
+    Object.assign(tea, updateTeaDto);
+
+    return await this.teaRepository.save(tea);
+  }
+
+  // async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  //   const user = await this.userRepository.findOneBy({ id: id });
+
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+
+  //   Object.assign(user, updateUserDto);
+
+  //   console.log(user);
+  //   return await this.userRepository.save(user);
+  // }
 }
