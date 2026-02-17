@@ -73,11 +73,16 @@ export class AuthController {
   @Post('logout')
   @ApiOperation({ summary: 'Déconnexion de l’utilisateur' })
   @ApiResponse({ status: 200, description: 'Déconnexion réussie' })
-  async logout(@Res({ passthrough: true }) response: Response) {
-    return this.authService.logout(response);
+  async logout(
+    @Req() req: ExpressRequest,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken = req.cookies['refresh_token'];
+    return this.authService.logout(refreshToken, response);
   }
 
   @ApiCookieAuth() // needs refresh token
+  @Public()
   @UseGuards(JwtRefreshAuthGuard)
   @Throttle({ default: { limit: 20, ttl: 60000 } })
   @Post('refresh-tokens')
@@ -92,16 +97,11 @@ export class AuthController {
     @Req() req: ExpressRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const payload = req.user as { user: User; refreshTokenExpiresAt: Date };
-    const { user, refreshTokenExpiresAt } = payload;
+    const payload = req.user as { user: User };
+    const { user } = payload;
     const currentRefreshToken = req.cookies['refresh_token'];
 
-    return this.authService.refreshTokens(
-      user.id,
-      currentRefreshToken!,
-      refreshTokenExpiresAt,
-      res,
-    );
+    return this.authService.refreshTokens(user.id, currentRefreshToken!, res);
   }
 
   @Public()
@@ -127,16 +127,28 @@ export class AuthController {
   @Throttle({ default: { limit: 3, ttl: 60000 } })
   @Post('forgot-password')
   @ApiOperation({ summary: 'Demande de réinitialisation du mot de passe' })
-  @ApiResponse({ status: 200, description: 'Si cet email existe, un lien de réinitialisation a été envoyé', }) @ApiResponse({ status: 400, description: 'Email invalide', })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Si cet email existe, un lien de réinitialisation a été envoyé',
+  })
+  @ApiResponse({ status: 400, description: 'Email invalide' })
   async forgotPassword(@Body('email') email: string) {
     await this.authService.forgotPassword(email);
     return { message: 'If this email exists, a reset link was sent' };
   }
-  
-  @Public() 
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) 
+
+  @Public()
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('reset-password')
-  @ApiOperation({ summary: 'Réinitialise le mot de passe via un token reçu par email' }) @ApiResponse({ status: 200, description: 'Mot de passe réinitialisé avec succès', }) @ApiResponse({ status: 400, description: 'Token invalide ou expiré', }) 
+  @ApiOperation({
+    summary: 'Réinitialise le mot de passe via un token reçu par email',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Mot de passe réinitialisé avec succès',
+  })
+  @ApiResponse({ status: 400, description: 'Token invalide ou expiré' })
   async resetPassword(
     @Body('token') token: string,
     @Body('password') newPassword: string,

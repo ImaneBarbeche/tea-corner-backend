@@ -85,14 +85,14 @@ export class AuthService {
     // store in an httpOnly cookie
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // true in prod
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false, // true in prod
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
     });
@@ -102,7 +102,6 @@ export class AuthService {
   async refreshTokens(
     userId: string,
     currentRefreshToken: string,
-    currentRefreshTokenExpiresAt: Date,
     response: Response,
   ) {
     const user = await this.userService.findOne(userId);
@@ -110,33 +109,41 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-
-    const tokens = await this.authRefreshTokenService.generateTokenPair(
-      user,
+    const isValid = await this.authRefreshTokenService.validateRefreshToken(
       currentRefreshToken,
-      currentRefreshTokenExpiresAt,
+      userId,
+    );
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+    // only access token is created
+    const payload = {
+      sub: user.id,
+      username: user.user_name,
+      role: user.role,
+    };
+
+    const newAccessToken = this.authRefreshTokenService['jwtService'].sign(
+      payload,
+      {
+        expiresIn: '15m',
+      },
     );
 
-    // creates new access token
-    response.cookie('access_token', tokens.access_token, {
+    // update access token
+    response.cookie('access_token', newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-    // creates new refresh token
-    response.cookie('refresh_token', tokens.refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
-    // only return tokens in dev mode, for postman testing
+
     if (process.env.NODE_ENV === 'development') {
-      return tokens;
+      return { access_token: newAccessToken };
     }
-    return { message: 'Tokens refreshed' };
+
+    return { message: 'Access token refreshed' };
   }
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -223,9 +230,15 @@ export class AuthService {
     return { message: 'Email vérifié avec succès' };
   }
 
-  async logout(response: Response) {
+  async logout(refreshToken: string, response: Response) {
+    // Révoquer le refresh token en DB
+    if (refreshToken) {
+      await this.authRefreshTokenService.revokeRefreshToken(refreshToken);
+    }
+
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
+
     return { message: 'Logout successful' };
   }
 

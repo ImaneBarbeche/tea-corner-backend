@@ -7,31 +7,41 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from '../strategies/local-strategy';
 import { JwtRefreshStrategy } from '../strategies/jwt-refresh.strategy';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
-import { AuthRefreshTokenModule } from './auth-refresh-token.module';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthRefreshToken } from '../entities/auth-refresh-token.entity';
 import { EmailService } from './email.service';
 import { PasswordResetToken } from '../entities/password-reset-token.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     PassportModule,
     TypeOrmModule.forFeature([
       EmailVerificationToken,
-      PasswordResetToken,      
+      PasswordResetToken,
       AuthRefreshToken,
     ]),
     forwardRef(() => UserModule),
     JwtModule.registerAsync({
-      useFactory: () => ({
-        secret: process.env.JWT_SECRET || 'fallback-secret-key',
-        signOptions: { 
-          expiresIn: process.env.JWT_EXPIRES as any || '15m' },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_ACCESS_EXPIRES'),
+        },
       }),
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService, EmailService,],
+
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtRefreshStrategy,
+    AuthRefreshTokenService,
+    EmailService,
+  ],
   controllers: [AuthController],
   exports: [AuthService, JwtModule, AuthRefreshTokenService],
 })

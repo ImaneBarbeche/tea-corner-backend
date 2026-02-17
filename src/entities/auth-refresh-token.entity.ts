@@ -19,6 +19,9 @@ export class AuthRefreshToken {
   @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
+  @Column({ type: 'boolean', default: false }) 
+  revoked: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
