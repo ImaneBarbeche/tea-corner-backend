@@ -7,6 +7,8 @@ import {
   Post,
   UseGuards,
   Request,
+  Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
@@ -15,7 +17,7 @@ import { Role } from 'src/enums/role.enum';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
-import { createTeaDto } from './create-tea.dto';
+import { CreateTeaDto } from './create-tea.dto';
 
 @Controller('tea')
 export class TeaController {
@@ -38,7 +40,6 @@ export class TeaController {
     return tea;
   }
 
-  @ApiCookieAuth()
   @ApiOperation({ summary: 'Get only system teas' })
   @Get('/system')
   async findSystemTeas(): Promise<Tea[]> {
@@ -72,10 +73,39 @@ export class TeaController {
   @Post('/create')
   @UseGuards(AuthGuard)
   async createTea(
-    @Body() createTeaDto: createTeaDto,
+    @Body() createTeaDto: CreateTeaDto,
     @Request() req,
   ): Promise<Tea> {
     createTeaDto.author_id = req.user.sub;
+    console.log(createTeaDto.author_id);
     return this.teaService.create(createTeaDto);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Delete a tea' })
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async deleteTea(@Param('id') id: string, @Request() req): Promise<void> {
+    const tea = await this.teaService.findOne(id);
+
+    if (!tea) {
+      throw new NotFoundException(`Tea with ID ${id} not found`);
+    }
+
+    // system tea can only be deleted by admins
+    if (!tea.author && req.user.role !== Role.Admin) {
+      throw new ForbiddenException('system tea can only be deleted by admins');
+    }
+
+    // Users can only delete their proper tea
+    if (
+      tea.author &&
+      tea.author.id !== req.user.id &&
+      req.user.role !== Role.Admin
+    ) {
+      throw new ForbiddenException('You can only delete your own teas');
+    }
+
+    await this.teaService.remove(id);
   }
 }

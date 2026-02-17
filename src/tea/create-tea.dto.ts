@@ -12,7 +12,7 @@ import {
 import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
 import { TeaType } from 'src/enums/teaType.enum';
 
-export class createTeaDto {
+export class CreateTeaDto {
   @ApiProperty({
     example: '1234',
     description: 'The user (or admin) who created the tea',

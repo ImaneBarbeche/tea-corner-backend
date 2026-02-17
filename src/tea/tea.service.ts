@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { createTeaDto } from './create-tea.dto';
+import { CreateTeaDto } from './create-tea.dto';
 
 @Injectable()
 export class TeaService {
@@ -56,12 +56,17 @@ export class TeaService {
     return tea;
   }
 
+  // TODO: think of how it affects queries
   async remove(id: string): Promise<void> {
-    await this.teaRepository.delete(id);
+    await this.teaRepository.softDelete(id);
   }
 
-  async create(createTeaDto: createTeaDto): Promise<Tea> {
+  async create(createTeaDto: CreateTeaDto): Promise<Tea> {
     const tea = this.teaRepository.create(createTeaDto);
+
+    // if (createTeaDto.authorId) {
+    //   tea.author = { id: createTeaDto.authorId } as any; // TypeORM will use the ID to set the FK
+    // }
 
     return await this.teaRepository.save(tea);
   }

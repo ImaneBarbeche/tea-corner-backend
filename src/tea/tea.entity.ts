@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,7 +18,11 @@ export class Tea {
   @PrimaryGeneratedColumn('uuid') // if uuid is used, id cannot be a number, it should be a string
   id: string;
 
+  @Column('uuid', { nullable: true, name: 'author_id' })
+  author_id: string;
+
   @ManyToOne(() => User, (user) => user.teas, { nullable: true })
+  // @JoinColumn({ name: 'author_id' })
   author: User;
 
   @Column('varchar', { length: 30 })
