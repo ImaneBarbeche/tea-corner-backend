@@ -12,6 +12,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tea } from 'src/tea/tea.entity';
+import { Ingredient } from 'src/ingredient/ingredient.entity';
 // import {
 //   MinLength,
 //   IsString,
@@ -82,6 +83,9 @@ export class User {
 
   @OneToMany(() => Tea, (tea) => tea.author)
   teas: Tea[];
+
+  @OneToMany(() => Ingredient, (ingredient) => ingredient.user)
+  ingredients: Ingredient[];
 
   // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
   @CreateDateColumn()
