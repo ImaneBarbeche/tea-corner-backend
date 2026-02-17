@@ -27,6 +27,7 @@ export class TeaService {
     });
   }
 
+  // returns community teas (not system ones)
   async findPublicTeas(): Promise<Tea[]> {
     return this.teaRepository.find({
       where: { is_public: true, author: Not(IsNull()) },
@@ -49,6 +50,19 @@ export class TeaService {
     const isOwnTea = tea.author && userId && tea.author.id === userId;
     const isPublicTea = tea.is_public;
 
+    console.log('isSystemTea');
+    console.log(isSystemTea);
+    console.log('isOwnTea');
+    console.log(isOwnTea);
+    // console.log('tea.author.id === userId');
+    // console.log(tea.author.id === userId);
+    // console.log('tea.author.id');
+    // console.log(tea.author.id);
+    console.log('userId');
+    console.log(userId);
+    console.log('isPublicTea');
+    console.log(isPublicTea);
+
     if (!isSystemTea && !isOwnTea && !isPublicTea) {
       throw new ForbiddenException('This tea is private');
     }
@@ -56,17 +70,12 @@ export class TeaService {
     return tea;
   }
 
-  // TODO: think of how it affects queries
   async remove(id: string): Promise<void> {
     await this.teaRepository.softDelete(id);
   }
 
   async create(createTeaDto: CreateTeaDto): Promise<Tea> {
     const tea = this.teaRepository.create(createTeaDto);
-
-    // if (createTeaDto.authorId) {
-    //   tea.author = { id: createTeaDto.authorId } as any; // TypeORM will use the ID to set the FK
-    // }
 
     return await this.teaRepository.save(tea);
   }

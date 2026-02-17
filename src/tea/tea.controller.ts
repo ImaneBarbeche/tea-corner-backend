@@ -58,8 +58,8 @@ export class TeaController {
   @ApiOperation({ summary: 'Get tea by ID' })
   @Get(':id')
   @UseGuards(AuthGuard)
-  async findTeaById(@Param('id') id: string): Promise<Tea> {
-    const tea = await this.teaService.findOne(id);
+  async findTeaById(@Param('id') id: string, @Request() req): Promise<Tea> {
+    const tea = await this.teaService.findOne(id, req.user.sub);
 
     if (!tea) {
       throw new NotFoundException(`Tea with ID ${id} could not be found`);
@@ -76,35 +76,39 @@ export class TeaController {
     @Body() createTeaDto: CreateTeaDto,
     @Request() req,
   ): Promise<Tea> {
-    createTeaDto.author_id = req.user.sub;
-    console.log(createTeaDto.author_id);
-    return this.teaService.create(createTeaDto);
+    const teaData = {
+      ...createTeaDto,
+      author: { id: req.user.sub },
+    };
+
+    return this.teaService.create(teaData);
   }
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Delete a tea' })
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   async deleteTea(@Param('id') id: string, @Request() req): Promise<void> {
-    const tea = await this.teaService.findOne(id);
+    const tea = await this.teaService.findOne(id, req.user.sub);
+    // const isAdmin = req.user.role === Role.Admin;
 
     if (!tea) {
-      throw new NotFoundException(`Tea with ID ${id} not found`);
+      throw new NotFoundException(`Tea with ID ${id} could not be found`);
     }
 
-    // system tea can only be deleted by admins
-    if (!tea.author && req.user.role !== Role.Admin) {
-      throw new ForbiddenException('system tea can only be deleted by admins');
-    }
+    // // 1. Identify if the user is the owner
+    // const isOwner = tea.author && tea.author.id === req.user.sub;
 
-    // Users can only delete their proper tea
-    if (
-      tea.author &&
-      tea.author.id !== req.user.id &&
-      req.user.role !== Role.Admin
-    ) {
-      throw new ForbiddenException('You can only delete your own teas');
-    }
+    // // 2. Define the only two groups allowed to delete:
+    // //    Group A: Admins (can delete anything)
+    // //    Group B: The Author (can only delete their own tea)
+    // if (!isAdmin && !isOwner) {
+    //   // This catches regular users trying to delete system teas (no author)
+    //   // and regular users trying to delete other people's teas.
+    //   throw new ForbiddenException(
+    //     'You do not have permission to delete this tea',
+    //   );
+    // }
 
     await this.teaService.remove(id);
   }
