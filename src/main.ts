@@ -4,9 +4,11 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   const config = new DocumentBuilder()
     .setTitle('TeaCorner Api')
@@ -29,7 +31,7 @@ async function bootstrap() {
 
   // simple csrf token, without using sessions
   const { doubleCsrfProtection } = doubleCsrf({
-    getSecret: () => process.env.CSRF_SECRET || 'fallback-secret',
+    getSecret: () => configService.get('CSRF_SECRET').toString(),
     getSessionIdentifier: (req) => {
       return req.ip || 'anonymous'; // uses the ip adress as session id
     },
@@ -45,9 +47,9 @@ async function bootstrap() {
     getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
   });
 
-  if (process.env.NODE_ENV === 'production') {
-    app.use(doubleCsrfProtection);
-  }
+  // if (process.env.NODE_ENV === 'production') {
+  //   app.use(doubleCsrfProtection);
+  // }
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);
