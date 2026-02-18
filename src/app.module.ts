@@ -23,9 +23,12 @@ import { TeaStyleModule } from './tea-style/tea-style.module';
 import { IngredientService } from './ingredient/ingredient.service';
 import { IngredientController } from './ingredient/ingredient.controller';
 import { IngredientModule } from './ingredient/ingredient.module';
-import { FlavourController } from './flavour/flavour.controller';
-import { FlavourService } from './flavour/flavour.service';
-import { FlavourModule } from './flavour/flavour.module';
+import { FlavourProfileController } from './flavour-profile/flavour-profile.controller';
+import { FlavourProfileService } from './flavour-profile/flavour-profile.service';
+import { FlavourModule } from './flavour-profile/flavour-profile.module';
+import { FlavourTypeController } from './flavour-type/flavour-type.controller';
+import { FlavourTypeService } from './flavour-type/flavour-type.service';
+import { FlavourTypeModule } from './flavour-type/flavour-type.module';
 
 @Module({
   imports: [
@@ -56,8 +59,9 @@ import { FlavourModule } from './flavour/flavour.module';
     TeaStyleModule,
     IngredientModule,
     FlavourModule,
+    FlavourTypeModule,
   ],
-  controllers: [AppController, AuthController, TeaController, TeaStyleController, IngredientController, FlavourController],
+  controllers: [AppController, AuthController, TeaController, TeaStyleController, IngredientController, FlavourProfileController, FlavourTypeController],
   providers: [
     AppService,
     { provide: APP_GUARD, 
@@ -74,7 +78,8 @@ import { FlavourModule } from './flavour/flavour.module';
     TeaService,
     TeaStyleService,
     IngredientService,
-    FlavourService,
+    FlavourProfileService,
+    FlavourTypeService,
   ],
 })
 export class AppModule {
