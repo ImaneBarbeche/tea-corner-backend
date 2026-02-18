@@ -1,32 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-  MinLength,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
 import { IngredientType } from '../enums/ingredientType.enum';
 
-export class CreateIngredientDto {
-  @ApiProperty({
-    example: '1234',
-    description:
-      'The user who created the ingredient. If null, the ingredient is a system ingredient (admin only).',
-    nullable: true,
-  })
-  @IsUUID()
-  @IsOptional()
-  user_id?: string;
-
+export class UpdateIngredientDto {
   @ApiProperty({ example: 'lemon', description: 'Ingredient name' })
   @MinLength(2)
   @IsString()
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @ApiProperty({ example: 'fruit', description: 'ingredient type' })
   @IsEnum(IngredientType)
-  type: IngredientType;
+  @IsOptional()
+  type?: IngredientType;
 
   @ApiProperty({
     example: '#3EB489',
@@ -34,5 +20,5 @@ export class CreateIngredientDto {
   })
   @IsString()
   @IsOptional()
-  color: string;
+  color?: string;
 }

@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,11 +16,8 @@ export class Ingredient {
   @PrimaryGeneratedColumn('uuid') 
   id: string;
 
-  @Column('uuid', { nullable: true, name: 'user_id' })
-  user_id: string;
-
   @ManyToOne(() => User, (user) => user.ingredients, { nullable: true })
-  // @JoinColumn({ name: 'author_id' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column('varchar', { length: 50 })
@@ -30,6 +28,7 @@ export class Ingredient {
     enum: IngredientType,
     default: IngredientType.TeaLeaf
   })
+  type: IngredientType;
 
   @Column('varchar', { length: 10, nullable: true })
   color: string;

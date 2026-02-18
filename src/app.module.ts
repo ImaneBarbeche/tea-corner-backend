@@ -22,6 +22,7 @@ import { TeaStyleService } from './tea-style/tea-style.service';
 import { TeaStyleModule } from './tea-style/tea-style.module';
 import { IngredientService } from './ingredient/ingredient.service';
 import { IngredientController } from './ingredient/ingredient.controller';
+import { IngredientModule } from './ingredient/ingredient.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { IngredientController } from './ingredient/ingredient.controller';
     AuthModule,
     TeaModule,
     TeaStyleModule,
+    IngredientModule,
   ],
   controllers: [AppController, AuthController, TeaController, TeaStyleController, IngredientController],
   providers: [
