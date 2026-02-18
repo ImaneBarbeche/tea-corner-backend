@@ -104,7 +104,7 @@ export class TeaController {
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Delete a tea' })
+  @ApiOperation({ summary: 'Update a tea' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
