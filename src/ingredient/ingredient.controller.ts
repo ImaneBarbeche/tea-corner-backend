@@ -10,6 +10,8 @@ import {
   Query,
   ParseIntPipe,
   Patch,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
 import { ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -17,6 +19,9 @@ import { IngredientService } from './ingredient.service';
 import { CreateIngredientDto } from './create-ingredient.dto';
 import { Ingredient } from './ingredient.entity';
 import { UpdateIngredientDto } from './update-ingredient.dto';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
 
 @Controller('ingredient')
 export class IngredientController {
@@ -24,15 +29,16 @@ export class IngredientController {
 
   @ApiCookieAuth()
   @ApiOperation({
-    summary: 'Get all ingredients (paginated)',
+    summary: 'Get all ingredients (admin)',
   })
   @ApiResponse({
     status: 200,
     description: 'List of ingredients with pagination',
   })
   @ApiResponse({ status: 404, description: 'No ingredients found' })
-  @Get('all')
-  @UseGuards(AuthGuard)
+  @Get('/admin/all')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   async findAll(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 10,
@@ -41,13 +47,36 @@ export class IngredientController {
   }
 
   @ApiCookieAuth()
+  @ApiOperation({
+    summary: 'Get all ingredients (system + created by logged user)',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'List of ingredients from the system and created by the authentified user',
+  })
+  @ApiResponse({ status: 404, description: 'No ingredients found' })
+  @Get('all')
+  @UseGuards(AuthGuard)
+  async findAllForUser(@Request() req): Promise<Ingredient[]> {
+    const ingredients = await this.ingredientService.findAllForUser(
+      req.user.sub,
+    );
+    return ingredients;
+  }
+
+  @ApiCookieAuth()
   @ApiOperation({ summary: 'Get ingredient by ID' })
   @ApiResponse({ status: 200, description: 'Ingredient found' })
   @ApiResponse({ status: 404, description: 'Ingredient not found' })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UseGuards(AuthGuard)
-  async findIngredientById(@Param('id') id: string): Promise<Ingredient> {
-    return this.ingredientService.findOne(id);
+  async findIngredientById(
+    @Param('id') id: string,
+    @Request() req,
+  ): Promise<Ingredient> {
+    return this.ingredientService.findOne(id, req.user.sub);
   }
 
   @ApiCookieAuth()
@@ -61,7 +90,7 @@ export class IngredientController {
   ): Promise<Ingredient> {
     const ingredientData = {
       ...createIngredientDto,
-      user_id: req.user.sub
+      user: { id: req.user.sub },
     };
     return this.ingredientService.create(ingredientData);
   }
@@ -83,6 +112,7 @@ export class IngredientController {
   @ApiOperation({ summary: 'Update an ingredient' })
   @ApiResponse({ status: 200, description: 'Ingredient updated' })
   @ApiResponse({ status: 403, description: 'Forbidden (not your ingredient)' })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
   @UseGuards(AuthGuard)
   async updateIngredient(

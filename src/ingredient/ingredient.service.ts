@@ -1,5 +1,5 @@
 import { Ingredient } from './ingredient.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import {
   ForbiddenException,
   Injectable,
@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateIngredientDto } from './create-ingredient.dto';
-import { User } from '../user/user.entity';
 import { Role } from 'src/enums/role.enum';
 import { UpdateIngredientDto } from './update-ingredient.dto';
 @Injectable()
@@ -17,7 +16,7 @@ export class IngredientService {
     private ingredientRepository: Repository<Ingredient>,
   ) {}
 
-  // return all ingredients that were not deleted (with pagination to prevent too much data at once)
+  // admin return all ingredients that were not deleted (with pagination to prevent too much data at once)
   async findAll(
     page: number = 1,
     limit: number = 10,
@@ -29,24 +28,16 @@ export class IngredientService {
     return { data, total };
   }
 
-  //   ingredients added by the admin (user is null)
-  async findSystemIngredient(): Promise<Ingredient[]> {
+  // find ingredients if user null or user created them
+  async findAllForUser(userId: string): Promise<Ingredient[]> {
     return this.ingredientRepository.find({
-      where: { user: IsNull() },
-      relations: ['user'],
-    });
-  }
-
-  //   ingredients created by a user
-  async findUserIngredients(): Promise<Ingredient[]> {
-    return this.ingredientRepository.find({
-      where: { user: Not(IsNull()) },
+      where: [{ user: { id: userId } }, { user: IsNull() }],
       relations: ['user'],
     });
   }
 
   //   find an ingredient by ID
-  async findOne(id: string): Promise<Ingredient> {
+  async findOne(id: string, userId: string): Promise<Ingredient> {
     const ingredient = await this.ingredientRepository.findOne({
       where: { id },
       relations: ['user'],
@@ -55,12 +46,20 @@ export class IngredientService {
     if (!ingredient) {
       throw new NotFoundException(`Ingredient with Id ${id} not found`);
     }
+    
+    const isSystemIngredient = !ingredient.user;
+    const isOwnIngredient = ingredient.user && userId && ingredient.user.id === userId;
+
+    if (!isSystemIngredient && !isOwnIngredient) {
+      throw new ForbiddenException('Tea ingredient is private')
+    }
+
     return ingredient;
   }
 
   //   delete an ingredient
   async remove(id: string, userId: string, userRole: Role): Promise<void> {
-    const ingredient = await this.findOne(id);
+    const ingredient = await this.findOne(id, userId);
 
     if (ingredient.user?.id !== userId && userRole !== Role.Admin) {
       throw new ForbiddenException('You can only delete your own ingredients');
@@ -73,15 +72,15 @@ export class IngredientService {
     const ingredient = this.ingredientRepository.create(createIngredientDto);
     return await this.ingredientRepository.save(ingredient);
   }
-  // ingredient.service.ts
 
+  // update ingredients only if user created them
   async update(
     id: string,
     updateData: UpdateIngredientDto,
     userId: string,
     userRole: Role,
   ): Promise<Ingredient> {
-    const ingredient = await this.findOne(id);
+    const ingredient = await this.findOne(id, userId);
 
     // only admin can update ingredient system
     if (!ingredient.user && userRole !== Role.Admin) {

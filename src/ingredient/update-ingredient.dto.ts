@@ -1,24 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
-import { IngredientType } from '../enums/ingredientType.enum';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { CreateIngredientDto } from './create-ingredient.dto';
 
-export class UpdateIngredientDto {
-  @ApiProperty({ example: 'lemon', description: 'Ingredient name' })
-  @MinLength(2)
-  @IsString()
-  @IsOptional()
-  name?: string;
-
-  @ApiProperty({ example: 'fruit', description: 'ingredient type' })
-  @IsEnum(IngredientType)
-  @IsOptional()
-  type?: IngredientType;
-
-  @ApiProperty({
-    example: '#3EB489',
-    description: 'Custom color for the ingredient',
-  })
-  @IsString()
-  @IsOptional()
-  color?: string;
-}
+export class UpdateIngredientDto extends PartialType(OmitType(CreateIngredientDto, [ 'user_id' ] as const)
+  
+){}
