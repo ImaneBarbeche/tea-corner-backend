@@ -1,6 +1,7 @@
 import { Ingredient } from './ingredient.entity';
 import { IsNull, Repository } from 'typeorm';
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -46,12 +47,13 @@ export class IngredientService {
     if (!ingredient) {
       throw new NotFoundException(`Ingredient with Id ${id} not found`);
     }
-    
+
     const isSystemIngredient = !ingredient.user;
-    const isOwnIngredient = ingredient.user && userId && ingredient.user.id === userId;
+    const isOwnIngredient =
+      ingredient.user && userId && ingredient.user.id === userId;
 
     if (!isSystemIngredient && !isOwnIngredient) {
-      throw new ForbiddenException('Tea ingredient is private')
+      throw new ForbiddenException('This ingredient is private');
     }
 
     return ingredient;
@@ -68,9 +70,20 @@ export class IngredientService {
     await this.ingredientRepository.softDelete(id);
   }
 
-  async create(createIngredientDto: CreateIngredientDto): Promise<Ingredient> {
-    const ingredient = this.ingredientRepository.create(createIngredientDto);
-    return await this.ingredientRepository.save(ingredient);
+  async create( dto: CreateIngredientDto, userId: string) {
+    const existing = await this.ingredientRepository.findOne({
+      where: {
+      user: { id: userId }, 
+      name: dto.name,   
+    },
+    });
+    if (existing) {
+      throw new ConflictException(
+        `Vous avez déjà un ingrédient nommé "${dto.name}"`,
+      );
+    }
+
+    return await this.ingredientRepository.save(dto);
   }
 
   // update ingredients only if user created them

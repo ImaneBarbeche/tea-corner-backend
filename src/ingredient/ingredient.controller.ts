@@ -92,7 +92,7 @@ export class IngredientController {
       ...createIngredientDto,
       user: { id: req.user.sub },
     };
-    return this.ingredientService.create(ingredientData);
+    return this.ingredientService.create(ingredientData, req.user.sub);
   }
 
   @ApiCookieAuth()

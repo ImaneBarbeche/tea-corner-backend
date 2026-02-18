@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,7 @@ import { User } from '../user/user.entity';
 import { IngredientType } from '../enums/ingredientType.enum';
 
 @Entity()
+@Index(['user', 'name'], { unique: true })
 export class Ingredient {
   @PrimaryGeneratedColumn('uuid') 
   id: string;
