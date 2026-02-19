@@ -7,6 +7,8 @@ import * as argon2 from 'argon2';
 import { UserService } from '../user/user.service';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
+import { EmailService } from './email.service';
+import { PasswordResetToken } from '../entities/password-reset-token.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -36,6 +38,21 @@ describe('AuthService', () => {
         {
           provide: getRepositoryToken(EmailVerificationToken),
           useValue: { insert: jest.fn(), find: jest.fn(), save: jest.fn() },
+        },
+        {
+          provide: EmailService,
+          useValue: {
+            sendVerificationEmail: jest.fn(),
+            sendPasswordResetEmail: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(PasswordResetToken),
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+            delete: jest.fn(),
+          },
         },
       ],
     }).compile();
