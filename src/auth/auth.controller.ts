@@ -99,7 +99,7 @@ export class AuthController {
     const { user } = payload;
     const currentRefreshToken = req.cookies['refresh_token'];
 
-    return this.authService.refreshTokens(user.id, currentRefreshToken!, res);
+    return this.authService.refreshTokens(user.id, currentRefreshToken, res);
   }
 
   @Public()

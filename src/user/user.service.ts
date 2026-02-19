@@ -137,7 +137,7 @@ export class UserService {
     user.email_verified = false;
     const updatedUser = await this.userRepository.save(user);
 
-       // send a new verification email + token
+    // send a new verification email + token
     try {
       const rawToken = crypto.randomBytes(32).toString('hex');
       const hashedToken = await argon2.hash(rawToken);
@@ -151,14 +151,13 @@ export class UserService {
       });
 
       await this.emailService.sendVerificationEmail(updatedUser, rawToken);
-      
+
       console.log('Verification email sent to:', updatedUser.email);
     } catch (error) {
       console.error('Failed to send verification email:', error);
     }
-     return updatedUser
+    return updatedUser;
   }
-  
 
   async updatePassword(
     userId: string,

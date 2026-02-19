@@ -53,7 +53,10 @@ export class AuthRefreshTokenService {
   }
 
   //  check if refresh token has been used or has expired
-  async validateRefreshToken(refreshToken: string, userId: string): Promise<boolean> {
+  async validateRefreshToken(
+    refreshToken: string,
+    userId: string,
+  ): Promise<boolean> {
     // look for token in DB
     const token = await this.authRefreshTokenRepository.findOne({
       where: { refreshToken, userId, revoked: false },

@@ -44,9 +44,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
   controllers: [AppController, AuthController],
   providers: [
     AppService,
-    { provide: APP_GUARD, 
-      useClass: ThrottlerGuard 
-    },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

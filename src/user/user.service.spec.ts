@@ -26,20 +26,19 @@ describe('UserService', () => {
             update: jest.fn(),
             delete: jest.fn(),
           },
-          
         },
         {
-        provide: getRepositoryToken(EmailVerificationToken), 
-        useValue: {
-          findOne: jest.fn(),
-          save: jest.fn(),
-          delete: jest.fn(),
+          provide: getRepositoryToken(EmailVerificationToken),
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+            delete: jest.fn(),
+          },
         },
-      },
-      {
-        provide: EmailService,
-        useValue: mockEmailService,
-      },
+        {
+          provide: EmailService,
+          useValue: mockEmailService,
+        },
       ],
     }).compile();
 

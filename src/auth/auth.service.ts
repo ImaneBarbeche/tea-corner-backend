@@ -137,7 +137,6 @@ export class AuthService {
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
-
     if (process.env.NODE_ENV === 'development') {
       return { access_token: newAccessToken };
     }
@@ -145,7 +144,7 @@ export class AuthService {
     return { message: 'Access token refreshed' };
   }
 
-  async validateUser(username: string, pass: string): Promise<Object | null> {
+  async validateUser(username: string, pass: string): Promise<object | null> {
     const user = await this.userService.findByUsername(username);
     if (!user) return null;
     if (!user.email_verified) {
