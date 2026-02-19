@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { MinLength, IsString, IsEmail, IsEmpty } from 'class-validator';
 
 export enum UserRole {
@@ -52,5 +52,10 @@ export class User {
   })
   role: UserRole;
 
-  status;
+  @Column({
+    type: 'enum',
+    enum: status,
+    default: status.ACTIVE,
+  })
+  status: status;
 }
