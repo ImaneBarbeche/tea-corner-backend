@@ -33,6 +33,7 @@ export class Tea {
   type: TeaType;
 
   @ManyToOne(() => TeaStyle, (style) => style.teas)
+  @JoinColumn({ name: 'style_id' })
   style: TeaStyle;
 
   @Column('text', { nullable: true })
