@@ -47,9 +47,9 @@ async function bootstrap() {
     getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
   });
 
-  // if (process.env.NODE_ENV === 'production') {
-  //   app.use(doubleCsrfProtection);
-  // }
+  if (process.env.NODE_ENV === 'production') {
+    app.use(doubleCsrfProtection);
+  }
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);

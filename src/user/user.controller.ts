@@ -17,10 +17,11 @@ import { Roles } from '../decorators/roles.decorator';
 import { User } from './user.entity';
 import { RolesGuard } from '../guards/roles.guard';
 import { AuthGuard } from '../guards/auth.guard';
-import { Public } from '../decorators/auth.decorator';
 import { UpdateUserDto } from './update-user.dto';
 import { UpdateUsernameDto } from './update-username.dto';
 import { ApiCookieAuth, ApiResponse, ApiOperation } from '@nestjs/swagger';
+import { UpdatePasswordDto } from './update-password.dto';
+import { UpdateEmailDto } from './update-email.dto';
 
 @Controller('user')
 export class UserController {
@@ -94,17 +95,6 @@ export class UserController {
     return users;
   }
 
-  // @Roles(Role.Admin)
-  // @UseGuards(AuthGuard, RolesGuard)
-  // @Get(':id')
-  // async findOne(@Param('id') id: string): Promise<User> {
-  //   const user = await this.userService.findOne(id);
-  //   if (!user) {
-  //     throw new NotFoundException(`User with id '${id}' not found`);
-  //   }
-  //   return user;
-  // }
-
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get user by username' })
   @UseInterceptors(ClassSerializerInterceptor)
@@ -119,6 +109,52 @@ export class UserController {
     }
     return user;
   }
-}
 
-// FindOneParams, like a DTO, is simply a class that defines validation rules using class-validator
+  @Patch('email')
+  @ApiCookieAuth()
+  @ApiOperation({
+    summary: 'Update user email address',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Email successfully updated',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'New email must be different from current email',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid current password',
+  })
+  @UseGuards(AuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async updateEmail(@Request() req, @Body() updateEmailDto: UpdateEmailDto) {
+    return this.userService.updateEmail(req.user.sub, updateEmailDto);
+  }
+
+  @Patch('password')
+  @ApiCookieAuth()
+  @ApiOperation({
+    summary: 'Update user password',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Password successfully updated',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'New password and confirmation do not match',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Invalid current password',
+  })
+  @UseGuards(AuthGuard)
+  async updatePassword(
+    @Request() req,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    return this.userService.updatePassword(req.user.sub, updatePasswordDto);
+  }
+}

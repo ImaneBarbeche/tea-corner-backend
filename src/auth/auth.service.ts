@@ -10,7 +10,6 @@ import * as argon2 from 'argon2';
 import type { Response } from 'express';
 import { User } from 'src/user/user.entity';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
-import * as nodemailer from 'nodemailer';
 import * as crypto from 'crypto';
 import { MoreThan, Repository } from 'typeorm';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
