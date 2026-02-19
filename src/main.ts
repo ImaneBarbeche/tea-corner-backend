@@ -4,11 +4,29 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
+// import { ConfigService } from '@nestjs/config';
+
+// simple csrf token, without using sessions
+const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
+  getSecret: () => process.env.CSRF_SECRET ?? 'dev-secret',
+  getSessionIdentifier: (req) => req.ip ?? 'anonymous',
+  cookieName: 'csrf-token',
+  cookieOptions: {
+    sameSite: 'lax',
+    path: '/',
+    secure: false,
+    httpOnly: true,
+  },
+  size: 32,
+  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+  getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
+});
+
+export { generateCsrfToken };
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const configService = app.get(ConfigService);
+  // const configService = app.get(ConfigService);
 
   const config = new DocumentBuilder()
     .setTitle('TeaCorner Api')
@@ -29,29 +47,11 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
   });
 
-  // simple csrf token, without using sessions
-  const { doubleCsrfProtection } = doubleCsrf({
-    getSecret: () => configService.get('CSRF_SECRET').toString(),
-    getSessionIdentifier: (req) => {
-      return req.ip || 'anonymous'; // uses the ip adress as session id
-    },
-    cookieName: 'csrf-token',
-    cookieOptions: {
-      sameSite: 'lax', // 'strict' option is hindering in dev mode
-      path: '/',
-      secure: false, // only for http dev, otherwise, for https, use 'true'
-      httpOnly: true,
-    },
-    size: 32,
-    ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-    getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
-  });
+  app.use(doubleCsrfProtection);
 
-  if (process.env.NODE_ENV === 'production') {
-    app.use(doubleCsrfProtection);
-  }
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);
 }
+
 bootstrap();
