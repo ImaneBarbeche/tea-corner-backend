@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Post,
-  HttpCode,
-  HttpStatus,
   UseInterceptors,
   ClassSerializerInterceptor,
   UseGuards,
@@ -64,9 +62,9 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Données invalides' })
   async signUp(
     @Body() payload: CreateUserDto,
-    @Res({ passthrough: true }) response: Response,
+    // @Res({ passthrough: true }) response: Response,
   ) {
-    return this.authService.signUp(payload, response);
+    return this.authService.signUp(payload);
   }
 
   @ApiCookieAuth() // indicate to swagger that this route needs an auth cookie

@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/create-user.dto';
 import * as argon2 from 'argon2';
 import type { Response } from 'express';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import * as crypto from 'crypto';
 import { MoreThan, Repository } from 'typeorm';
@@ -33,7 +33,7 @@ export class AuthService {
 
   async signUp(
     createUserDto: CreateUserDto,
-    response: Response,
+    // response: Response,
   ): Promise<{
     message: string;
   }> {
@@ -145,7 +145,7 @@ export class AuthService {
     return { message: 'Access token refreshed' };
   }
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, pass: string): Promise<Object | null> {
     const user = await this.userService.findByUsername(username);
     if (!user) return null;
     if (!user.email_verified) {
@@ -157,7 +157,7 @@ export class AuthService {
     const isMatch = await argon2.verify(user.password, pass);
     if (!isMatch) return null;
 
-    const { password, ...result } = user;
+    const { password: _, ...result } = user;
 
     return result;
   }

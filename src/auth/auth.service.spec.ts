@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UserService } from '../user/user.service';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
-import { EmailVerificationToken } from './email-verification-token.entity';
+import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 
 describe('AuthService', () => {
   let service: AuthService;

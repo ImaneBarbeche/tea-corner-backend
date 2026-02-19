@@ -3,9 +3,7 @@ import { Role } from '../enums/role.enum';
 import {
   Entity,
   Column,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  Timestamp,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,

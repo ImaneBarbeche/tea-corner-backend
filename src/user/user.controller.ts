@@ -5,7 +5,6 @@ import {
   Get,
   NotFoundException,
   Param,
-  Post,
   UseGuards,
   UseInterceptors,
   Request,

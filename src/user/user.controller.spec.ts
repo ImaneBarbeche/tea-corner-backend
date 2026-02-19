@@ -3,7 +3,6 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Status, User } from './user.entity';
 import { Role } from '../enums/role.enum';
-import { UpdateUsernameDto } from './update-username.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { NotFoundException } from '@nestjs/common';
