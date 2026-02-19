@@ -1,29 +1,45 @@
-name: CI
-
+name: CI/CD
+# Run the script every time there is a push or pull request on the staging branch
 on:
   push:
-    branches: [ master ]
+    branches: [ staging ]
   pull_request:
-    branches: [ master ]
+    branches: [ staging ]
 
+# What the script needs to execute
 jobs:
   test:
+    # Creating a VM (Ubuntu) to execute the test job
     runs-on: ubuntu-latest
-
-    steps:
+    steps: 
+      # GitHub copies the code from the repo into the VM
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
+      # Installing Node.js version 22
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 22
-
+      
       - name: Install dependencies
         run: npm install
-
+      
       - name: Lint code
         run: npm run lint
-
+      
       - name: Run tests
         run: npm test
+
+# CD part (Continuous Deployment)
+  deploy:
+    # Only deploys if the 'test' job passes AND only when a push is made (not on PRs)
+    needs: test  
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Calls Render's deploy hook (stored securely in GitHub secrets) via HTTP POST
+      - name: Deploy to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
