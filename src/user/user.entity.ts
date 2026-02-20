@@ -12,18 +12,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Tea } from '../tea/tea.entity';
-// import {
-//   MinLength,
-//   IsString,
-//   IsEmail,
-//   IsEmpty,
-//   IsNotEmpty,
-// } from 'class-validator';
-
-// export enum UserRole {
-//   USER = 'user',
-//   ADMIN = 'admin',
-// }
+import { UserTea } from 'src/user-tea/user-tea.entity';
 
 export enum Status {
   ACTIVE = 'active',
@@ -46,7 +35,7 @@ export class User {
   @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user
+  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signing up a user
   banner_color: string;
 
   @Column('text', { nullable: true })
@@ -83,7 +72,9 @@ export class User {
   @OneToMany(() => Tea, (tea) => tea.author)
   teas: Tea[];
 
-  // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
+  @OneToMany(() => UserTea, (userTea) => userTea.user)
+  userTeas: UserTea[];
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -93,5 +84,3 @@ export class User {
   @DeleteDateColumn()
   deleted_at: Date;
 }
-
-// validators should only be used in DTO's files not in the entity file!

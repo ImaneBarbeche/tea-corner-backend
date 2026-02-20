@@ -20,6 +20,7 @@ import { TeaModule } from './tea/tea.module';
 import { TeaStyleController } from './tea-style/tea-style.controller';
 import { TeaStyleService } from './tea-style/tea-style.service';
 import { TeaStyleModule } from './tea-style/tea-style.module';
+import { UserTeaModule } from './user-tea/user-tea.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { TeaStyleModule } from './tea-style/tea-style.module';
     AuthModule,
     TeaModule,
     TeaStyleModule,
+    UserTeaModule,
   ],
   controllers: [AppController, AuthController, TeaController, TeaStyleController],
   providers: [

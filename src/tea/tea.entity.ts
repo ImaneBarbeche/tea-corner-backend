@@ -5,6 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,6 +13,7 @@ import { User } from 'src/user/user.entity';
 import { TeaType } from 'src/enums/teaType.enum';
 import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
 import { TeaStyle } from 'src/tea-style/tea-style.entity';
+import { UserTea } from 'src/user-tea/user-tea.entity';
 
 @Entity()
 export class Tea {
@@ -78,6 +80,9 @@ export class Tea {
 
   @Column('boolean', { default: false })
   is_public: boolean;
+
+  @OneToMany(() => UserTea, (userTea) => userTea.tea)
+  userTeas: UserTea[];
 
   @CreateDateColumn()
   created_at: Date;
