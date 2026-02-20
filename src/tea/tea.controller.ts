@@ -84,6 +84,7 @@ export class TeaController {
     const teaData = {
       ...createTeaDto,
       author: { id: req.user.sub },
+      style: createTeaDto.style_id ? { id: createTeaDto.style_id } : undefined,
     };
 
     return this.teaService.create(teaData);

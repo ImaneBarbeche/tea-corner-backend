@@ -8,12 +8,14 @@ import {
 } from '@nestjs/common';
 import { CreateTeaDto } from './create-tea.dto';
 import { UpdateTeaDto } from './update-tea.dto';
+import { TeaStyleService } from 'src/tea-style/tea-style.service';
 
 @Injectable()
 export class TeaService {
   constructor(
     @InjectRepository(Tea)
     private teaRepository: Repository<Tea>,
+    private teaStyleService: TeaStyleService,
   ) {}
 
   // admin
@@ -64,6 +66,16 @@ export class TeaService {
 
   async create(createTeaDto: CreateTeaDto): Promise<Tea> {
     const tea = this.teaRepository.create(createTeaDto);
+
+    if (createTeaDto.style_id) {
+      const style = await this.teaStyleService.findOne(createTeaDto.style_id);
+
+      if (!style) {
+        throw new NotFoundException(
+          `style with ID ${createTeaDto.style_id} not found`,
+        );
+      }
+    }
 
     return await this.teaRepository.save(tea);
   }

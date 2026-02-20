@@ -11,7 +11,7 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Tea } from 'src/tea/tea.entity';
+import { Tea } from '../tea/tea.entity';
 // import {
 //   MinLength,
 //   IsString,
