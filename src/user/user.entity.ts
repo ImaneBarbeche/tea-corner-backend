@@ -3,9 +3,7 @@ import { Role } from '../enums/role.enum';
 import {
   Entity,
   Column,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  Timestamp,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
@@ -20,7 +18,7 @@ export enum Status {
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid') // if uuid is used, id cannot be a number, it should be a string
+  @PrimaryGeneratedColumn('uuid') 
   id: string;
 
   @Column('varchar', { length: 30 })
@@ -32,7 +30,7 @@ export class User {
   @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10, default: '#3B82F6' }) // can add a default color if necessary to prevent errors when signup a user
+  @Column('varchar', { length: 10, default: '#3B82F6' }) 
   banner_color: string;
 
   @Column('text', { nullable: true })
@@ -42,7 +40,7 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
+  @Column('text') 
   password: string;
 
   @Column({
@@ -66,7 +64,6 @@ export class User {
   @CreateDateColumn({ nullable: true })
   username_last_changed: Date;
 
-  // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
   @CreateDateColumn()
   created_at: Date;
 
@@ -75,6 +72,9 @@ export class User {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  // scheduled hard delete date
+  @Column({ nullable: true }) 
+  delete_scheduled_at: Date;
 }
 
-// validators should only be used in DTO's files not in the entity file!

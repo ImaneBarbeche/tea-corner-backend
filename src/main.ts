@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { doubleCsrf } from 'csrf-csrf';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-// import { ConfigService } from '@nestjs/config';
 
 // simple csrf token, without using sessions
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
@@ -26,7 +25,6 @@ export { generateCsrfToken };
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // const configService = app.get(ConfigService);
 
   const config = new DocumentBuilder()
     .setTitle('TeaCorner Api')

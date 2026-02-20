@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, Not, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
@@ -17,6 +17,7 @@ import * as argon2 from 'argon2';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 import { EmailService } from '../auth/email.service';
 import * as crypto from 'crypto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class UserService {
@@ -45,8 +46,27 @@ export class UserService {
     return this.userRepository.findOneBy({ email });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.userRepository.delete(id);
+  async remove(id: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    // mark user as deleted in the db (softdelete)
+    await this.userRepository.softDelete(id);
+
+    // definitive deletion date
+    const deleteScheduledAt = new Date();
+    deleteScheduledAt.setDate(deleteScheduledAt.getDate() + 30);
+
+    // update the date in the repository
+    await this.userRepository.update(id, {
+      delete_scheduled_at: deleteScheduledAt,
+    });
+
+    // sends the email to the user
+    await this.emailService.sendDeletionNotification(user, deleteScheduledAt);
+    return { message: 'User deletion scheduled successfully' };
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -138,7 +158,7 @@ export class UserService {
     user.email_verified = false;
     const updatedUser = await this.userRepository.save(user);
 
-       // send a new verification email + token
+    // send a new verification email + token
     try {
       const rawToken = crypto.randomBytes(32).toString('hex');
       const hashedToken = await argon2.hash(rawToken);
@@ -152,14 +172,13 @@ export class UserService {
       });
 
       await this.emailService.sendVerificationEmail(updatedUser, rawToken);
-      
+
       console.log('Verification email sent to:', updatedUser.email);
     } catch (error) {
       console.error('Failed to send verification email:', error);
     }
-     return updatedUser
+    return updatedUser;
   }
-  
 
   async updatePassword(
     userId: string,
@@ -202,5 +221,27 @@ export class UserService {
     user.password = await argon2.hash(updatePasswordDto.new_password);
     await this.userRepository.save(user);
     return { message: 'Password updated successfully' };
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async cleanupDeletedUsers() {
+    console.log('Executing cronjob for deleted users');
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // find users with deleted_at > 30 days
+    const usersToDelete = await this.userRepository.find({
+      where: {
+        deleted_at: Not(IsNull()),
+        delete_scheduled_at: LessThanOrEqual(thirtyDaysAgo),
+      },
+    });
+
+    // hard delete
+    for (const user of usersToDelete) {
+      await this.userRepository.delete(user.id);
+      console.log(`User ${user.id} deleted.`);
+    }
   }
 }
