@@ -63,11 +63,6 @@ export class TeaService {
 
   async create(createTeaDto: CreateTeaDto): Promise<Tea> {
     const tea = this.teaRepository.create(createTeaDto);
-
-    // if (createTeaDto.authorId) {
-    //   tea.author = { id: createTeaDto.authorId } as any; // TypeORM will use the ID to set the FK
-    // }
-
     return await this.teaRepository.save(tea);
   }
 }
