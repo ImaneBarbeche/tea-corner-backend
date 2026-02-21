@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Role } from 'src/enums/role.enum';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
+import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
 

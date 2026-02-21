@@ -9,8 +9,8 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
-import { TeaType } from 'src/enums/teaType.enum';
+import { caffeineLevel } from '../enums/caffeineLevel.enum';
+import { TeaType } from '../enums/teaType.enum';
 
 export class CreateTeaDto {
   @ApiProperty({

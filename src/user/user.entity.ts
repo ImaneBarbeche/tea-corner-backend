@@ -3,28 +3,14 @@ import { Role } from '../enums/role.enum';
 import {
   Entity,
   Column,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  Timestamp,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Tea } from 'src/tea/tea.entity';
-import { Ingredient } from 'src/ingredient/ingredient.entity';
-// import {
-//   MinLength,
-//   IsString,
-//   IsEmail,
-//   IsEmpty,
-//   IsNotEmpty,
-// } from 'class-validator';
-
-// export enum UserRole {
-//   USER = 'user',
-//   ADMIN = 'admin',
-// }
+import { Tea } from '../tea/tea.entity';
+import { Ingredient } from '../ingredient/ingredient.entity';
 
 export enum Status {
   ACTIVE = 'active',
@@ -57,7 +43,7 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
+  @Column('text') 
   password: string;
 
   @Column({
@@ -87,7 +73,6 @@ export class User {
   @OneToMany(() => Ingredient, (ingredient) => ingredient.user)
   ingredients: Ingredient[];
 
-  // check if this is the correct way to implement it - typeorm would use Date and not timestamp - so createdatecolumn etc would be better probably
   @CreateDateColumn()
   created_at: Date;
 
@@ -98,4 +83,3 @@ export class User {
   deleted_at: Date;
 }
 
-// validators should only be used in DTO's files not in the entity file!

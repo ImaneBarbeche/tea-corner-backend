@@ -4,7 +4,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import {FlavourProfile}  from '../flavour-profile/flavour-profile.entity';
+import {FlavourProfile} from '../flavour-profile/flavour-profile.entity';
 
 @Entity('flavour_type')
 export class FlavourType {

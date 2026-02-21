@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateIngredientDto } from './create-ingredient.dto';
-import { Role } from 'src/enums/role.enum';
+import { Role } from '../enums/role.enum';
 import { UpdateIngredientDto } from './update-ingredient.dto';
 @Injectable()
 export class IngredientService {

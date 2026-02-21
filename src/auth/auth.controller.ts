@@ -18,7 +18,7 @@ import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
 import type { Response, Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import {
   ApiCookieAuth,

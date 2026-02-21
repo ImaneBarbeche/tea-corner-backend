@@ -4,30 +4,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { AuthRefreshToken } from './auth/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { TeaController } from './tea/tea.controller';
-import { TeaService } from './tea/tea.service';
 import { TeaModule } from './tea/tea.module';
-import { TeaStyleController } from './tea-style/tea-style.controller';
-import { TeaStyleService } from './tea-style/tea-style.service';
 import { TeaStyleModule } from './tea-style/tea-style.module';
-import { IngredientService } from './ingredient/ingredient.service';
-import { IngredientController } from './ingredient/ingredient.controller';
 import { IngredientModule } from './ingredient/ingredient.module';
-import { FlavourProfileController } from './flavour-profile/flavour-profile.controller';
-import { FlavourProfileService } from './flavour-profile/flavour-profile.service';
-import { FlavourModule } from './flavour-profile/flavour-profile.module';
-import { FlavourTypeController } from './flavour-type/flavour-type.controller';
-import { FlavourTypeService } from './flavour-type/flavour-type.service';
+import { FlavourProfileModule } from './flavour-profile/flavour-profile.module';
 import { FlavourTypeModule } from './flavour-type/flavour-type.module';
 
 @Module({
@@ -49,7 +36,7 @@ import { FlavourTypeModule } from './flavour-type/flavour-type.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, AuthRefreshToken],
+      entities: [],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -58,10 +45,10 @@ import { FlavourTypeModule } from './flavour-type/flavour-type.module';
     TeaModule,
     TeaStyleModule,
     IngredientModule,
-    FlavourModule,
+    FlavourProfileModule,
     FlavourTypeModule,
   ],
-  controllers: [AppController, AuthController, TeaController, TeaStyleController, IngredientController, FlavourProfileController, FlavourTypeController],
+  controllers: [AppController],
   providers: [
     AppService,
     { provide: APP_GUARD, 
@@ -75,11 +62,6 @@ import { FlavourTypeModule } from './flavour-type/flavour-type.module';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
-    TeaService,
-    TeaStyleService,
-    IngredientService,
-    FlavourProfileService,
-    FlavourTypeService,
   ],
 })
 export class AppModule {

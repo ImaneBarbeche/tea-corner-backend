@@ -1,8 +1,9 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { FlavourTypeService } from './flavour-type.service';
 import { ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from '../guards/auth.guard';
 import { FlavourType } from './flavour-type.entity';
+
 
 @Controller('flavour-type')
 export class FlavourTypeController {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, MinLength } from 'class-validator';
-import { TeaType } from 'src/enums/teaType.enum';
+import { TeaType } from '../enums/teaType.enum';
 
 export class CreateTeaStyleDto {
   @ApiProperty({ example: 'sencha', description: 'Tea style' })

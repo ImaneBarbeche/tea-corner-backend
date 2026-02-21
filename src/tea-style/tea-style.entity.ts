@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { TeaType } from 'src/enums/teaType.enum';
-import { Tea } from 'src/tea/tea.entity';
+import { TeaType } from '../enums/teaType.enum';
+import { Tea } from '../tea/tea.entity';
 
 @Entity()
 export class TeaStyle {

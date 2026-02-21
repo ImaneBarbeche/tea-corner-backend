@@ -8,10 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { TeaType } from 'src/enums/teaType.enum';
-import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
-import { TeaStyle } from 'src/tea-style/tea-style.entity';
+import { User } from '../user/user.entity';
+import { TeaType } from '../enums/teaType.enum';
+import { caffeineLevel } from '../enums/caffeineLevel.enum';
+import { TeaStyle } from '../tea-style/tea-style.entity';
 
 @Entity()
 export class Tea {
