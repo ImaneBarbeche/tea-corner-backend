@@ -4,10 +4,11 @@ import { IngredientService } from './ingredient.service';
 import { IngredientController } from './ingredient.controller';
 import { Ingredient } from './ingredient.entity';
 import { AuthModule } from '../auth/auth.module';
+import { TeaIngredient } from './tea-ingredient.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Ingredient]),
+    TypeOrmModule.forFeature([Ingredient, TeaIngredient]),
     forwardRef(() => AuthModule),
   ],
   exports: [TypeOrmModule, IngredientService],
