@@ -13,9 +13,9 @@ import { User } from 'src/user/user.entity';
 import { Tea } from 'src/tea/tea.entity';
 
 @Entity()
-// @Index(['user', 'tea'], { unique: true })
+@Index(['user', 'tea'], { unique: true })
 export class UserTea {
-  @PrimaryGeneratedColumn('uuid') // if uuid is used, id cannot be a number, it should be a string
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => User, (user) => user.userTeas)
@@ -26,17 +26,29 @@ export class UserTea {
   @JoinColumn({ name: 'tea_id' })
   tea: Tea;
 
-  // inventory_amount float
-  // // inventory_unit varchar(20) perhaps not needed
+  @Column('float', { nullable: true })
+  // in grams
+  inventory_amount: number;
 
-  // // Optional brewing preference overrides
-  // custom_brewing_time integer
-  // custom_brewing_temperature integer
-  // custom_leaf_amount integer
-  // custom_water_amount integer
+  @Column('integer', { nullable: true })
+  //   seconds by default
+  custom_brewing_time: number;
 
-  // // personal note
-  // notes text
+  @Column('integer', { nullable: true })
+  //   celsius by default
+  custom_brewing_temperature: number;
+
+  @Column('integer', { nullable: true })
+  //   grams by default
+  // null in case the user doesn't have a recommended amount
+  custom_leaf_amount: number;
+
+  @Column('integer', { nullable: true })
+  //   ml by default
+  custom_water_amount: number;
+
+  @Column('text', { nullable: true })
+  notes: string;
 
   // added_at timestamp [default: "now()"]
 

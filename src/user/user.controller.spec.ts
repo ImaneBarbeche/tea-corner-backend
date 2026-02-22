@@ -61,6 +61,7 @@ describe('UserController', () => {
         modified_at: new Date(),
         deleted_at: new Date(),
         teas: [],
+        userTeas: [],
       };
 
       const updateDto: UpdateUserDto = {
@@ -99,6 +100,7 @@ describe('UserController', () => {
         modified_at: new Date(),
         deleted_at: new Date(),
         teas: [],
+        userTeas: [],
       };
       jest.spyOn(service, 'findByUsername').mockResolvedValue(result);
 
