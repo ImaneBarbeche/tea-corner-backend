@@ -10,8 +10,8 @@ import {
 
 @Entity('auth_refresh_tokens')
 export class AuthRefreshToken {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ name: 'refresh_token', length: 500 })
   refreshToken: string;
