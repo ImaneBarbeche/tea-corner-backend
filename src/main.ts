@@ -7,7 +7,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 // simple csrf token, without using sessions
 const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
-  getSecret: () => process.env.CSRF_SECRET ?? 'dev-secret',
+  getSecret: () => {
+  const secret = process.env.CSRF_SECRET;
+  if (!secret) throw new Error('CSRF_SECRET env variable is not set');
+  return secret;
+},
   getSessionIdentifier: (req) => req.ip ?? 'anonymous',
   cookieName: 'csrf-token',
   cookieOptions: {
