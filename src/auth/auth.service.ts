@@ -8,7 +8,7 @@ import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/create-user.dto';
 import * as argon2 from 'argon2';
 import type { Response } from 'express';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import * as crypto from 'crypto';
 import { MoreThan, Repository } from 'typeorm';
@@ -31,10 +31,7 @@ export class AuthService {
     private userRepository: Repository<User>,
   ) {}
 
-  async signUp(
-    createUserDto: CreateUserDto,
-    response: Response,
-  ): Promise<{
+  async signUp(createUserDto: CreateUserDto): Promise<{
     message: string;
   }> {
     // Hash with Argon2
@@ -61,23 +58,9 @@ export class AuthService {
   }
 
   async signIn(
-    username: string,
-    pass: string,
+    user: User,
     response: Response,
   ): Promise<{ access_token: string; refresh_token: string }> {
-    const user = await this.userService.findByUsername(username);
-
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // verify with argon2
-    const isPasswordValid = await argon2.verify(user.password, pass);
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
     // generate a token pair
     const tokens = await this.authRefreshTokenService.generateTokenPair(user);
 
@@ -115,19 +98,8 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
-    // only access token is created
-    const payload = {
-      sub: user.id,
-      username: user.user_name,
-      role: user.role,
-    };
-
-    const newAccessToken = this.authRefreshTokenService['jwtService'].sign(
-      payload,
-      {
-        expiresIn: '15m',
-      },
-    );
+    const newAccessToken =
+      this.authRefreshTokenService.generateAccessToken(user);
 
     // update access token
     response.cookie('access_token', newAccessToken, {
@@ -136,7 +108,6 @@ export class AuthService {
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
-
 
     if (process.env.NODE_ENV === 'development') {
       return { access_token: newAccessToken };
@@ -157,14 +128,15 @@ export class AuthService {
     const isMatch = await argon2.verify(user.password, pass);
     if (!isMatch) return null;
 
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
 
     return result;
   }
 
   async generateEmailVerificationToken(user: User) {
     const token = crypto.randomBytes(32).toString('hex'); //token send in the email
-    const hashToken = await argon2.hash(token); // token stored in the db
+    const hashToken = crypto.createHash('sha256').update(token).digest('hex');
+    // token stored in the db
     const expires_at = new Date(Date.now() + 1000 * 60 * 60); // 1h
 
     await this.emailVerificationTokenRepository.insert({
@@ -178,53 +150,30 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    // take unused tokens
-    const tokens = await this.emailVerificationTokenRepository.find({
-      where: { used: false },
-      order: { created_at: 'DESC' },
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const tokenRecord = await this.emailVerificationTokenRepository.findOne({
+      where: { email_token: hashedToken, used: false },
       relations: ['user'],
     });
-    // if no tokens, send error
-    if (!tokens.length) {
+
+    if (!tokenRecord) {
       throw new BadRequestException('Token invalide ou déjà utilisé');
     }
 
-    // tokenRecord needs to store 2 values, before the loop it stores null and after it stores EmailVerificationToken object
-    let tokenRecord: EmailVerificationToken | null = null;
-
-    for (const t of tokens) {
-      // argon2.verify compare brut token with hashed token
-      const isMatch = await argon2.verify(t.email_token, token);
-
-      if (isMatch) {
-        tokenRecord = t; // change the value because the token is found
-        break;
-      }
-    }
-
-    if (!tokenRecord) {
-      throw new BadRequestException('Token invalide');
-    }
-
-    // verify expiration
     if (tokenRecord.expires_at < new Date()) {
       throw new BadRequestException('Token expiré');
     }
 
-    // get the associated user
-    const user = tokenRecord.user;
-
-    if (!user) {
+    if (!tokenRecord.user) {
       throw new NotFoundException('Utilisateur introuvable');
     }
 
-    // mark token as used
     tokenRecord.used = true;
     await this.emailVerificationTokenRepository.save(tokenRecord);
 
-    // verify user email
-    user.email_verified = true;
-    await this.userService.save(user);
+    tokenRecord.user.email_verified = true;
+    await this.userService.save(tokenRecord.user);
 
     return { message: 'Email vérifié avec succès' };
   }
@@ -250,7 +199,10 @@ export class AuthService {
     if (!user) return; // do not reveal if the email exists
 
     const rawToken = crypto.randomBytes(32).toString('hex'); //token send in the email
-    const hashedToken = await argon2.hash(rawToken); // token stored in the db
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex'); // token stored in the db
     const expires_at = new Date(Date.now() + 1000 * 60 * 15); // 15 min
 
     await this.passwordResetRepository.insert({
@@ -266,30 +218,18 @@ export class AuthService {
     if (!newPassword) {
       throw new BadRequestException('New password is required');
     }
-    // get non expired tokens
-    const resets = await this.passwordResetRepository.find({
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const resetRecord = await this.passwordResetRepository.findOne({
       where: {
-        expires_at: MoreThan(new Date()), // filters expired tokens
+        password_token: hashedToken,
+        expires_at: MoreThan(new Date()),
       },
       relations: ['user'],
     });
 
-    let resetRecord: PasswordResetToken | null = null;
-
-    // compare raw tokens with hashed tokens
-    for (const r of resets) {
-      const match = await argon2.verify(r.password_token, token);
-      if (match) {
-        resetRecord = r;
-        break;
-      }
-    }
     if (!resetRecord) {
       throw new BadRequestException('Invalid token');
-    }
-
-    if (resetRecord.expires_at < new Date()) {
-      throw new BadRequestException('Token expired');
     }
     // update password
     resetRecord.user.password = await this.hashPassword(newPassword);

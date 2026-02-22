@@ -6,7 +6,6 @@ import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
@@ -44,9 +43,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
   controllers: [AppController],
   providers: [
     AppService,
-    { provide: APP_GUARD, 
-      useClass: ThrottlerGuard 
-    },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

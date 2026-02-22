@@ -9,10 +9,13 @@ export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
-  constructor(private userService: UserService, private configService: ConfigService,) {
+  constructor(
+    private userService: UserService,
+    private configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => req?.cookies?.refresh_token,      
+        (req) => req?.cookies?.refresh_token,
       ]), // extract token from cookies
       ignoreExpiration: false,
       secretOrKey: configService.get('JWT_REFRESH_SECRET').toString(),

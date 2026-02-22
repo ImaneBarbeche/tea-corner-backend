@@ -6,7 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UserService } from '../user/user.service';
 import { AuthRefreshTokenService } from './auth-refresh-token.service';
-import { EmailVerificationToken } from './email-verification-token.entity';
+import { EmailVerificationToken } from '../entities/email-verification-token.entity';
+import { EmailService } from './email.service';
+import { PasswordResetToken } from '../entities/password-reset-token.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -27,6 +29,7 @@ describe('AuthService', () => {
             create: jest.fn(),
             findOne: jest.fn(),
             save: jest.fn(),
+            findByEmail: jest.fn(),
           },
         },
         {
@@ -35,7 +38,19 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(EmailVerificationToken),
-          useValue: { insert: jest.fn(), find: jest.fn(), save: jest.fn() },
+          useValue: { insert: jest.fn(), find: jest.fn(), save: jest.fn(), findOne: jest.fn() },
+        },
+        {
+          provide: getRepositoryToken(PasswordResetToken),
+          useValue: { insert: jest.fn(), findOne: jest.fn(), delete: jest.fn() },
+        },
+        {
+          provide: EmailService,
+          useValue: {
+            sendVerificationEmail: jest.fn(),
+            sendResetEmail: jest.fn(),
+            sendDeletionNotification: jest.fn(),
+          },
         },
       ],
     }).compile();

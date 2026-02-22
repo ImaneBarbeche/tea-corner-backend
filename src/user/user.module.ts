@@ -8,7 +8,10 @@ import { EmailService } from '../auth/email.service';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, EmailVerificationToken]), forwardRef(() => AuthModule)],
+  imports: [
+    TypeOrmModule.forFeature([User, EmailVerificationToken]),
+    forwardRef(() => AuthModule),
+  ],
   exports: [TypeOrmModule, UserService],
   providers: [UserService, EmailService],
   controllers: [UserController],

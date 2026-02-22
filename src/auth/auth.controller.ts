@@ -12,11 +12,10 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/create-user.dto';
-import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
 import type { Response, Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import {
   ApiCookieAuth,
@@ -52,15 +51,8 @@ export class AuthController {
     status: 429,
     description: 'Trop de requêtes — rate limit dépassé',
   })
-  async signIn(
-    @Body() signInDto: SignInDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signIn(
-      signInDto.user_name,
-      signInDto.password,
-      response,
-    );
+  async signIn(@Req() req, @Res({ passthrough: true }) response: Response) {
+    return this.authService.signIn(req.user, response);
   }
 
   @Public()
@@ -69,11 +61,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Création d’un nouvel utilisateur' })
   @ApiResponse({ status: 201, description: 'Utilisateur créé avec succès' })
   @ApiResponse({ status: 400, description: 'Données invalides' })
-  async signUp(
-    @Body() payload: CreateUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signUp(payload, response);
+  async signUp(@Body() payload: CreateUserDto) {
+    return this.authService.signUp(payload);
   }
 
   @ApiCookieAuth() // indicate to swagger that this route needs an auth cookie
@@ -108,7 +97,7 @@ export class AuthController {
     const { user } = payload;
     const currentRefreshToken = req.cookies['refresh_token'];
 
-    return this.authService.refreshTokens(user.id, currentRefreshToken!, res);
+    return this.authService.refreshTokens(user.id, currentRefreshToken, res);
   }
 
   @Public()

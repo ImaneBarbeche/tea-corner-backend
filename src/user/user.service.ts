@@ -10,7 +10,6 @@ import { IsNull, LessThanOrEqual, Not, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './create-user.dto';
 import { UpdateUserDto } from './update-user.dto';
-import { UpdateUsernameDto } from './update-username.dto';
 import { UpdateEmailDto } from './update-email.dto';
 import { UpdatePasswordDto } from './update-password.dto';
 import * as argon2 from 'argon2';

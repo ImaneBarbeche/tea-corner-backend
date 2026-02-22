@@ -37,26 +37,28 @@ export class AuthRefreshTokenService {
     return newRefreshToken;
   }
 
-  async generateTokenPair(user: User) {
-    const payload = {
-      sub: user.id,
-      username: user.user_name,
-      role: user.role,
-    };
+  generateAccessToken(user: User): string {
+    const payload = { sub: user.id, username: user.user_name, role: user.role };
+    return this.jwtService.sign(payload, {
+      expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
+    });
+  }
 
+  async generateTokenPair(user: User) {
     return {
-      access_token: this.jwtService.sign(payload, {
-        expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
-      }),
+      access_token: this.generateAccessToken(user),
       refresh_token: await this.generateRefreshToken(user.id),
     };
   }
 
   //  check if refresh token has been used or has expired
-  async validateRefreshToken(refreshToken: string, userId: string): Promise<boolean> {
+  async validateRefreshToken(
+    refreshToken: string,
+    userId: string,
+  ): Promise<boolean> {
     // look for token in DB
     const token = await this.authRefreshTokenRepository.findOne({
-        where: { refreshToken, user: { id: userId }, revoked: false },
+      where: { refreshToken, user: { id: userId }, revoked: false },
     });
 
     // not found or revoked

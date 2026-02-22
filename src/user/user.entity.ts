@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Role } from '../enums/role.enum';
+import { Status } from '../enums/status.enum';
 import {
   Entity,
   Column,
@@ -9,16 +10,16 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 
-export enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
-  ARCHIVED = 'archived',
-}
+// export enum Status {
+//   ACTIVE = 'active',
+//   INACTIVE = 'inactive',
+//   DELETED = 'deleted',
+//   ARCHIVED = 'archived',
+// }
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid') 
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column('varchar', { length: 30 })
@@ -30,7 +31,7 @@ export class User {
   @Column('text', { nullable: true })
   avatar_url: string;
 
-  @Column('varchar', { length: 10, default: '#3B82F6' }) 
+  @Column('varchar', { length: 10, default: '#3B82F6' })
   banner_color: string;
 
   @Column('text', { nullable: true })
@@ -40,7 +41,7 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column('text') 
+  @Column('text')
   password: string;
 
   @Column({
@@ -74,7 +75,6 @@ export class User {
   deleted_at: Date;
 
   // scheduled hard delete date
-  @Column({ nullable: true }) 
+  @Column({ nullable: true })
   delete_scheduled_at: Date;
 }
-
