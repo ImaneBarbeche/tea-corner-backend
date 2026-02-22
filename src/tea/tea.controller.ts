@@ -18,6 +18,8 @@ import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
+import { AddIngredientDto } from './add-ingredient.dto';
+import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 
 @Controller('tea')
 export class TeaController {
@@ -107,5 +109,36 @@ export class TeaController {
     }
 
     await this.teaService.remove(id);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Add an ingredient to a tea' })
+  @Post(':teaId/ingredients')
+  @UseGuards(AuthGuard)
+  async addIngredient(
+    @Param('teaId') teaId: string,
+    @Body() dto: AddIngredientDto,
+  ): Promise<TeaIngredient> {
+    return this.teaService.addIngredient(teaId, dto);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Get all ingredients of a tea' })
+  @Get(':teaId/ingredients')
+  @UseGuards(AuthGuard)
+  async getIngredients(
+    @Param('teaId') teaId: string,
+  ): Promise<TeaIngredient[]> {
+    return this.teaService.getIngredients(teaId);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Remove an ingredient from a tea' })
+  @Delete(':teaId/ingredients/:id')
+  @UseGuards(AuthGuard)
+  async removeIngredient(
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.teaService.removeIngredient(id);
   }
 }
