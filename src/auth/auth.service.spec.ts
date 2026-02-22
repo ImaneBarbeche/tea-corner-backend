@@ -38,11 +38,20 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(EmailVerificationToken),
-          useValue: { insert: jest.fn(), find: jest.fn(), save: jest.fn(), findOne: jest.fn() },
+          useValue: {
+            insert: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+            findOne: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(PasswordResetToken),
-          useValue: { insert: jest.fn(), findOne: jest.fn(), delete: jest.fn() },
+          useValue: {
+            insert: jest.fn(),
+            findOne: jest.fn(),
+            delete: jest.fn(),
+          },
         },
         {
           provide: EmailService,
