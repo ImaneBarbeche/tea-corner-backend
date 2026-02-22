@@ -30,7 +30,7 @@ export class AuthRefreshTokenService {
     await this.authRefreshTokenRepository.insert({
       refreshToken: newRefreshToken,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      userId,
+      user: { id: userId },
       revoked: false,
     });
 
@@ -56,7 +56,7 @@ export class AuthRefreshTokenService {
   async validateRefreshToken(refreshToken: string, userId: string): Promise<boolean> {
     // look for token in DB
     const token = await this.authRefreshTokenRepository.findOne({
-      where: { refreshToken, userId, revoked: false },
+        where: { refreshToken, user: { id: userId }, revoked: false },
     });
 
     // not found or revoked
