@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 
 export class CreateUserTeaDto {
-  @ApiProperty({
-    example: '1234',
-    description: 'The user adding the custom tea',
-  })
-  @IsUUID()
-  user_id: string;
+  // @ApiProperty({
+  //   example: '1234',
+  //   description: 'The user adding the custom tea',
+  // })
+  // @IsUUID()
+  // user_id: string;
 
   @ApiProperty({
     example: '1234',
@@ -66,5 +66,6 @@ export class CreateUserTeaDto {
     description: 'A note related to the tea',
   })
   @IsString()
+  @IsOptional()
   notes: string;
 }

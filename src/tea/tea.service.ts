@@ -95,17 +95,4 @@ export class TeaService {
 
     return await this.teaRepository.save(tea);
   }
-
-  // async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-  //   const user = await this.userRepository.findOneBy({ id: id });
-
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-
-  //   Object.assign(user, updateUserDto);
-
-  //   console.log(user);
-  //   return await this.userRepository.save(user);
-  // }
 }
