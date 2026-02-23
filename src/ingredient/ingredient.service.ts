@@ -1,5 +1,5 @@
 import { Ingredient } from './ingredient.entity';
-import { IsNull, Repository } from 'typeorm';
+import { ILike, IsNull, Like, Repository } from 'typeorm';
 import {
   ConflictException,
   ForbiddenException,
@@ -29,11 +29,17 @@ export class IngredientService {
     return { data, total };
   }
 
-  // find ingredients if user null or user created them
-  async findAllForUser(userId: string): Promise<Ingredient[]> {
+  // find system and user ingredients with search option
+  // ILike -> case-insensitive searching in TypeORM
+  async findAllForUser(userId: string, search?: string): Promise<Ingredient[]> {
+      let where;
+      if (search) {
+      where = [{ user: { id: userId } , name: ILike(`%${search}%`)}, { user: IsNull() , name: ILike(`%${search}%`)}]
+      } else {
+      where = [{ user: { id: userId } }, { user: IsNull() }]
+      }
     return this.ingredientRepository.find({
-      where: [{ user: { id: userId } }, { user: IsNull() }],
-      relations: ['user'],
+    where, relations: ['user'] 
     });
   }
 
@@ -70,16 +76,16 @@ export class IngredientService {
     await this.ingredientRepository.softDelete(id);
   }
 
-  async create( dto: CreateIngredientDto, userId: string) {
+  async create(dto: CreateIngredientDto, userId: string) {
     const existing = await this.ingredientRepository.findOne({
       where: {
-      user: { id: userId }, 
-      name: dto.name,   
-    },
+        user: { id: userId },
+        name: dto.name,
+      },
     });
     if (existing) {
       throw new ConflictException(
-        `Vous avez déjà un ingrédient nommé "${dto.name}"`,
+        `You already have an ingredient named "${dto.name}"`,
       );
     }
 

@@ -14,7 +14,12 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
-import { ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { IngredientService } from './ingredient.service';
 import { CreateIngredientDto } from './create-ingredient.dto';
 import { Ingredient } from './ingredient.entity';
@@ -36,6 +41,7 @@ export class IngredientController {
     description: 'List of ingredients with pagination',
   })
   @ApiResponse({ status: 404, description: 'No ingredients found' })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('/admin/all')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
@@ -56,11 +62,17 @@ export class IngredientController {
       'List of ingredients from the system and created by the authentified user',
   })
   @ApiResponse({ status: 404, description: 'No ingredients found' })
+  @ApiQuery({ name: 'search', required: false })
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get('all')
   @UseGuards(AuthGuard)
-  async findAllForUser(@Request() req): Promise<Ingredient[]> {
+  async findAllForUser(
+    @Request() req,
+    @Query('search') search?: string, // to get parameters in the url
+  ): Promise<Ingredient[]> {
     const ingredients = await this.ingredientService.findAllForUser(
       req.user.sub,
+      search,
     );
     return ingredients;
   }

@@ -79,6 +79,7 @@ export class TeaService {
     return await this.teaRepository.save(tea);
   }
 
+  // is called after a tea is created (handled in the front)
   async addIngredient(
     teaId: string,
     dto: AddIngredientDto,
@@ -101,7 +102,7 @@ export class TeaService {
     }
 
     const teaIngredient = this.teaIngredientRepository.create({
-      tea: { id: teaId },
+      tea: { id: teaId }, 
       ingredient: { id: dto.ingredientId },
       quantity: dto.quantity,
       optional: dto.optional ?? false,
@@ -109,7 +110,7 @@ export class TeaService {
     return this.teaIngredientRepository.save(teaIngredient);
   }
 
-  // in case we want to get ingredients separately from the tea or if we want to onl refresh ingredients and not the whole tea page
+  // in case we want to get ingredients separately from the tea or if we want to only refresh ingredients and not the whole tea page
   async getIngredients(teaId: string): Promise<TeaIngredient[]> {
     return this.teaIngredientRepository.find({
       where: { tea: { id: teaId } },

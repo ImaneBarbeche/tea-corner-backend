@@ -113,7 +113,7 @@ export class TeaController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Add an ingredient to a tea' })
-  @Post(':teaId/ingredients')
+  @Post(':teaId/ingredient')
   @UseGuards(AuthGuard)
   async addIngredient(
     @Param('teaId') teaId: string,
