@@ -8,7 +8,6 @@ import {
   UseGuards,
   Request,
   Delete,
-  ForbiddenException,
   UseInterceptors,
   ClassSerializerInterceptor,
   Patch,
@@ -24,6 +23,7 @@ import { CreateTeaDto } from './create-tea.dto';
 import { AddIngredientDto } from './add-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
+import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 
 @Controller('tea')
 export class TeaController {
@@ -126,7 +126,16 @@ export class TeaController {
   ): Promise<TeaIngredient[]> {
     return this.teaService.getIngredients(teaId);
   }
-
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Update the quantity of an ingredient in a tea' })
+  @Patch(':teaId/ingredients/:id')
+  @UseGuards(AuthGuard)
+  async updateIngredient(
+    @Param('id') id: string,
+    @Body() dto: UpdateTeaIngredientDto,
+  ): Promise<TeaIngredient> {
+    return this.teaService.updateIngredient(id, dto);
+  }
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Remove an ingredient from a tea' })
   @Delete(':teaId/ingredients/:id')

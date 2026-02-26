@@ -24,10 +24,7 @@ export class Ingredient {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(
-    () => TeaIngredient,
-    teaIngredient => teaIngredient.ingredient
-  )
+  @OneToMany(() => TeaIngredient, (teaIngredient) => teaIngredient.ingredient)
   public teaIngredients: TeaIngredient[];
 
   @Column('varchar', { length: 50 })

@@ -13,6 +13,7 @@ import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { TeaStyleService } from 'src/tea-style/tea-style.service';
+import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 
 @Injectable()
 export class TeaService {
@@ -143,7 +144,32 @@ export class TeaService {
     });
   }
 
+  async updateIngredient(
+    teaIngredientId: string,
+    dto: UpdateTeaIngredientDto,
+  ): Promise<TeaIngredient> {
+    const teaIngredient = await this.teaIngredientRepository.findOne({
+      where: { id: teaIngredientId },
+    });
+    if (!teaIngredient) {
+      throw new NotFoundException(
+        `TeaIngredient with ID ${teaIngredientId} not found`,
+      );
+    }
+    teaIngredient.quantity = dto.quantity;
+    return this.teaIngredientRepository.save(teaIngredient);
+  }
+
   async removeIngredient(teaIngredientId: string): Promise<void> {
+    const teaIngredient = await this.teaIngredientRepository.findOne({
+      where: { id: teaIngredientId },
+    });
+
+    if (!teaIngredient) {
+      throw new NotFoundException(
+        `TeaIngredient with ID ${teaIngredientId} not found`,
+      );
+    }
     await this.teaIngredientRepository.delete(teaIngredientId);
   }
 }
