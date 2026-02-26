@@ -25,6 +25,19 @@ describe('UserService', () => {
             create: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+            findOneBy: jest.fn(),
+            softDelete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(EmailVerificationToken),
+          useValue: { insert: jest.fn() },
+        },
+        {
+          provide: EmailService,
+          useValue: {
+            sendVerificationEmail: jest.fn(),
+            sendDeletionNotification: jest.fn(),
           },
         },
         {

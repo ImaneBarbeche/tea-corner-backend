@@ -4,9 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
@@ -14,6 +12,13 @@ import { RolesGuard } from './guards/roles.guard';
 import { AuthRefreshToken } from './entities/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TeaModule } from './tea/tea.module';
+import { TeaStyleModule } from './tea-style/tea-style.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { FlavourProfileModule } from './flavour-profile/flavour-profile.module';
+import { FlavourTypeModule } from './flavour-type/flavour-type.module';
+import { UserTeaModule } from './user-tea/user-tea.module';
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
@@ -38,10 +43,17 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    TypeOrmModule.forFeature([User]),
     UserModule,
     AuthModule,
+    TeaModule, 
+    TeaStyleModule,
+    IngredientModule, 
+    FlavourProfileModule, 
+    FlavourTypeModule, 
+    UserTeaModule, 
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController],
   providers: [
     AppService,
     { provide: APP_GUARD, useClass: ThrottlerGuard },

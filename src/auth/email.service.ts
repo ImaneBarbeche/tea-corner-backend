@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
 import type { User } from '../user/user.entity';
-import type { Transporter } from 'nodemailer';
+import { ConfigService } from '@nestjs/config';
+import { createTransport, type Transporter } from 'nodemailer';
 
 @Injectable()
 export class EmailService {
   private transporter: Transporter;
 
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
+  constructor(private configService: ConfigService) {
+    this.transporter = createTransport({
+      host: this.configService.getOrThrow<string>('MAIL_HOST'),
+      port: this.configService.get<number>('MAIL_PORT'),
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+        user: this.configService.getOrThrow<string>('MAIL_USER'),
+        pass: this.configService.getOrThrow<string>('MAIL_PASS'),
       },
     });
   }
 
   async sendVerificationEmail(user: User, token: string) {
-    const url = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const url = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/verify-email?token=${token}`;
 
     await this.transporter.sendMail({
       from: '"TeaCorner" <no-reply@teacorner.com>',
@@ -36,7 +36,7 @@ export class EmailService {
   }
 
   async sendResetEmail(user: User, password_token: string) {
-    const url = `${process.env.FRONTEND_URL}/reset-password?token=${password_token}`;
+    const url = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${password_token}`;
 
     await this.transporter.sendMail({
       from: '"TeaCorner" <no-reply@teacorner.com>',
@@ -51,5 +51,20 @@ export class EmailService {
     });
 
     console.log('Email de reset envoyé à :', user.email);
+  }
+
+  async sendDeletionNotification(user: User, deleteScheduledAt: Date) {
+    await this.transporter.sendMail({
+      from: '"TeaCorner" <no-reply@teacorner.com>',
+      to: user.email,
+      subject: 'Suppression de votre compte TeaCorner',
+      html: `
+        <p>Bonjour ${user.user_name || 'utilisateur'},</p>
+        <p>Votre compte a été marqué comme supprimé. Il sera définitivement supprimé le <strong>${deleteScheduledAt.toLocaleDateString('fr-FR')}</strong>.</p>
+        <p>Vous avez 30 jours pour annuler cette suppression en vous reconnectant à votre compte.</p>
+        <p>Cordialement,<br/>L'équipe TeaCorner</p>
+      `,
+    });
+    console.log('Email de suppression envoyé à :', user.email);
   }
 }

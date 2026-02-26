@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   Request,
   Patch,
+  Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Role } from '../enums/role.enum';
@@ -109,7 +110,7 @@ export class UserController {
     return user;
   }
 
-  @Patch('email')
+  @Patch('/email')
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'Update user email address',
@@ -132,7 +133,7 @@ export class UserController {
     return this.userService.updateEmail(req.user.sub, updateEmailDto);
   }
 
-  @Patch('password')
+  @Patch('/password')
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'Update user password',
@@ -155,5 +156,23 @@ export class UserController {
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     return this.userService.updatePassword(req.user.sub, updatePasswordDto);
+  }
+
+  @Delete('/account')
+  @ApiCookieAuth()
+  @ApiOperation({
+    summary: 'Delete user account',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Account deletion successfully processed',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  @UseGuards(AuthGuard)
+  async deleteAccount(@Request() req) {
+    return this.userService.remove(req.user.sub);
   }
 }

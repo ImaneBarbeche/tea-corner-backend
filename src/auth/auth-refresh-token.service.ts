@@ -30,24 +30,23 @@ export class AuthRefreshTokenService {
     await this.authRefreshTokenRepository.insert({
       refreshToken: newRefreshToken,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      userId,
+      user: { id: userId },
       revoked: false,
     });
 
     return newRefreshToken;
   }
 
-  async generateTokenPair(user: User) {
-    const payload = {
-      sub: user.id,
-      username: user.user_name,
-      role: user.role,
-    };
+  generateAccessToken(user: User): string {
+    const payload = { sub: user.id, username: user.user_name, role: user.role };
+    return this.jwtService.sign(payload, {
+      expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
+    });
+  }
 
+  async generateTokenPair(user: User) {
     return {
-      access_token: this.jwtService.sign(payload, {
-        expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
-      }),
+      access_token: this.generateAccessToken(user),
       refresh_token: await this.generateRefreshToken(user.id),
     };
   }
@@ -59,7 +58,7 @@ export class AuthRefreshTokenService {
   ): Promise<boolean> {
     // look for token in DB
     const token = await this.authRefreshTokenRepository.findOne({
-      where: { refreshToken, userId, revoked: false },
+      where: { refreshToken, user: { id: userId }, revoked: false },
     });
 
     // not found or revoked

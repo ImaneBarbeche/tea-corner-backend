@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { Status, User } from './user.entity';
+import { User } from './user.entity';
+import { Status } from '../enums/status.enum';
 import { Role } from '../enums/role.enum';
 import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
@@ -59,6 +60,10 @@ describe('UserController', () => {
         created_at: new Date(),
         modified_at: new Date(),
         deleted_at: new Date(),
+        delete_scheduled_at: new Date(),
+        teas: [],
+        userTeas: [],
+        ingredients: [],
       };
 
       const updateDto: UpdateUserDto = {
@@ -68,13 +73,15 @@ describe('UserController', () => {
         bio: 'adfadf',
       } as UpdateUserDto;
 
-      jest.spyOn(service, 'update').mockResolvedValue(mockUser);
+      const updateSpy = jest
+        .spyOn(service, 'update')
+        .mockResolvedValue(mockUser);
 
       const req = { user: { sub: 1 } };
       const result = await controller.updateProfile(req, updateDto);
 
       expect(result).toBe(mockUser);
-      expect(service.update).toHaveBeenCalledWith(1, updateDto);
+      expect(updateSpy).toHaveBeenCalledWith(1, updateDto);
     });
   });
 
@@ -96,12 +103,19 @@ describe('UserController', () => {
         created_at: new Date(),
         modified_at: new Date(),
         deleted_at: new Date(),
+        teas: [],
+        userTeas: [],
+        ingredients: [],
+        delete_scheduled_at: new Date(),
       };
-      jest.spyOn(service, 'findByUsername').mockResolvedValue(result);
+
+      const findSpy = jest
+        .spyOn(service, 'findByUsername')
+        .mockResolvedValue(result);
 
       const req = { user: { username: 'john_doe' } };
       expect(await controller.findUserProfile(req)).toBe(result);
-      expect(service.findByUsername).toHaveBeenLastCalledWith('john_doe');
+      expect(findSpy).toHaveBeenLastCalledWith('john_doe');
     });
 
     it('should throw NotFoundException when user not found', async () => {

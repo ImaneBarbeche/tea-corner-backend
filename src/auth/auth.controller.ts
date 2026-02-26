@@ -12,11 +12,10 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/create-user.dto';
-import { SignInDto } from './sign-in.dto';
 import { Public } from '../decorators/auth.decorator';
 import type { Response, Request as ExpressRequest } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import {
   ApiCookieAuth,
@@ -26,11 +25,20 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { generateCsrfToken } from '../main';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Public()
+  @Get('csrf-token')
+  @ApiOperation({ summary: 'Récupérer le jeton csrf' })
+  getCsrfToken(@Req() req, @Res() res) {
+    const csrfToken = generateCsrfToken(req, res);
+    return res.json({ csrfToken });
+  }
 
   @Public()
   @UseGuards(LocalAuthGuard)
@@ -43,15 +51,8 @@ export class AuthController {
     status: 429,
     description: 'Trop de requêtes — rate limit dépassé',
   })
-  async signIn(
-    @Body() signInDto: SignInDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signIn(
-      signInDto.user_name,
-      signInDto.password,
-      response,
-    );
+  async signIn(@Req() req, @Res({ passthrough: true }) response: Response) {
+    return this.authService.signIn(req.user, response);
   }
 
   @Public()
@@ -60,10 +61,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Création d’un nouvel utilisateur' })
   @ApiResponse({ status: 201, description: 'Utilisateur créé avec succès' })
   @ApiResponse({ status: 400, description: 'Données invalides' })
-  async signUp(
-    @Body() payload: CreateUserDto,
-    // @Res({ passthrough: true }) response: Response,
-  ) {
+  async signUp(@Body() payload: CreateUserDto) {
     return this.authService.signUp(payload);
   }
 
