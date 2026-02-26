@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { Tea } from 'src/tea/tea.entity';
+import { User } from '../user/user.entity';
+import { Tea } from '../tea/tea.entity';
 
 @Entity()
 @Index(['user', 'tea'], { unique: true })

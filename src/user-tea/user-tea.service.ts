@@ -8,7 +8,7 @@ import { UserTea } from './user-tea.entity';
 import { Repository } from 'typeorm';
 import { CreateUserTeaDto } from './create-user-tea.dto';
 import { UpdateUserTeaDto } from './update-user-tea.dto';
-import { TeaService } from 'src/tea/tea.service';
+import { TeaService } from '../tea/tea.service';
 
 @Injectable()
 export class UserTeaService {

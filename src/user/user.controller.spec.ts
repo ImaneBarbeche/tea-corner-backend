@@ -60,6 +60,7 @@ describe('UserController', () => {
         created_at: new Date(),
         modified_at: new Date(),
         deleted_at: new Date(),
+        delete_scheduled_at: new Date(),
         teas: [],
         userTeas: [],
         ingredients: [],

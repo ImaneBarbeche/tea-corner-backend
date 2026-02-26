@@ -10,13 +10,9 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-
-// export enum Status {
-//   ACTIVE = 'active',
-//   INACTIVE = 'inactive',
-//   DELETED = 'deleted',
-//   ARCHIVED = 'archived',
-// }
+import { Tea } from '../tea/tea.entity';
+import { UserTea } from '../user-tea/user-tea.entity';
+import { Ingredient } from '../ingredient/ingredient.entity';
 
 @Entity()
 export class User {

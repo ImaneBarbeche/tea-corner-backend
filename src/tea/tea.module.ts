@@ -7,8 +7,8 @@ import { AuthModule } from '../auth/auth.module';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { Ingredient } from '../ingredient/ingredient.entity';
 
-import { TeaStyleService } from 'src/tea-style/tea-style.service';
-import { TeaStyle } from 'src/tea-style/tea-style.entity';
+import { TeaStyleService } from '../tea-style/tea-style.service';
+import { TeaStyle } from '../tea-style/tea-style.entity';
 
 @Module({
   imports: [

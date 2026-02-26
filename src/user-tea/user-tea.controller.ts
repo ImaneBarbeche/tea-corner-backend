@@ -14,10 +14,10 @@ import {
 } from '@nestjs/common';
 import { UserTeaService } from './user-tea.service';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Role } from 'src/enums/role.enum';
+import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
 import { UserTea } from './user-tea.entity';
 import { CreateUserTeaDto } from './create-user-tea.dto';
 import { UpdateUserTeaDto } from './update-user-tea.dto';

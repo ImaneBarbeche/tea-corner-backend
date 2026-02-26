@@ -18,6 +18,7 @@ import { IngredientModule } from './ingredient/ingredient.module';
 import { FlavourProfileModule } from './flavour-profile/flavour-profile.module';
 import { FlavourTypeModule } from './flavour-type/flavour-type.module';
 import { UserTeaModule } from './user-tea/user-tea.module';
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
@@ -44,6 +45,12 @@ import { UserTeaModule } from './user-tea/user-tea.module';
     }),
     UserModule,
     AuthModule,
+    TeaModule, 
+    TeaStyleModule,
+    IngredientModule, 
+    FlavourProfileModule, 
+    FlavourTypeModule, 
+    UserTeaModule, 
   ],
   controllers: [AppController],
   providers: [

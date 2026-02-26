@@ -14,7 +14,7 @@ import { TeaType } from '../enums/teaType.enum';
 import { caffeineLevel } from '../enums/caffeineLevel.enum';
 import { TeaStyle } from '../tea-style/tea-style.entity';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
-import { UserTea } from 'src/user-tea/user-tea.entity';
+import { UserTea } from '../user-tea/user-tea.entity';
 
 @Entity()
 export class Tea {

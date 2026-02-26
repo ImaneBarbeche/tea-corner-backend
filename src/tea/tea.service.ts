@@ -12,7 +12,7 @@ import { AddIngredientDto } from './add-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { Ingredient } from '../ingredient/ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
-import { TeaStyleService } from 'src/tea-style/tea-style.service';
+import { TeaStyleService } from '../tea-style/tea-style.service';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 
 @Injectable()
