@@ -3,15 +3,14 @@ import { Role } from '../enums/role.enum';
 import {
   Entity,
   Column,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
-  Timestamp,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
 import { Tea } from '../tea/tea.entity';
+import { Ingredient } from '../ingredient/ingredient.entity';
 import { UserTea } from 'src/user-tea/user-tea.entity';
 
 export enum Status {
@@ -45,7 +44,7 @@ export class User {
   email: string;
 
   @Exclude()
-  @Column('text') // if we use a hashing system, password can be longer : either put a higher value to be sure like 500 hundred or put text instead of varchar
+  @Column('text')
   password: string;
 
   @Column({
@@ -74,6 +73,9 @@ export class User {
 
   @OneToMany(() => UserTea, (userTea) => userTea.user)
   userTeas: UserTea[];
+
+  @OneToMany(() => Ingredient, (ingredient) => ingredient.user)
+  ingredients: Ingredient[];
 
   @CreateDateColumn()
   created_at: Date;

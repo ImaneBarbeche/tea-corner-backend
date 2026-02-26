@@ -6,13 +6,15 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { TeaType } from 'src/enums/teaType.enum';
-import { caffeineLevel } from 'src/enums/caffeineLevel.enum';
-import { TeaStyle } from 'src/tea-style/tea-style.entity';
+import { User } from '../user/user.entity';
+import { TeaType } from '../enums/teaType.enum';
+import { caffeineLevel } from '../enums/caffeineLevel.enum';
+import { TeaStyle } from '../tea-style/tea-style.entity';
+import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UserTea } from 'src/user-tea/user-tea.entity';
 
 @Entity()
@@ -23,6 +25,9 @@ export class Tea {
   @ManyToOne(() => User, (user) => user.teas, { nullable: true })
   @JoinColumn({ name: 'author_id' })
   author: User;
+
+  @OneToMany(() => TeaIngredient, (teaIngredient) => teaIngredient.tea)
+  public teaIngredients: TeaIngredient[];
 
   @Column('varchar', { length: 30 })
   name: string;

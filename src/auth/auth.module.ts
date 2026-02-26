@@ -24,7 +24,7 @@ import { AuthRefreshToken } from './auth-refresh-token.entity';
       }),
     }),
     AuthRefreshTokenModule, 
-    TypeOrmModule.forFeature([ AuthRefreshToken, EmailVerificationToken, ]),
+    TypeOrmModule.forFeature([ AuthRefreshToken, EmailVerificationToken,]),
   ],
   providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService],
   controllers: [AuthController],

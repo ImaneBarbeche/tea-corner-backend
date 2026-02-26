@@ -15,12 +15,14 @@ import {
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Role } from 'src/enums/role.enum';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
+import { AuthGuard } from '../guards/auth.guard';
+import { RolesGuard } from '../guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
+import { AddIngredientDto } from './add-ingredient.dto';
+import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 
 @Controller('tea')
@@ -102,6 +104,35 @@ export class TeaController {
     }
 
     await this.teaService.remove(id);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Add an ingredient to a tea' })
+  @Post(':teaId/ingredient')
+  @UseGuards(AuthGuard)
+  async addIngredient(
+    @Param('teaId') teaId: string,
+    @Body() dto: AddIngredientDto,
+  ): Promise<TeaIngredient> {
+    return this.teaService.addIngredient(teaId, dto);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Get all ingredients of a tea' })
+  @Get(':teaId/ingredients')
+  @UseGuards(AuthGuard)
+  async getIngredients(
+    @Param('teaId') teaId: string,
+  ): Promise<TeaIngredient[]> {
+    return this.teaService.getIngredients(teaId);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Remove an ingredient from a tea' })
+  @Delete(':teaId/ingredients/:id')
+  @UseGuards(AuthGuard)
+  async removeIngredient(@Param('id') id: string): Promise<void> {
+    return this.teaService.removeIngredient(id);
   }
 
   @ApiCookieAuth()
