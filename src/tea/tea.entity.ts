@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -27,7 +26,7 @@ export class Tea {
   author: User;
 
   @OneToMany(() => TeaIngredient, (teaIngredient) => teaIngredient.tea)
-  public teaIngredients: TeaIngredient[];
+  public ingredients: TeaIngredient[];
 
   @Column('varchar', { length: 30 })
   name: string;

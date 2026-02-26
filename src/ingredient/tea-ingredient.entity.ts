@@ -1,4 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Ingredient } from './ingredient.entity';
 import { Tea } from '../tea/tea.entity';
 
@@ -11,7 +20,7 @@ export class TeaIngredient {
   @ManyToOne(() => Ingredient, (ingredient) => ingredient.teaIngredients)
   public ingredient: Ingredient;
 
-  @ManyToOne(() => Tea, (tea) => tea.teaIngredients)
+  @ManyToOne(() => Tea, (tea) => tea.ingredients)
   public tea: Tea;
 
   @Column('integer') // e.g 5 (grams of mint)
@@ -19,4 +28,13 @@ export class TeaIngredient {
 
   @Column('boolean', { default: false }) // ingredients are optionnal (tea leaves are not considered ingredients)
   optional: boolean;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  modified_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 }

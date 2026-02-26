@@ -49,12 +49,7 @@ export class TeaService {
   async findOne(id: string, userId?: string): Promise<Tea | null> {
     const tea = await this.teaRepository.findOne({
       where: { id },
-      relations: [
-        'style',
-        'author',
-        'teaIngredients',
-        'teaIngredients.ingredient',
-      ],
+      relations: ['style', 'author', 'ingredients', 'ingredients.ingredient'],
     });
 
     if (!tea) {
