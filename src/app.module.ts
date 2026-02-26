@@ -43,6 +43,7 @@ import { User } from './user/user.entity';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    TypeOrmModule.forFeature([User]),
     UserModule,
     AuthModule,
     TeaModule, 
