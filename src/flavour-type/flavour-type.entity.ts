@@ -1,10 +1,5 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import {FlavourProfile} from '../flavour-profile/flavour-profile.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
 
 @Entity('flavour_type')
 export class FlavourType {
@@ -19,5 +14,4 @@ export class FlavourType {
 
   @OneToMany(() => FlavourProfile, (profile) => profile.flavourType)
   profiles: FlavourProfile[];
-
 }

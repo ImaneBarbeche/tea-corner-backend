@@ -9,6 +9,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [TypeOrmModule.forFeature([FlavourType]), AuthModule],
   providers: [FlavourTypeService],
   controllers: [FlavourTypeController],
-  exports: [FlavourTypeService]
+  exports: [FlavourTypeService],
 })
 export class FlavourTypeModule {}

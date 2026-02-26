@@ -23,5 +23,5 @@ export class EmailVerificationToken {
   created_at: Date;
 
   @Column({ default: false })
-  used: boolean
+  used: boolean;
 }

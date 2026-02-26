@@ -16,7 +16,7 @@ export class FlavourProfile {
   id: string;
 
   @ManyToOne(() => FlavourType, (type) => type.profiles, {
-    nullable: false, 
+    nullable: false,
   })
   @JoinColumn({ name: 'flavour_type_id' })
   flavourType: FlavourType;

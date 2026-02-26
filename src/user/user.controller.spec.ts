@@ -3,7 +3,6 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { Status, User } from './user.entity';
 import { Role } from '../enums/role.enum';
-import { UpdateUsernameDto } from './update-username.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { NotFoundException } from '@nestjs/common';
@@ -62,6 +61,7 @@ describe('UserController', () => {
         deleted_at: new Date(),
         teas: [],
         userTeas: [],
+        ingredients: [],
       };
 
       const updateDto: UpdateUserDto = {
@@ -77,6 +77,7 @@ describe('UserController', () => {
       const result = await controller.updateProfile(req, updateDto);
 
       expect(result).toBe(mockUser);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(service.update).toHaveBeenCalledWith(1, updateDto);
     });
   });
@@ -101,11 +102,13 @@ describe('UserController', () => {
         deleted_at: new Date(),
         teas: [],
         userTeas: [],
+        ingredients: [],
       };
       jest.spyOn(service, 'findByUsername').mockResolvedValue(result);
 
       const req = { user: { username: 'john_doe' } };
       expect(await controller.findUserProfile(req)).toBe(result);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(service.findByUsername).toHaveBeenLastCalledWith('john_doe');
     });
 

@@ -1,5 +1,5 @@
 import { Ingredient } from './ingredient.entity';
-import { ILike, IsNull, Like, Repository } from 'typeorm';
+import { ILike, IsNull, Repository } from 'typeorm';
 import {
   ConflictException,
   ForbiddenException,
@@ -32,14 +32,18 @@ export class IngredientService {
   // find system and user ingredients with search option
   // ILike -> case-insensitive searching in TypeORM
   async findAllForUser(userId: string, search?: string): Promise<Ingredient[]> {
-      let where;
-      if (search) {
-      where = [{ user: { id: userId } , name: ILike(`%${search}%`)}, { user: IsNull() , name: ILike(`%${search}%`)}]
-      } else {
-      where = [{ user: { id: userId } }, { user: IsNull() }]
-      }
+    let where;
+    if (search) {
+      where = [
+        { user: { id: userId }, name: ILike(`%${search}%`) },
+        { user: IsNull(), name: ILike(`%${search}%`) },
+      ];
+    } else {
+      where = [{ user: { id: userId } }, { user: IsNull() }];
+    }
     return this.ingredientRepository.find({
-    where, relations: ['user'] 
+      where,
+      relations: ['user'],
     });
   }
 

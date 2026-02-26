@@ -64,10 +64,7 @@ export class AuthService {
     return tokens;
   }
 
-  async signUp(
-    createUserDto: CreateUserDto,
-    response: Response,
-  ): Promise<{
+  async signUp(createUserDto: CreateUserDto): Promise<{
     message: string;
   }> {
     // Hash with Argon2
@@ -145,7 +142,7 @@ export class AuthService {
     const isMatch = await argon2.verify(user.password, pass);
     if (!isMatch) return null;
 
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
 
     return result;
   }
@@ -232,7 +229,7 @@ export class AuthService {
     return { message: 'Email vérifié avec succès' };
   }
 
-  async logout(response: Response) {
+  logout(response: Response) {
     response.clearCookie('access_token');
     response.clearCookie('refresh_token');
     return { message: 'Logout successful' };

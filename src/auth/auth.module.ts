@@ -19,14 +19,20 @@ import { AuthRefreshToken } from './auth-refresh-token.entity';
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_SECRET || 'fallback-secret-key',
-        signOptions: { 
-          expiresIn: process.env.JWT_EXPIRES as any || '15m' },
+        signOptions: {
+          expiresIn: (process.env.JWT_EXPIRES as any) || '15m',
+        },
       }),
     }),
-    AuthRefreshTokenModule, 
-    TypeOrmModule.forFeature([ AuthRefreshToken, EmailVerificationToken,]),
+    AuthRefreshTokenModule,
+    TypeOrmModule.forFeature([AuthRefreshToken, EmailVerificationToken]),
   ],
-  providers: [AuthService, LocalStrategy, JwtRefreshStrategy, AuthRefreshTokenService],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtRefreshStrategy,
+    AuthRefreshTokenService,
+  ],
   controllers: [AuthController],
   exports: [AuthService, JwtModule, AuthRefreshTokenService],
 })

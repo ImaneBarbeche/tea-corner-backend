@@ -4,8 +4,6 @@ import { UserTeaController } from './user-tea.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserTea } from './user-tea.entity';
 import { AuthModule } from 'src/auth/auth.module';
-import { Tea } from 'src/tea/tea.entity';
-import { TeaService } from 'src/tea/tea.service';
 import { TeaModule } from 'src/tea/tea.module';
 
 @Module({

@@ -63,11 +63,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Création d’un nouvel utilisateur' })
   @ApiResponse({ status: 201, description: 'Utilisateur créé avec succès' })
   @ApiResponse({ status: 400, description: 'Données invalides' })
-  async signUp(
-    @Body() payload: CreateUserDto,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    return this.authService.signUp(payload, response);
+  async signUp(@Body() payload: CreateUserDto) {
+    return this.authService.signUp(payload);
   }
 
   @ApiCookieAuth() // indicate to swagger that this route needs an auth cookie
@@ -99,7 +96,7 @@ export class AuthController {
 
     return this.authService.refreshTokens(
       user.id,
-      currentRefreshToken!,
+      currentRefreshToken,
       refreshTokenExpiresAt,
       res,
     );

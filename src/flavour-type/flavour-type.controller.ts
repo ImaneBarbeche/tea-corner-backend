@@ -4,7 +4,6 @@ import { ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { FlavourType } from './flavour-type.entity';
 
-
 @Controller('flavour-type')
 export class FlavourTypeController {
   constructor(private flavourTypeService: FlavourTypeService) {}

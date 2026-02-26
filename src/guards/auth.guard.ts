@@ -1,4 +1,3 @@
-
 import {
   CanActivate,
   ExecutionContext,
@@ -12,7 +11,10 @@ import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -30,7 +32,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      // Here the JWT secret key that's used for verifying the payload 
+      // Here the JWT secret key that's used for verifying the payload
       // is the key that was passsed in the JwtModule
       const payload = await this.jwtService.verifyAsync(token);
       // We're assigning the payload to the request object here

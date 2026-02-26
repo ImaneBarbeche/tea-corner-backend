@@ -5,5 +5,5 @@ export enum IngredientType {
   Fruit = 'fruit',
   Spice = 'spice',
   Nut = 'nut',
-  Other = 'other'
+  Other = 'other',
 }

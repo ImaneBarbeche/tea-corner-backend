@@ -10,8 +10,12 @@ async function seedData() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
   // Récupère les repositories
-  const flavourTypeRepository = app.get<Repository<FlavourType>>(getRepositoryToken(FlavourType));
-  const flavourProfileRepository = app.get<Repository<FlavourProfile>>(getRepositoryToken(FlavourProfile));
+  const flavourTypeRepository = app.get<Repository<FlavourType>>(
+    getRepositoryToken(FlavourType),
+  );
+  const flavourProfileRepository = app.get<Repository<FlavourProfile>>(
+    getRepositoryToken(FlavourProfile),
+  );
 
   // Données de test pour FlavourType
   const flavourTypesData = [
@@ -24,7 +28,9 @@ async function seedData() {
   // Insère les FlavourType
   const insertedFlavourTypes: FlavourType[] = [];
   for (const flavourTypeData of flavourTypesData) {
-    const existing = await flavourTypeRepository.findOne({ where: { name: flavourTypeData.name } });
+    const existing = await flavourTypeRepository.findOne({
+      where: { name: flavourTypeData.name },
+    });
     if (!existing) {
       const flavourType = flavourTypeRepository.create(flavourTypeData);
       const inserted = await flavourTypeRepository.save(flavourType);
@@ -46,7 +52,9 @@ async function seedData() {
 
   // Insère les FlavourProfile
   for (const profileData of flavourProfilesData) {
-    const existingProfile = await flavourProfileRepository.findOne({ where: { name: profileData.name } });
+    const existingProfile = await flavourProfileRepository.findOne({
+      where: { name: profileData.name },
+    });
     if (!existingProfile) {
       const profile = flavourProfileRepository.create(profileData);
       await flavourProfileRepository.save(profile);
@@ -60,4 +68,4 @@ async function seedData() {
   await app.close();
 }
 
-seedData().catch(error => console.error(error));
+seedData().catch((error) => console.error(error));
