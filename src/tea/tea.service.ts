@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateTeaDto } from './create-tea.dto';
 import { AddIngredientDto } from './add-ingredient.dto';
+import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { Ingredient } from '../ingredient/ingredient.entity';
 
@@ -48,8 +49,8 @@ export class TeaService {
       relations: [
         'style',
         'author',
-        'teaIngredients',
-        'teaIngredients.ingredient',
+        'ingredients',
+        'ingredients.ingredient',
       ],
     });
 
@@ -118,7 +119,31 @@ export class TeaService {
     });
   }
 
+  async updateIngredient(
+    teaIngredientId: string,
+    dto: UpdateTeaIngredientDto,
+  ): Promise<TeaIngredient> {
+    const teaIngredient = await this.teaIngredientRepository.findOne({
+      where: { id: teaIngredientId },
+    });
+    if (!teaIngredient) {
+      throw new NotFoundException(
+        `TeaIngredient with ID ${teaIngredientId} not found`,
+      );
+    }
+    teaIngredient.quantity = dto.quantity;
+    return this.teaIngredientRepository.save(teaIngredient);
+  }
+
   async removeIngredient(teaIngredientId: string): Promise<void> {
+    const teaIngredient = await this.teaIngredientRepository.findOne({
+      where: { id: teaIngredientId },
+    });
+    if (!teaIngredient) {
+      throw new NotFoundException(
+        `TeaIngredient with ID ${teaIngredientId} not found`,
+      );
+    }
     await this.teaIngredientRepository.delete(teaIngredientId);
   }
 }

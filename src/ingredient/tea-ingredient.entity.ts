@@ -11,7 +11,7 @@ export class TeaIngredient {
   @ManyToOne(() => Ingredient, (ingredient) => ingredient.teaIngredients)
   public ingredient: Ingredient;
 
-  @ManyToOne(() => Tea, (tea) => tea.teaIngredients)
+  @ManyToOne(() => Tea, (tea) => tea.ingredients)
   public tea: Tea;
 
   @Column('integer') // e.g 5 (grams of mint)

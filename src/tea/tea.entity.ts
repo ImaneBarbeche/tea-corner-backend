@@ -31,7 +31,7 @@ export class Tea {
       () => TeaIngredient,
       teaIngredient => teaIngredient.tea
     )
-    public teaIngredients: TeaIngredient[];
+    public ingredients: TeaIngredient[];
 
   @Column('varchar', { length: 30 })
   name: string;

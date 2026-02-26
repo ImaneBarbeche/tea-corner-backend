@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Patch,
   UseGuards,
   Request,
   Delete,
@@ -19,6 +20,7 @@ import { RolesGuard } from '../guards/roles.guard';
 import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
 import { AddIngredientDto } from './add-ingredient.dto';
+import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 
 @Controller('tea')
@@ -130,6 +132,17 @@ export class TeaController {
     @Param('teaId') teaId: string,
   ): Promise<TeaIngredient[]> {
     return this.teaService.getIngredients(teaId);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Update the quantity of an ingredient in a tea' })
+  @Patch(':teaId/ingredients/:id')
+  @UseGuards(AuthGuard)
+  async updateIngredient(
+    @Param('id') id: string,
+    @Body() dto: UpdateTeaIngredientDto,
+  ): Promise<TeaIngredient> {
+    return this.teaService.updateIngredient(id, dto);
   }
 
   @ApiCookieAuth()
