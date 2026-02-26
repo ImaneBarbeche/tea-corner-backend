@@ -4,7 +4,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DataSource } from 'typeorm';
-import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -13,6 +12,12 @@ import { RolesGuard } from './guards/roles.guard';
 import { AuthRefreshToken } from './entities/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TeaModule } from './tea/tea.module';
+import { TeaStyleModule } from './tea-style/tea-style.module';
+import { IngredientModule } from './ingredient/ingredient.module';
+import { FlavourProfileModule } from './flavour-profile/flavour-profile.module';
+import { FlavourTypeModule } from './flavour-type/flavour-type.module';
+import { UserTeaModule } from './user-tea/user-tea.module';
 
 @Module({
   imports: [

@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 // export enum Status {
@@ -64,6 +65,15 @@ export class User {
 
   @CreateDateColumn({ nullable: true })
   username_last_changed: Date;
+
+  @OneToMany(() => Tea, (tea) => tea.author)
+  teas: Tea[];
+
+  @OneToMany(() => UserTea, (userTea) => userTea.user)
+  userTeas: UserTea[];
+
+  @OneToMany(() => Ingredient, (ingredient) => ingredient.user)
+  ingredients: Ingredient[];
 
   @CreateDateColumn()
   created_at: Date;
