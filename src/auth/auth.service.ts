@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -34,6 +35,20 @@ export class AuthService {
   async signUp(createUserDto: CreateUserDto): Promise<{
     message: string;
   }> {
+    // add error handling if user already exists in database (uniqueness)
+    // should show generic success message to prevent too much info for attackers
+    const existing = await this.userService.findByEmail(createUserDto.email);
+    if (existing) {
+      throw new ConflictException('Email already in use');
+    }
+
+    const existingUsername = await this.userService.findByUsername(
+      createUserDto.user_name,
+    );
+    if (existingUsername) {
+      throw new ConflictException('Username already in use');
+    }
+
     // Hash with Argon2
     const hashedPassword = await this.hashPassword(createUserDto.password);
 
@@ -42,7 +57,6 @@ export class AuthService {
       password: hashedPassword,
       email_verified: false,
     };
-
     // creating the user
     const user = await this.userService.create(data);
 
@@ -118,15 +132,17 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<object | null> {
     const user = await this.userService.findByUsername(username);
+
     if (!user) return null;
+
+    const isMatch = await argon2.verify(user.password, pass);
+    if (!isMatch) return null;
+
     if (!user.email_verified) {
       throw new UnauthorizedException(
         'Veuillez vérifier votre email avant de vous connecter',
       );
     }
-
-    const isMatch = await argon2.verify(user.password, pass);
-    if (!isMatch) return null;
 
     const { password: _password, ...result } = user;
 
@@ -157,18 +173,9 @@ export class AuthService {
       relations: ['user'],
     });
 
-    if (!tokenRecord) {
-      throw new BadRequestException('Token invalide ou déjà utilisé');
+    if (!tokenRecord || tokenRecord.expires_at < new Date()) {
+      throw new BadRequestException('Token invalide ou expiré');
     }
-
-    if (tokenRecord.expires_at < new Date()) {
-      throw new BadRequestException('Token expiré');
-    }
-
-    if (!tokenRecord.user) {
-      throw new NotFoundException('Utilisateur introuvable');
-    }
-
     tokenRecord.used = true;
     await this.emailVerificationTokenRepository.save(tokenRecord);
 
