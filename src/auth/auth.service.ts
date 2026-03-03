@@ -65,17 +65,19 @@ export class AuthService {
     const tokens = await this.authRefreshTokenService.generateTokenPair(user);
 
     // store in an httpOnly cookie
+    const isProd = process.env.NODE_ENV === 'production';
+
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      secure: false, // true in prod
-      sameSite: 'lax',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      secure: false, // true in prod
-      sameSite: 'lax',
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
     });
     return tokens;
@@ -102,10 +104,12 @@ export class AuthService {
       this.authRefreshTokenService.generateAccessToken(user);
 
     // update access token
+    const isRefreshProd = process.env.NODE_ENV === 'production';
+
     response.cookie('access_token', newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isRefreshProd,
+      sameSite: isRefreshProd ? 'none' : 'lax',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 

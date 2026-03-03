@@ -15,9 +15,9 @@ const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
   getSessionIdentifier: (req) => req.ip ?? 'anonymous',
   cookieName: 'csrf-token',
   cookieOptions: {
-    sameSite: 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/',
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
   },
   size: 32,
@@ -43,7 +43,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://teacorner.vercel.app'], // front url
+    origin: ['http://localhost:5173','https://teacorner.vercel.app'], // front url
     credentials: true, // allows cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
