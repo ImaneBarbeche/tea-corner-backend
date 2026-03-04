@@ -43,7 +43,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.enableCors({
-    origin: ['http://localhost:5173','https://teacorner.vercel.app'], // front url
+    origin: ['http://localhost:5173', 'https://teacorner.vercel.app'], // front url
     credentials: true, // allows cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
