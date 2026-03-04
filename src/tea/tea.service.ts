@@ -14,6 +14,8 @@ import { Ingredient } from '../ingredient/ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { TeaStyleService } from '../tea-style/tea-style.service';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
+import { DailyTea } from './daily-tea.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class TeaService {
@@ -24,6 +26,8 @@ export class TeaService {
     private teaIngredientRepository: Repository<TeaIngredient>,
     @InjectRepository(Ingredient)
     private ingredientRepository: Repository<Ingredient>,
+    @InjectRepository(DailyTea)
+    private dailyTeaRepository: Repository<DailyTea>,
     private teaStyleService: TeaStyleService,
   ) {}
 
@@ -67,6 +71,52 @@ export class TeaService {
     }
 
     return tea;
+  }
+
+  async getDailyTea(): Promise<Tea> {
+    const today = new Date().toISOString().split('T')[0];
+
+    const existing = await this.dailyTeaRepository.findOne({
+      where: { date: today },
+      relations: ['tea', 'tea.style'],
+    });
+
+    if (existing) return existing.tea;
+
+    return this.pickAndSaveDailyTea(today);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async scheduleDailyTea(): Promise<void> {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const date = tomorrow.toISOString().split('T')[0];
+
+    const existing = await this.dailyTeaRepository.findOne({ where: { date } });
+    if (!existing) {
+      await this.pickAndSaveDailyTea(date);
+    }
+  }
+
+  private async pickAndSaveDailyTea(date: string): Promise<Tea> {
+    const candidates = await this.teaRepository.find({
+      where: [{ author: IsNull() }, { is_public: true, author: Not(IsNull()) }],
+    });
+
+    if (candidates.length === 0) {
+      throw new NotFoundException('No teas available for daily selection');
+    }
+
+    const tea = candidates[Math.floor(Math.random() * candidates.length)];
+
+    await this.dailyTeaRepository.save(
+      this.dailyTeaRepository.create({ date, tea }),
+    );
+
+    return this.teaRepository.findOne({
+      where: { id: tea.id },
+      relations: ['style'],
+    }) as Promise<Tea>;
   }
 
   async remove(id: string): Promise<void> {

@@ -9,10 +9,11 @@ import { Ingredient } from '../ingredient/ingredient.entity';
 
 import { TeaStyleService } from '../tea-style/tea-style.service';
 import { TeaStyle } from '../tea-style/tea-style.entity';
+import { DailyTea } from './daily-tea.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Tea, TeaIngredient, Ingredient, TeaStyle]),
+    TypeOrmModule.forFeature([Tea, TeaIngredient, Ingredient, TeaStyle, DailyTea]),
     forwardRef(() => AuthModule),
   ],
   exports: [TypeOrmModule, TeaService],

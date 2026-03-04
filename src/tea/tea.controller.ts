@@ -52,6 +52,12 @@ export class TeaController {
     return this.teaService.findSystemTeas();
   }
 
+  @ApiOperation({ summary: 'Get the daily tea suggestion' })
+  @Get('/daily')
+  async getDailyTea(): Promise<Tea> {
+    return this.teaService.getDailyTea();
+  }
+
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get public tea shared by users' })
   @Get('/public')
