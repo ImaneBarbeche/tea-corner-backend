@@ -24,7 +24,7 @@ import { AddIngredientDto } from './add-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
-import { Public } from 'src/decorators/auth.decorator';
+import { Public } from '../decorators/auth.decorator';
 
 @Controller('tea')
 export class TeaController {
