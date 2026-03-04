@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';

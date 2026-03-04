@@ -27,7 +27,6 @@ export class TeaService {
     @InjectRepository(Ingredient)
     private ingredientRepository: Repository<Ingredient>,
     @InjectRepository(DailyTea)
-    private dailyTeaRepository: Repository<DailyTea>,
     private teaStyleService: TeaStyleService,
   ) {}
 
@@ -73,49 +72,70 @@ export class TeaService {
     return tea;
   }
 
-  async getDailyTea(): Promise<Tea> {
-    const today = new Date().toISOString().split('T')[0];
+  // async getDailyTea(): Promise<Tea> {
+  //   const today = new Date().toISOString().split('T')[0];
 
-    const existing = await this.dailyTeaRepository.findOne({
-      where: { date: today },
-      relations: ['tea', 'tea.style'],
-    });
+  //   const existing = await this.dailyTeaRepository.findOne({
+  //     where: { date: today },
+  //     relations: ['tea', 'tea.style'],
+  //   });
 
-    if (existing) return existing.tea;
+  //   if (existing) return existing.tea;
 
-    return this.pickAndSaveDailyTea(today);
-  }
+  //   return this.pickAndSaveDailyTea(today);
+  // }
+
+  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  // async scheduleDailyTea(): Promise<void> {
+  //   const tomorrow = new Date();
+  //   tomorrow.setDate(tomorrow.getDate() + 1);
+  //   const date = tomorrow.toISOString().split('T')[0];
+
+  //   const existing = await this.dailyTeaRepository.findOne({ where: { date } });
+  //   if (!existing) {
+  //     await this.pickAndSaveDailyTea(date);
+  //   }
+  // }
+
+  // private async pickAndSaveDailyTea(date: string): Promise<Tea> {
+  //   const candidates = await this.teaRepository.find({
+  //     where: [{ author: IsNull() }, { is_public: true, author: Not(IsNull()) }],
+  //   });
+
+  //   if (candidates.length === 0) {
+  //     throw new NotFoundException('No teas available for daily selection');
+  //   }
+
+  //   const tea = candidates[Math.floor(Math.random() * candidates.length)];
+
+  //   await this.dailyTeaRepository.save(
+  //     this.dailyTeaRepository.create({ date, tea }),
+  //   );
+
+  //   return this.teaRepository.findOne({
+  //     where: { id: tea.id },
+  //     relations: ['style'],
+  //   }) as Promise<Tea>;
+  // }
+
+  private dailyTeaId: string;
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async scheduleDailyTea(): Promise<void> {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const date = tomorrow.toISOString().split('T')[0];
-
-    const existing = await this.dailyTeaRepository.findOne({ where: { date } });
-    if (!existing) {
-      await this.pickAndSaveDailyTea(date);
-    }
-  }
-
-  private async pickAndSaveDailyTea(date: string): Promise<Tea> {
-    const candidates = await this.teaRepository.find({
+    const teas = await this.teaRepository.find({
       where: [{ author: IsNull() }, { is_public: true, author: Not(IsNull()) }],
     });
+    if (!teas.length) return;
+    this.dailyTeaId = teas[Math.floor(Math.random() * teas.length)].id;
+  }
 
-    if (candidates.length === 0) {
-      throw new NotFoundException('No teas available for daily selection');
+  async getDailyTea(): Promise<Tea> {
+    if (!this.dailyTeaId) {
+      await this.scheduleDailyTea(); // fallback on server restart
     }
-
-    const tea = candidates[Math.floor(Math.random() * candidates.length)];
-
-    await this.dailyTeaRepository.save(
-      this.dailyTeaRepository.create({ date, tea }),
-    );
-
     return this.teaRepository.findOne({
-      where: { id: tea.id },
-      relations: ['style'],
+      where: { id: this.dailyTeaId },
+      relations: ['style', 'author', 'ingredients', 'ingredients.ingredient'],
     }) as Promise<Tea>;
   }
 
