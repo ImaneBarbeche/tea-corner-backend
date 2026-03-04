@@ -23,15 +23,7 @@ describe('AuthController', () => {
       providers: [
         {
           provide: AuthService,
-          useValue: {
-            signIn: jest.fn(),
-            signUp: jest.fn(),
-            logout: jest.fn(),
-            refreshTokens: jest.fn(),
-            verifyEmail: jest.fn(),
-            forgotPassword: jest.fn(),
-            resetPassword: jest.fn(),
-          },
+          useValue: mockAuthService,
         },
       ],
     }).compile();
