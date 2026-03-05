@@ -78,8 +78,12 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     // generate a token pair
     const tokens = await this.authRefreshTokenService.generateTokenPair(user);
-    const accessExpire = this.configService.get('JWT_ACCESS_EXPIRES');
-    const refreshExpire = this.configService.get('JWT_REFRESH_EXPIRES');
+    const accessExpire = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRES') as string,
+    );
+    const refreshExpire = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRES') as string,
+    );
 
     // store in an httpOnly cookie
     // const isProd = process.env.NODE_ENV === 'production';
@@ -124,7 +128,9 @@ export class AuthService {
     // update access token
     // const isRefreshProd = process.env.NODE_ENV === 'production';
     const isRefreshProd = this.configService.get('NODE_ENV') === 'production';
-    const accessExpire = this.configService.get('JWT_ACCESS_EXPIRES');
+    const accessExpire = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRES') as string,
+    );
 
     response.cookie('access_token', newAccessToken, {
       httpOnly: true,

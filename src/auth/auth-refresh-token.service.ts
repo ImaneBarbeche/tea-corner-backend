@@ -18,7 +18,9 @@ export class AuthRefreshTokenService {
 
   // creates new refresh token and stores it in the database
   async generateRefreshToken(userId: string): Promise<string> {
-    const refreshExpire = this.configService.get('JWT_REFRESH_EXPIRES');
+    const refreshExpire = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRES') as string,
+    );
 
     const newRefreshToken = this.jwtService.sign(
       { sub: userId },
@@ -40,9 +42,12 @@ export class AuthRefreshTokenService {
   }
 
   generateAccessToken(user: User): string {
+    const accessExpire = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRES') as string,
+    );
     const payload = { sub: user.id, username: user.user_name, role: user.role };
     return this.jwtService.sign(payload, {
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
+      expiresIn: accessExpire,
     });
   }
 
@@ -81,7 +86,7 @@ export class AuthRefreshTokenService {
     );
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_2AM)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async clearExpiredRefreshTokens() {
     await this.authRefreshTokenRepository.delete({
       expiresAt: LessThanOrEqual(new Date()),
