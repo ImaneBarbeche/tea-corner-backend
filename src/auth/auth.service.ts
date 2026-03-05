@@ -86,7 +86,6 @@ export class AuthService {
     );
 
     // store in an httpOnly cookie
-    // const isProd = process.env.NODE_ENV === 'production';
     const isProd = this.configService.get('NODE_ENV') === 'production';
 
     response.cookie('access_token', tokens.access_token, {
@@ -126,7 +125,6 @@ export class AuthService {
       this.authRefreshTokenService.generateAccessToken(user);
 
     // update access token
-    // const isRefreshProd = process.env.NODE_ENV === 'production';
     const isRefreshProd = this.configService.get('NODE_ENV') === 'production';
     const accessExpire = parseInt(
       this.configService.get('JWT_ACCESS_EXPIRES') as string,
@@ -136,7 +134,6 @@ export class AuthService {
       httpOnly: true,
       secure: isRefreshProd,
       sameSite: isRefreshProd ? 'none' : 'lax',
-      // maxAge: 15 * 60 * 1000, // 15 minutes
       maxAge: accessExpire * 1000,
     });
 
