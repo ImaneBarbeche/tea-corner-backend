@@ -17,6 +17,7 @@ import { EmailVerificationToken } from '../entities/email-verification-token.ent
 import { InjectRepository } from '@nestjs/typeorm';
 import { PasswordResetToken } from '../entities/password-reset-token.entity';
 import { EmailService } from './email.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +31,7 @@ export class AuthService {
     private passwordResetRepository: Repository<PasswordResetToken>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private configService: ConfigService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<{
@@ -77,20 +79,25 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     // generate a token pair
     const tokens = await this.authRefreshTokenService.generateTokenPair(user);
+    const accessExpire = this.configService.get('JWT_ACCESS_EXPIRES');
+    const refreshExpire = this.configService.get('JWT_REFRESH_EXPIRES');
 
     // store in an httpOnly cookie
+    // const isProd = process.env.NODE_ENV === 'production';
+    const isProd = this.configService.get('NODE_ENV') === 'production';
+
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      secure: false, // true in prod
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: accessExpire * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      secure: false, // true in prod
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: refreshExpire * 1000, // 7d
     });
     return tokens;
   }
@@ -116,14 +123,19 @@ export class AuthService {
       this.authRefreshTokenService.generateAccessToken(user);
 
     // update access token
+    // const isRefreshProd = process.env.NODE_ENV === 'production';
+    const isRefreshProd = this.configService.get('NODE_ENV') === 'production';
+    const accessExpire = this.configService.get('JWT_ACCESS_EXPIRES');
+
     response.cookie('access_token', newAccessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      secure: isRefreshProd,
+      sameSite: isRefreshProd ? 'none' : 'lax',
+      // maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: accessExpire * 1000,
     });
 
-    if (process.env.NODE_ENV === 'development') {
+    if (this.configService.get('NODE_ENV') === 'development') {
       return { access_token: newAccessToken };
     }
 

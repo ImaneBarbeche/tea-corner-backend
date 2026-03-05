@@ -18,18 +18,20 @@ export class AuthRefreshTokenService {
 
   // creates new refresh token and stores it in the database
   async generateRefreshToken(userId: string): Promise<string> {
+    const refreshExpire = this.configService.get('JWT_REFRESH_EXPIRES');
+
     const newRefreshToken = this.jwtService.sign(
       { sub: userId },
       {
         secret: this.configService.get('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get('JWT_REFRESH_EXPIRES'),
+        expiresIn: refreshExpire,
       },
     );
 
-    // store new refresh token in databse
+    // store new refresh token in database
     await this.authRefreshTokenRepository.insert({
       refreshToken: newRefreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + refreshExpire * 1000),
       user: { id: userId },
       revoked: false,
     });
