@@ -24,6 +24,7 @@ import { AddIngredientDto } from './add-ingredient.dto';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
+import { Public } from '../decorators/auth.decorator';
 
 @Controller('tea')
 export class TeaController {
@@ -48,6 +49,7 @@ export class TeaController {
 
   @ApiOperation({ summary: 'Get only system teas' })
   @Get('/system')
+  @Public()
   async findSystemTeas(): Promise<Tea[]> {
     return this.teaService.findSystemTeas();
   }
