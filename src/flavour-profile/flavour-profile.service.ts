@@ -10,8 +10,9 @@ export class FlavourProfileService {
     private flavourProfileRepository: Repository<FlavourProfile>,
   ) {}
 
-  async findAll(): Promise<FlavourProfile[]> {
+  async findAll(flavourTypeId?: string): Promise<FlavourProfile[]> {
     return await this.flavourProfileRepository.find({
+      where: flavourTypeId ? { flavourType: { id: flavourTypeId } } : {},
       relations: ['flavourType'],
     });
   }
