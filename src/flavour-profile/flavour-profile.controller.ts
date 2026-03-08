@@ -12,13 +12,13 @@ export class FlavourProfileController {
   @ApiOperation({ summary: 'Get all flavour profiles)' })
   @ApiResponse({ status: 200, description: 'List of flavour profiles' })
   @ApiResponse({ status: 404, description: 'No flavour profile found' })
-  @ApiQuery({ name: 'flavourTypeId', required: false })
+  @ApiQuery({ name: 'flavourTypeName', required: false })
   @Get('/all')
   @UseGuards(AuthGuard)
   async findAllFlavourProfiles(
-    @Query('flavourTypeId') flavourTypeId?: string,
+    @Query('flavourTypeName') flavourTypeName?: string,
   ): Promise<FlavourProfile[]> {
-    return this.flavourProfileService.findAll(flavourTypeId);
+    return this.flavourProfileService.findAll(flavourTypeName);
   }
 
   @ApiCookieAuth()

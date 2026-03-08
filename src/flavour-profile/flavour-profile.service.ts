@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FlavourProfile } from './flavour-profile.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -10,9 +10,11 @@ export class FlavourProfileService {
     private flavourProfileRepository: Repository<FlavourProfile>,
   ) {}
 
-  async findAll(flavourTypeId?: string): Promise<FlavourProfile[]> {
+  async findAll(flavourTypeName?: string): Promise<FlavourProfile[]> {
     return await this.flavourProfileRepository.find({
-      where: flavourTypeId ? { flavourType: { id: flavourTypeId } } : {},
+      where: flavourTypeName
+        ? { flavourType: { name: ILike(`%${flavourTypeName}%`) } }
+        : {},
       relations: ['flavourType'],
     });
   }
