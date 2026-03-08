@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateIngredientDto } from './create-ingredient.dto';
 import { Role } from '../enums/role.enum';
 import { UpdateIngredientDto } from './update-ingredient.dto';
+import { IngredientType } from '../enums/ingredientType.enum';
 @Injectable()
 export class IngredientService {
   constructor(
@@ -31,18 +32,31 @@ export class IngredientService {
 
   // find system and user ingredients with search option
   // ILike -> case-insensitive searching in TypeORM
-  async findAllForUser(userId: string, search?: string): Promise<Ingredient[]> {
-    let where;
-    if (search) {
-      where = [
-        { user: { id: userId }, name: ILike(`%${search}%`) },
-        { user: IsNull(), name: ILike(`%${search}%`) },
-      ];
-    } else {
-      where = [{ user: { id: userId } }, { user: IsNull() }];
-    }
+  async findAllForUser(
+    userId: string,
+    search?: string,
+    type?: IngredientType,
+  ): Promise<Ingredient[]> {
+    // undefined = no search used
+    const nameFilter = search ? ILike(`%${search}%`) : undefined;
+    // if no type filter used, empty object
+    const typeFilter = type ? { type } : {};
+
+    // spread used to combine optionnal filters
+    const userCondition = {
+      user: { id: userId },
+      ...typeFilter,
+      ...(nameFilter ? { name: nameFilter } : {}),
+    };
+    // same logic but for system ingredients
+    const systemCondition = {
+      user: IsNull(),
+      ...typeFilter,
+      ...(nameFilter ? { name: nameFilter } : {}),
+    };
+
     return this.ingredientRepository.find({
-      where,
+      where: [userCondition, systemCondition],
       relations: ['user'],
     });
   }

@@ -27,6 +27,7 @@ import { UpdateIngredientDto } from './update-ingredient.dto';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
 import { Role } from '../enums/role.enum';
+import { IngredientType } from '../enums/ingredientType.enum';
 
 @Controller('ingredient')
 export class IngredientController {
@@ -63,16 +64,19 @@ export class IngredientController {
   })
   @ApiResponse({ status: 404, description: 'No ingredients found' })
   @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'type', required: false, enum: IngredientType })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('all')
   @UseGuards(AuthGuard)
   async findAllForUser(
     @Request() req,
     @Query('search') search?: string, // to get parameters in the url
+    @Query('type') type?: IngredientType,
   ): Promise<Ingredient[]> {
     const ingredients = await this.ingredientService.findAllForUser(
       req.user.sub,
       search,
+      type
     );
     return ingredients;
   }
