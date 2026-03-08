@@ -59,6 +59,12 @@ export class User {
   @Column('boolean', { default: false })
   email_verified: boolean;
 
+  @Column({ nullable: true })
+  terms_accepted_at: Date;
+
+  @Column({ nullable: true })
+  privacy_accepted_at: Date;
+
   @CreateDateColumn({ nullable: true })
   username_last_changed: Date;
 
