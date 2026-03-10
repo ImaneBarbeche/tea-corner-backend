@@ -25,20 +25,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { generateCsrfToken } from '../main';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
-
-  @Public()
-  @Get('csrf-token')
-  @ApiOperation({ summary: 'Récupérer le jeton csrf' })
-  getCsrfToken(@Req() req, @Res() res) {
-    const csrfToken = generateCsrfToken(req, res);
-    return res.json({ csrfToken });
-  }
 
   @Public()
   @UseGuards(LocalAuthGuard)

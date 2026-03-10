@@ -91,14 +91,14 @@ export class AuthService {
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
       secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
+      sameSite: isProd ? 'none' : 'lax', // csrf protection
       maxAge: accessExpire * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
+      sameSite: isProd ? 'none' : 'lax', // csrf protection
       maxAge: refreshExpire * 1000, // 7d
     });
     return tokens;
