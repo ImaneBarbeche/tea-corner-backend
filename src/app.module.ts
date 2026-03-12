@@ -22,14 +22,21 @@ import { User } from './user/user.entity';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // 60s window
-        limit: 10, // 10 request max per minute
-      },
-    ]),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isProd = configService.get('NODE_ENV') === 'production';
+        return [
+          {
+            ttl: 60000, // 60s window
+            limit: 10000,
+            // limit: isProd ? 10 : 0, // disabled outside production
+          },
+        ];
+      },
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({

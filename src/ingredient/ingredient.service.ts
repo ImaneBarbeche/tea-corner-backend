@@ -106,6 +106,14 @@ export class IngredientService {
         `You already have an ingredient named "${dto.name}"`,
       );
     }
+    const systemDuplicate = await this.ingredientRepository.findOne({
+      where: { user: IsNull(), name: dto.name },
+    });
+    if (systemDuplicate) {
+      throw new ConflictException(
+        `"${dto.name}" already exists as a system ingredient`,
+      );
+    }
 
     return await this.ingredientRepository.save(dto);
   }

@@ -36,7 +36,6 @@ export class AuthService {
   async signUp(createUserDto: CreateUserDto): Promise<{
     message: string;
   }> {
-    // add error handling if user already exists in database (uniqueness)
     // should show generic success message to prevent too much info for attackers
     const existing = await this.userService.findByEmail(createUserDto.email);
     if (existing) {
@@ -90,15 +89,15 @@ export class AuthService {
 
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax', // csrf protection
+      secure: isProd, // if true -> https
+      sameSite: isProd ? 'none' : 'lax', 
       maxAge: accessExpire * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax', // csrf protection
+      secure: isProd, // if true -> https
+      sameSite: isProd ? 'none' : 'lax', 
       maxAge: refreshExpire * 1000, // 7d
     });
     return tokens;

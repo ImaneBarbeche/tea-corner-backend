@@ -62,7 +62,6 @@ export class IngredientController {
     description:
       'List of ingredients from the system and created by the authentified user',
   })
-  @ApiResponse({ status: 404, description: 'No ingredients found' })
   @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'type', required: false, enum: IngredientType })
   @UseInterceptors(ClassSerializerInterceptor)
