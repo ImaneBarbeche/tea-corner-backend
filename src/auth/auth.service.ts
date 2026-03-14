@@ -84,7 +84,6 @@ export class AuthService {
       this.configService.get('JWT_REFRESH_EXPIRES') as string,
     );
 
-    // store in an httpOnly cookie
     const isProd = this.configService.get('NODE_ENV') === 'production';
 
     response.cookie('access_token', tokens.access_token, {

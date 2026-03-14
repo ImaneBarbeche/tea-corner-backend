@@ -66,7 +66,6 @@ export class UserController {
     @Request() req,
     @Body() UpdateUsernameDto: UpdateUsernameDto,
   ): Promise<{ message: string }> {
-    console.log(req.user);
     try {
       await this.userService.updateUserName(
         req.user.sub,

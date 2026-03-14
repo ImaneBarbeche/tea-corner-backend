@@ -32,8 +32,7 @@ import { User } from './user/user.entity';
         return [
           {
             ttl: 60000, // 60s window
-            limit: 10000,
-            // limit: isProd ? 10 : 0, // disabled outside production
+            limit: isProd ? 10 : 10000, 
           },
         ];
       },
