@@ -75,7 +75,7 @@ export class IngredientController {
     const ingredients = await this.ingredientService.findAllForUser(
       req.user.sub,
       search,
-      type
+      type,
     );
     return ingredients;
   }

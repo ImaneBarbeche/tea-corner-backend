@@ -19,7 +19,12 @@ import { RolesGuard } from '../guards/roles.guard';
 import { AuthGuard } from '../guards/auth.guard';
 import { UpdateUserDto } from './update-user.dto';
 import { UpdateUsernameDto } from './update-username.dto';
-import { ApiCookieAuth, ApiResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiResponse,
+  ApiOperation,
+  ApiParam,
+} from '@nestjs/swagger';
 import { UpdatePasswordDto } from './update-password.dto';
 import { UpdateEmailDto } from './update-email.dto';
 
@@ -47,8 +52,14 @@ export class UserController {
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error — invalid request body' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid request body',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/profile')
   @UseGuards(AuthGuard)
@@ -63,9 +74,18 @@ export class UserController {
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Update username' })
   @ApiResponse({ status: 200, description: 'Username updated successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error — invalid username format' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
-  @ApiResponse({ status: 409, description: 'Conflict — username already taken' })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid username format',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict — username already taken',
+  })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch('/username')
   @UseGuards(AuthGuard)
@@ -87,8 +107,14 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get all users (admin only)' })
-  @ApiResponse({ status: 200, description: 'List of all users returned successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all users returned successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden — admin role required' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/user-management/all')
@@ -106,9 +132,16 @@ export class UserController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get user by username' })
-  @ApiParam({ name: 'username', description: 'Username of the user to retrieve', example: 'teamaster42' })
+  @ApiParam({
+    name: 'username',
+    description: 'Username of the user to retrieve',
+    example: 'teamaster42',
+  })
   @ApiResponse({ status: 200, description: 'User returned successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':username')

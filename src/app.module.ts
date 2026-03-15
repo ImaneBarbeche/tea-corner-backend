@@ -9,7 +9,6 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { AuthRefreshToken } from './entities/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TeaModule } from './tea/tea.module';
@@ -32,7 +31,7 @@ import { User } from './user/user.entity';
         return [
           {
             ttl: 60000, // 60s window
-            limit: isProd ? 10 : 10000, 
+            limit: isProd ? 10 : 10000,
           },
         ];
       },
@@ -48,8 +47,7 @@ import { User } from './user/user.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [User, AuthRefreshToken],
-        synchronize: true,
+        synchronize: true, // false in prod
         autoLoadEntities: true,
       }),
     }),
