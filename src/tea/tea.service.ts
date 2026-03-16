@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tea } from './tea.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
+import { TeaType } from '../enums/teaType.enum';
 import {
   ConflictException,
   ForbiddenException,
@@ -33,17 +34,32 @@ export class TeaService {
     return await this.teaRepository.find();
   }
 
-  async findSystemTeas(): Promise<Tea[]> {
+  async findSystemTeas(search?: string, type?: TeaType): Promise<Tea[]> {
+    const nameFilter = search ? ILike(`%${search}%`) : undefined;
+    const typeFilter = type ? { type } : {};
+
     return this.teaRepository.find({
-      where: { author: IsNull() },
+      where: {
+        author: IsNull(),
+        ...typeFilter,
+        ...(nameFilter ? { name: nameFilter } : {}),
+      },
       relations: ['style'],
     });
   }
 
   // returns community teas (not system ones)
-  async findPublicTeas(): Promise<Tea[]> {
+  async findPublicTeas(search?: string, type?: TeaType): Promise<Tea[]> {
+    const nameFilter = search ? ILike(`%${search}%`) : undefined;
+    const typeFilter = type ? { type } : {};
+
     return this.teaRepository.find({
-      where: { is_public: true, author: Not(IsNull()) },
+      where: {
+        is_public: true,
+        author: Not(IsNull()),
+        ...typeFilter,
+        ...(nameFilter ? { name: nameFilter } : {}),
+      },
       relations: ['style', 'author'],
     });
   }

@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { TeaService } from './tea.service';
 import { Tea } from './tea.entity';
@@ -22,6 +23,7 @@ import {
   ApiCookieAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
 } from '@nestjs/swagger';
 import { CreateTeaDto } from './create-tea.dto';
@@ -30,6 +32,7 @@ import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { Public } from '../decorators/auth.decorator';
+import { TeaType } from '../enums/teaType.enum';
 
 @Controller('tea')
 export class TeaController {
@@ -66,10 +69,15 @@ export class TeaController {
     status: 200,
     description: 'List of system teas returned successfully',
   })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'type', required: false, enum: TeaType })
   @Get('/system')
   @Public()
-  async findSystemTeas(): Promise<Tea[]> {
-    return this.teaService.findSystemTeas();
+  async findSystemTeas(
+    @Query('search') search?: string,
+    @Query('type') type?: TeaType,
+  ): Promise<Tea[]> {
+    return this.teaService.findSystemTeas(search, type);
   }
 
   @ApiCookieAuth()
@@ -97,10 +105,15 @@ export class TeaController {
     status: 401,
     description: 'Unauthorized — missing or invalid session',
   })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'type', required: false, enum: TeaType })
   @Get('/public')
   @UseGuards(AuthGuard)
-  async findPublicTea(): Promise<Tea[]> {
-    return this.teaService.findPublicTeas();
+  async findPublicTea(
+    @Query('search') search?: string,
+    @Query('type') type?: TeaType,
+  ): Promise<Tea[]> {
+    return this.teaService.findPublicTeas(search, type);
   }
 
   @ApiCookieAuth()
