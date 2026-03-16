@@ -5,6 +5,7 @@ import { User } from './user/user.entity';
 import { Role } from './enums/role.enum';
 import { Status } from './enums/status.enum';
 import * as argon2 from 'argon2';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppService implements OnApplicationBootstrap {
@@ -13,6 +14,7 @@ export class AppService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private configService: ConfigService,
   ) {}
 
   async onApplicationBootstrap() {
@@ -25,13 +27,15 @@ export class AppService implements OnApplicationBootstrap {
       return;
     }
 
-    const email = process.env.ADMIN_EMAIL;
-    const password = process.env.ADMIN_PASSWORD;
-    const username = process.env.ADMIN_USERNAME;
-    const displayName = process.env.ADMIN_DISPLAY_NAME;
+    const email = this.configService.get('ADMIN_EMAIL');
+    const password = this.configService.get('ADMIN_PASSWORD');
+    const username = this.configService.get('ADMIN_USERNAME');
+    const displayName = this.configService.get('ADMIN_DISPLAY_NAME');
 
     if (!email || !password || !username || !displayName) {
-      this.logger.warn('Admin env vars not set (ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME, ADMIN_DISPLAY_NAME), skipping admin seed');
+      this.logger.warn(
+        'Admin env vars not set (ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME, ADMIN_DISPLAY_NAME), skipping admin seed',
+      );
       return;
     }
 

@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   MinLength,
 } from 'class-validator';
 import { IngredientType } from '../enums/ingredientType.enum';
@@ -22,6 +23,9 @@ export class CreateIngredientDto {
   @ApiProperty({ example: 'lemon', description: 'Ingredient name' })
   @MinLength(2)
   @IsString()
+  @Matches(/^[a-zA-Z\s]+$/, {
+    message: 'name must only contain letters and spaces',
+  })
   name: string;
 
   @ApiProperty({ example: 'fruit', description: 'ingredient type' })

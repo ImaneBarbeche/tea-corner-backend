@@ -13,7 +13,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserTeaService } from './user-tea.service';
-import { ApiCookieAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiCookieAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { Roles } from '../decorators/roles.decorator';
@@ -27,9 +32,10 @@ export class UserTeaController {
   constructor(private userTeaService: UserTeaService) {}
 
   @ApiCookieAuth()
-  @ApiOperation({
-    summary: 'Get all user teas (admin only)',
-  })
+  @ApiOperation({ summary: 'Get all user-tea entries (admin only)' })
+  @ApiResponse({ status: 200, description: 'List of all user-tea entries returned successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({ status: 403, description: 'Forbidden — admin role required' })
   @Get('/all')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard, RolesGuard)
@@ -45,33 +51,39 @@ export class UserTeaController {
 
   @ApiCookieAuth()
   @ApiOperation({
-    summary:
-      "Get all teas that have been added to the user's library (system, public, and their own creations)",
+    summary: "Get the current user's tea library",
+    description: 'Returns all teas added to the user\'s library — system teas, public teas, and their own creations.',
   })
+  @ApiResponse({ status: 200, description: "User's tea library returned successfully" })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/library')
   @UseGuards(AuthGuard)
   async findUserTeaLibrary(@Request() req): Promise<UserTea[] | null> {
-    const userTeas = await this.userTeaService.findUserLibrary(req.user.sub);
-
-    // checking whether there is any tea in the service
-
-    return userTeas;
+    return this.userTeaService.findUserLibrary(req.user.sub);
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Get user tea by ID' })
+  @ApiOperation({ summary: 'Get a user-tea entry by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  @ApiResponse({ status: 200, description: 'User-tea entry returned successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UseGuards(AuthGuard)
   async findTeaById(@Param('id') id: string, @Request() req): Promise<UserTea> {
-    const tea = await this.userTeaService.findOne(id, req.user.sub);
-
-    return tea;
+    return this.userTeaService.findOne(id, req.user.sub);
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Create a new user tea' })
+  @ApiOperation({
+    summary: 'Add a tea to the user\'s library',
+    description: 'Links a tea to the current user with optional custom brewing parameters and inventory tracking.',
+  })
+  @ApiResponse({ status: 201, description: 'Tea added to library successfully' })
+  @ApiResponse({ status: 400, description: 'Validation error — invalid request body' })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
   @Post('/create')
   @UseGuards(AuthGuard)
   async createTea(
@@ -87,7 +99,12 @@ export class UserTeaController {
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Update a user tea' })
+  @ApiOperation({ summary: 'Update a user-tea entry' })
+  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry to update', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  @ApiResponse({ status: 200, description: 'User-tea entry updated successfully' })
+  @ApiResponse({ status: 400, description: 'Validation error — invalid request body' })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
@@ -96,11 +113,15 @@ export class UserTeaController {
     @Body() updateUserTeaDto: UpdateUserTeaDto,
     @Request() req,
   ): Promise<UserTea> {
-    return await this.userTeaService.update(id, updateUserTeaDto, req.user.sub);
+    return this.userTeaService.update(id, updateUserTeaDto, req.user.sub);
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Delete a tea' })
+  @ApiOperation({ summary: 'Remove a tea from the user\'s library' })
+  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry to delete', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  @ApiResponse({ status: 200, description: 'Tea removed from library successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
   async deleteTea(@Param('id') id: string, @Request() req): Promise<void> {

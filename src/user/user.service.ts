@@ -83,7 +83,6 @@ export class UserService {
 
     Object.assign(user, updateUserDto);
 
-    console.log(user);
     return await this.userRepository.save(user);
   }
 
@@ -172,7 +171,6 @@ export class UserService {
 
       await this.emailService.sendVerificationEmail(updatedUser, rawToken);
 
-      console.log('Verification email sent to:', updatedUser.email);
     } catch (error) {
       console.error('Failed to send verification email:', error);
     }
@@ -224,7 +222,6 @@ export class UserService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async cleanupDeletedUsers() {
-    console.log('Executing cronjob for deleted users');
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -240,7 +237,6 @@ export class UserService {
     // hard delete
     for (const user of usersToDelete) {
       await this.userRepository.delete(user.id);
-      console.log(`User ${user.id} deleted.`);
     }
   }
 }

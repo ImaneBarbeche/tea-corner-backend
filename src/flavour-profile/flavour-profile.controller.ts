@@ -1,6 +1,6 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { FlavourProfileService } from './flavour-profile.service';
-import { ApiCookieAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { FlavourProfile } from './flavour-profile.entity';
 
@@ -12,10 +12,13 @@ export class FlavourProfileController {
   @ApiOperation({ summary: 'Get all flavour profiles)' })
   @ApiResponse({ status: 200, description: 'List of flavour profiles' })
   @ApiResponse({ status: 404, description: 'No flavour profile found' })
+  @ApiQuery({ name: 'flavourTypeName', required: false })
   @Get('/all')
   @UseGuards(AuthGuard)
-  async findAllFlavourProfiles(): Promise<FlavourProfile[]> {
-    return this.flavourProfileService.findAll();
+  async findAllFlavourProfiles(
+    @Query('flavourTypeName') flavourTypeName?: string,
+  ): Promise<FlavourProfile[]> {
+    return this.flavourProfileService.findAll(flavourTypeName);
   }
 
   @ApiCookieAuth()

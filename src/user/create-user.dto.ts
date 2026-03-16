@@ -1,6 +1,8 @@
 import {
+  IsDateString,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -38,4 +40,14 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
+  
+  @ApiProperty({ example: '2026-03-08T12:00:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  terms_accepted_at?: string;
+
+  @ApiProperty({ example: '2026-03-08T12:00:00.000Z' })
+  @IsOptional()
+  @IsDateString()
+  privacy_accepted_at?: string;
 }

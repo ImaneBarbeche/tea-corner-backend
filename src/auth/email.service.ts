@@ -26,9 +26,22 @@ export class EmailService {
       to: user.email,
       subject: 'Vérifiez votre email',
       html: `
-        <h1>Bienvenue sur TeaCorner!</h1>
-        <p>Cliquez sur le lien ci-dessous pour vérifier votre email :</p>
-        <a href="${url}">${url}</a>
+        <div style="background-color:#F2ECE1;padding:48px 24px;font-family:Raleway,Helvetica,Arial,sans-serif;">
+          <div style="max-width:460px;margin:0 auto;">
+            <p style="color:#2E2E2E;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 40px;">Tea Corner</p>
+            <h1 style="color:#2E2E2E;font-size:26px;font-weight:normal;margin:0 0 16px;line-height:1.3;font-family:Georgia,serif;">Bienvenue.</h1>
+            <p style="color:#2E2E2E;font-size:15px;line-height:1.7;margin:0 0 36px;opacity:0.75;">
+              Plus qu'une étape — confirmez votre email pour accéder à votre compte.
+            </p>
+            <a href="${url}" style="display:inline-block;background-color:#2E2E2E;color:#F2ECE1;text-decoration:none;padding:13px 28px;border-radius:4px;font-size:13px;letter-spacing:0.05em;font-family:Raleway,Helvetica,Arial,sans-serif;">
+              Confirmer mon email
+            </a>
+            <hr style="border:none;border-top:1px solid #D6CEBC;margin:48px 0 24px;" />
+            <p style="color:#2E2E2E;font-size:12px;margin:0;opacity:0.45;">
+              Vous n'avez pas créé de compte ? Ignorez cet email.
+            </p>
+          </div>
+        </div>
       `,
     });
 

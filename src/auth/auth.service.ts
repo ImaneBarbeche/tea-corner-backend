@@ -1,7 +1,7 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
@@ -16,6 +16,7 @@ import { EmailVerificationToken } from '../entities/email-verification-token.ent
 import { InjectRepository } from '@nestjs/typeorm';
 import { PasswordResetToken } from '../entities/password-reset-token.entity';
 import { EmailService } from './email.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -29,11 +30,25 @@ export class AuthService {
     private passwordResetRepository: Repository<PasswordResetToken>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private configService: ConfigService,
   ) {}
 
   async signUp(createUserDto: CreateUserDto): Promise<{
     message: string;
   }> {
+    // should show generic success message to prevent too much info for attackers
+    const existing = await this.userService.findByEmail(createUserDto.email);
+    if (existing) {
+      throw new ConflictException('Email already in use');
+    }
+
+    const existingUsername = await this.userService.findByUsername(
+      createUserDto.user_name,
+    );
+    if (existingUsername) {
+      throw new ConflictException('Username already in use');
+    }
+
     // Hash with Argon2
     const hashedPassword = await this.hashPassword(createUserDto.password);
 
@@ -42,7 +57,6 @@ export class AuthService {
       password: hashedPassword,
       email_verified: false,
     };
-
     // creating the user
     const user = await this.userService.create(data);
 
@@ -63,22 +77,27 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     // generate a token pair
     const tokens = await this.authRefreshTokenService.generateTokenPair(user);
+    const accessExpire = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRES') as string,
+    );
+    const refreshExpire = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRES') as string,
+    );
 
-    // store in an httpOnly cookie
-    const isProd = process.env.NODE_ENV === 'production';
+    const isProd = this.configService.get('NODE_ENV') === 'production';
 
     response.cookie('access_token', tokens.access_token, {
       httpOnly: true,
-      secure: isProd,
+      secure: isProd, // if true -> https
       sameSite: isProd ? 'none' : 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: accessExpire * 1000, // 15 minutes
     });
 
     response.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
-      secure: isProd,
+      secure: isProd, // if true -> https
       sameSite: isProd ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7d
+      maxAge: refreshExpire * 1000, // 7d
     });
     return tokens;
   }
@@ -104,16 +123,19 @@ export class AuthService {
       this.authRefreshTokenService.generateAccessToken(user);
 
     // update access token
-    const isRefreshProd = process.env.NODE_ENV === 'production';
+    const isRefreshProd = this.configService.get('NODE_ENV') === 'production';
+    const accessExpire = parseInt(
+      this.configService.get('JWT_ACCESS_EXPIRES') as string,
+    );
 
     response.cookie('access_token', newAccessToken, {
       httpOnly: true,
       secure: isRefreshProd,
       sameSite: isRefreshProd ? 'none' : 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: accessExpire * 1000,
     });
 
-    if (process.env.NODE_ENV === 'development') {
+    if (this.configService.get('NODE_ENV') === 'development') {
       return { access_token: newAccessToken };
     }
 
@@ -122,15 +144,17 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<object | null> {
     const user = await this.userService.findByUsername(username);
+
     if (!user) return null;
+
+    const isMatch = await argon2.verify(user.password, pass);
+    if (!isMatch) return null;
+
     if (!user.email_verified) {
       throw new UnauthorizedException(
         'Veuillez vérifier votre email avant de vous connecter',
       );
     }
-
-    const isMatch = await argon2.verify(user.password, pass);
-    if (!isMatch) return null;
 
     const { password: _password, ...result } = user;
 
@@ -161,18 +185,9 @@ export class AuthService {
       relations: ['user'],
     });
 
-    if (!tokenRecord) {
-      throw new BadRequestException('Token invalide ou déjà utilisé');
+    if (!tokenRecord || tokenRecord.expires_at < new Date()) {
+      throw new BadRequestException('Token invalide ou expiré');
     }
-
-    if (tokenRecord.expires_at < new Date()) {
-      throw new BadRequestException('Token expiré');
-    }
-
-    if (!tokenRecord.user) {
-      throw new NotFoundException('Utilisateur introuvable');
-    }
-
     tokenRecord.used = true;
     await this.emailVerificationTokenRepository.save(tokenRecord);
 

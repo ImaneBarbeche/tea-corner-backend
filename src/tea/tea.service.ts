@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tea } from './tea.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
+import { TeaType } from '../enums/teaType.enum';
 import {
   ConflictException,
   ForbiddenException,
@@ -14,6 +15,7 @@ import { Ingredient } from '../ingredient/ingredient.entity';
 import { UpdateTeaDto } from './update-tea.dto';
 import { TeaStyleService } from '../tea-style/tea-style.service';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class TeaService {
@@ -32,17 +34,32 @@ export class TeaService {
     return await this.teaRepository.find();
   }
 
-  async findSystemTeas(): Promise<Tea[]> {
+  async findSystemTeas(search?: string, type?: TeaType): Promise<Tea[]> {
+    const nameFilter = search ? ILike(`%${search}%`) : undefined;
+    const typeFilter = type ? { type } : {};
+
     return this.teaRepository.find({
-      where: { author: IsNull() },
+      where: {
+        author: IsNull(),
+        ...typeFilter,
+        ...(nameFilter ? { name: nameFilter } : {}),
+      },
       relations: ['style'],
     });
   }
 
   // returns community teas (not system ones)
-  async findPublicTeas(): Promise<Tea[]> {
+  async findPublicTeas(search?: string, type?: TeaType): Promise<Tea[]> {
+    const nameFilter = search ? ILike(`%${search}%`) : undefined;
+    const typeFilter = type ? { type } : {};
+
     return this.teaRepository.find({
-      where: { is_public: true, author: Not(IsNull()) },
+      where: {
+        is_public: true,
+        author: Not(IsNull()),
+        ...typeFilter,
+        ...(nameFilter ? { name: nameFilter } : {}),
+      },
       relations: ['style', 'author'],
     });
   }
@@ -67,6 +84,27 @@ export class TeaService {
     }
 
     return tea;
+  }
+
+  private dailyTeaId: string;
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async scheduleDailyTea(): Promise<void> {
+    const teas = await this.teaRepository.find({
+      where: [{ author: IsNull() }, { is_public: true, author: Not(IsNull()) }],
+    });
+    if (!teas.length) return;
+    this.dailyTeaId = teas[Math.floor(Math.random() * teas.length)].id;
+  }
+
+  async getDailyTea(): Promise<Tea> {
+    if (!this.dailyTeaId) {
+      await this.scheduleDailyTea(); // fallback on server restart
+    }
+    return this.teaRepository.findOne({
+      where: { id: this.dailyTeaId },
+      relations: ['style', 'author', 'ingredients', 'ingredients.ingredient'],
+    }) as Promise<Tea>;
   }
 
   async remove(id: string): Promise<void> {

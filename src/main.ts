@@ -2,30 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
-import { doubleCsrf } from 'csrf-csrf';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-// simple csrf token, without using sessions
-const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
-  getSecret: () => {
-    const secret = process.env.CSRF_SECRET;
-    if (!secret) throw new Error('CSRF_SECRET env variable is not set');
-    return secret;
-  },
-  getSessionIdentifier: (req) => req.ip ?? 'anonymous',
-  cookieName: 'csrf-token',
-  cookieOptions: {
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    path: '/',
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-  },
-  size: 32,
-  ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-  getCsrfTokenFromRequest: (req) => req.headers['x-csrf-token'],
-});
-
-export { generateCsrfToken };
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -46,10 +23,8 @@ async function bootstrap() {
     origin: ['http://localhost:5173', 'https://teacorner.vercel.app'], // front url
     credentials: true, // allows cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
-
-  app.use(doubleCsrfProtection);
 
   app.useGlobalPipes(new ValidationPipe());
 

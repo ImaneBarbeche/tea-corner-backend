@@ -2,14 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/auth.guard';
 import { RolesGuard } from './guards/roles.guard';
-import { AuthRefreshToken } from './entities/auth-refresh-token.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TeaModule } from './tea/tea.module';
@@ -22,36 +21,45 @@ import { User } from './user/user.entity';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000, // 60s window
-        limit: 10, // 10 request max per minute
-      },
-    ]),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isProd = configService.get('NODE_ENV') === 'production';
+        return [
+          {
+            ttl: 60000, // 60s window
+            limit: isProd ? 10 : 10000,
+          },
+        ];
+      },
+    }),
     ScheduleModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '5432'),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities: [User, AuthRefreshToken],
-      synchronize: true,
-      autoLoadEntities: true,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: parseInt(configService.get('DB_PORT') || '5432'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        synchronize: true, // false in prod
+        autoLoadEntities: true,
+      }),
     }),
     TypeOrmModule.forFeature([User]),
     UserModule,
     AuthModule,
-    TeaModule, 
+    TeaModule,
     TeaStyleModule,
-    IngredientModule, 
-    FlavourProfileModule, 
-    FlavourTypeModule, 
-    UserTeaModule, 
+    IngredientModule,
+    FlavourProfileModule,
+    FlavourTypeModule,
+    UserTeaModule,
   ],
   controllers: [AppController],
   providers: [

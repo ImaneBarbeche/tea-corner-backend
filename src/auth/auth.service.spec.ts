@@ -9,6 +9,7 @@ import { AuthRefreshTokenService } from './auth-refresh-token.service';
 import { EmailVerificationToken } from '../entities/email-verification-token.entity';
 import { EmailService } from './email.service';
 import { PasswordResetToken } from '../entities/password-reset-token.entity';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -75,6 +76,10 @@ describe('AuthService', () => {
             save: jest.fn(),
             delete: jest.fn(),
           },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn() },
         },
       ],
     }).compile();
