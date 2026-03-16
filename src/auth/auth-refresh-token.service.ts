@@ -42,13 +42,8 @@ export class AuthRefreshTokenService {
   }
 
   generateAccessToken(user: User): string {
-    const accessExpire = parseInt(
-      this.configService.get('JWT_ACCESS_EXPIRES') as string,
-    );
     const payload = { sub: user.id, username: user.user_name, role: user.role };
-    return this.jwtService.sign(payload, {
-      expiresIn: accessExpire,
-    });
+    return this.jwtService.sign(payload);
   }
 
   async generateTokenPair(user: User) {
