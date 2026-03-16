@@ -186,30 +186,125 @@ async function seedData() {
   // Tea style data
   const teaStylesData = [
     // Green
-    { name: 'Sencha', description: 'Japanese green tea with needle-shaped leaves, lightly vegetal and umami.', color: '#7CB342', type: TeaType.Green },
-    { name: 'Matcha', description: 'Japanese green tea ground into a fine powder, used in the tea ceremony.', color: '#8BC34A', type: TeaType.Green },
-    { name: 'Gunpowder', description: 'Chinese green tea with leaves rolled into small pellets, bold in flavour.', color: '#9CCC65', type: TeaType.Green },
+    {
+      name: 'Sencha',
+      description:
+        'Japanese green tea with needle-shaped leaves, lightly vegetal and umami.',
+      color: '#7CB342',
+      type: TeaType.Green,
+    },
+    {
+      name: 'Matcha',
+      description:
+        'Japanese green tea ground into a fine powder, used in the tea ceremony.',
+      color: '#8BC34A',
+      type: TeaType.Green,
+    },
+    {
+      name: 'Gunpowder',
+      description:
+        'Chinese green tea with leaves rolled into small pellets, bold in flavour.',
+      color: '#9CCC65',
+      type: TeaType.Green,
+    },
     // Black
-    { name: 'Orthodox', description: 'Black tea with whole or broken leaves, processed using traditional methods.', color: '#4E342E', type: TeaType.Black },
-    { name: 'Earl Grey', description: 'Black tea flavoured with bergamot, an icon of British tea tradition.', color: '#5D4037', type: TeaType.Black },
-    { name: 'Darjeeling', description: 'Indian black tea with muscatel notes, known as the champagne of teas.', color: '#6D4C41', type: TeaType.Black },
+    {
+      name: 'Orthodox',
+      description:
+        'Black tea with whole or broken leaves, processed using traditional methods.',
+      color: '#4E342E',
+      type: TeaType.Black,
+    },
+    {
+      name: 'Earl Grey',
+      description:
+        'Black tea flavoured with bergamot, an icon of British tea tradition.',
+      color: '#5D4037',
+      type: TeaType.Black,
+    },
+    {
+      name: 'Darjeeling',
+      description:
+        'Indian black tea with muscatel notes, known as the champagne of teas.',
+      color: '#6D4C41',
+      type: TeaType.Black,
+    },
     // White
-    { name: 'Silver Needle', description: 'White tea made exclusively from downy buds, exceptionally delicate.', color: '#ECEFF1', type: TeaType.White },
-    { name: 'White Peony', description: 'White tea with buds and young leaves, slightly fuller in body.', color: '#CFD8DC', type: TeaType.White },
+    {
+      name: 'Silver Needle',
+      description:
+        'White tea made exclusively from downy buds, exceptionally delicate.',
+      color: '#ECEFF1',
+      type: TeaType.White,
+    },
+    {
+      name: 'White Peony',
+      description:
+        'White tea with buds and young leaves, slightly fuller in body.',
+      color: '#CFD8DC',
+      type: TeaType.White,
+    },
     // Oolong
-    { name: 'Tieguanyin', description: 'Chinese rolled oolong with floral and buttery aromas, semi-oxidised.', color: '#A5D6A7', type: TeaType.Oolong },
-    { name: 'Dan Cong', description: 'Twisted oolong with expressive aromas ranging from floral to fruity.', color: '#80CBC4', type: TeaType.Oolong },
+    {
+      name: 'Tieguanyin',
+      description:
+        'Chinese rolled oolong with floral and buttery aromas, semi-oxidised.',
+      color: '#A5D6A7',
+      type: TeaType.Oolong,
+    },
+    {
+      name: 'Dan Cong',
+      description:
+        'Twisted oolong with expressive aromas ranging from floral to fruity.',
+      color: '#80CBC4',
+      type: TeaType.Oolong,
+    },
     // Pu-erh
-    { name: 'Pressed Pu-erh', description: 'Pu-erh compressed into a cake or brick, refined over time.', color: '#3E2723', type: TeaType.Puerh },
-    { name: 'Loose Pu-erh', description: 'Loose-leaf pu-erh, naturally fermented.', color: '#4E342E', type: TeaType.Puerh },
+    {
+      name: 'Pressed Pu-erh',
+      description: 'Pu-erh compressed into a cake or brick, refined over time.',
+      color: '#3E2723',
+      type: TeaType.Puerh,
+    },
+    {
+      name: 'Loose Pu-erh',
+      description: 'Loose-leaf pu-erh, naturally fermented.',
+      color: '#4E342E',
+      type: TeaType.Puerh,
+    },
     // Herbal
-    { name: 'Floral Herbal', description: 'Infusion of dried flowers, gentle and fragrant.', color: '#F48FB1', type: TeaType.Herbal },
-    { name: 'Plant Herbal', description: 'Infusion of aromatic herbs, often soothing or digestive.', color: '#A5D6A7', type: TeaType.Herbal },
-    { name: 'Fruit Herbal', description: 'Infusion of dried fruits and berries, naturally sweet.', color: '#FFCC80', type: TeaType.Herbal },
+    {
+      name: 'Floral Herbal',
+      description: 'Infusion of dried flowers, gentle and fragrant.',
+      color: '#F48FB1',
+      type: TeaType.Herbal,
+    },
+    {
+      name: 'Plant Herbal',
+      description: 'Infusion of aromatic herbs, often soothing or digestive.',
+      color: '#A5D6A7',
+      type: TeaType.Herbal,
+    },
+    {
+      name: 'Fruit Herbal',
+      description: 'Infusion of dried fruits and berries, naturally sweet.',
+      color: '#FFCC80',
+      type: TeaType.Herbal,
+    },
     // Yellow
-    { name: 'Junshan Yinzhen', description: 'Rare yellow tea with downy needles, lightly oxidised.', color: '#FFF176', type: TeaType.Yellow },
+    {
+      name: 'Junshan Yinzhen',
+      description: 'Rare yellow tea with downy needles, lightly oxidised.',
+      color: '#FFF176',
+      type: TeaType.Yellow,
+    },
     // Dark
-    { name: 'Liu An', description: 'Fermented dark tea, earthy and smooth, ages well.', color: '#5D4037', type: TeaType.Dark },
+    {
+      name: 'Liu An',
+      description: 'Fermented dark tea, earthy and smooth, ages well.',
+      color: '#5D4037',
+      type: TeaType.Dark,
+    },
   ];
 
   // Insère les styles
@@ -240,10 +335,12 @@ async function seedData() {
       name: 'Sencha',
       type: TeaType.Green,
       style: style('Sencha'),
-      description: 'Classic Japanese green tea with vegetal and umami notes. Harvested in spring, an ideal introduction to Japanese green teas.',
+      description:
+        'Classic Japanese green tea with vegetal and umami notes. Harvested in spring, an ideal introduction to Japanese green teas.',
       custom_color: '#7CB342',
       custom_brew_color: '#C5E1A5',
-      instructions: 'Steep at 70-75°C for 1 to 2 minutes. Avoid boiling water, which would make the tea bitter.',
+      instructions:
+        'Steep at 70-75°C for 1 to 2 minutes. Avoid boiling water, which would make the tea bitter.',
       brewing_time: 90,
       brewing_temperature: 72,
       leaf_amount: 3,
@@ -256,10 +353,12 @@ async function seedData() {
       name: 'Ceremonial Matcha',
       type: TeaType.Green,
       style: style('Matcha'),
-      description: 'Ceremonial grade Japanese green tea powder, used in the chado tradition. Intense umami flavour with a pleasant bitterness.',
+      description:
+        'Ceremonial grade Japanese green tea powder, used in the chado tradition. Intense umami flavour with a pleasant bitterness.',
       custom_color: '#558B2F',
       custom_brew_color: '#AED581',
-      instructions: 'Sift 1.5g of matcha into a bowl. Add 70ml of water at 75°C. Whisk in a zigzag motion with a chasen until a foam forms.',
+      instructions:
+        'Sift 1.5g of matcha into a bowl. Add 70ml of water at 75°C. Whisk in a zigzag motion with a chasen until a foam forms.',
       brewing_time: 60,
       brewing_temperature: 75,
       leaf_amount: 2,
@@ -273,10 +372,12 @@ async function seedData() {
       name: 'Earl Grey',
       type: TeaType.Black,
       style: style('Earl Grey'),
-      description: 'Black tea flavoured with bergamot essential oil. Floral and citrusy character, an icon of British tea culture.',
+      description:
+        'Black tea flavoured with bergamot essential oil. Floral and citrusy character, an icon of British tea culture.',
       custom_color: '#4E342E',
       custom_brew_color: '#A1887F',
-      instructions: 'Steep at 95°C for 3 to 4 minutes. Enjoy plain or with a splash of milk.',
+      instructions:
+        'Steep at 95°C for 3 to 4 minutes. Enjoy plain or with a splash of milk.',
       brewing_time: 210,
       brewing_temperature: 95,
       leaf_amount: 3,
@@ -289,10 +390,12 @@ async function seedData() {
       name: 'Darjeeling First Flush',
       type: TeaType.Black,
       style: style('Darjeeling'),
-      description: 'First spring harvest from Darjeeling. Delicate muscatel and floral notes, with a light and clear liquor.',
+      description:
+        'First spring harvest from Darjeeling. Delicate muscatel and floral notes, with a light and clear liquor.',
       custom_color: '#795548',
       custom_brew_color: '#D7CCC8',
-      instructions: 'Steep at 90°C for 3 minutes. Avoid over-steeping to preserve the delicate aromatics.',
+      instructions:
+        'Steep at 90°C for 3 minutes. Avoid over-steeping to preserve the delicate aromatics.',
       brewing_time: 180,
       brewing_temperature: 90,
       leaf_amount: 3,
@@ -305,10 +408,12 @@ async function seedData() {
       name: 'Masala Chai',
       type: TeaType.Black,
       style: style('Orthodox'),
-      description: 'Spiced Indian black tea, a traditional preparation from the subcontinent. Warming and aromatic, typically made with milk.',
+      description:
+        'Spiced Indian black tea, a traditional preparation from the subcontinent. Warming and aromatic, typically made with milk.',
       custom_color: '#BF360C',
       custom_brew_color: '#FFAB91',
-      instructions: 'Simmer the tea with spices in a 50/50 water and milk blend for 5 minutes. Sweeten to taste.',
+      instructions:
+        'Simmer the tea with spices in a 50/50 water and milk blend for 5 minutes. Sweeten to taste.',
       brewing_time: 300,
       brewing_temperature: 100,
       leaf_amount: 4,
@@ -322,10 +427,12 @@ async function seedData() {
       name: 'Silver Needle',
       type: TeaType.White,
       style: style('Silver Needle'),
-      description: 'The most prized of white teas, made exclusively from downy buds. Soft, honeyed flavour with a delicate floral finish.',
+      description:
+        'The most prized of white teas, made exclusively from downy buds. Soft, honeyed flavour with a delicate floral finish.',
       custom_color: '#ECEFF1',
       custom_brew_color: '#F5F5F5',
-      instructions: 'Steep at 75°C for 3 to 5 minutes. Multiple infusions are possible, each revealing new aromas.',
+      instructions:
+        'Steep at 75°C for 3 to 5 minutes. Multiple infusions are possible, each revealing new aromas.',
       brewing_time: 240,
       brewing_temperature: 75,
       leaf_amount: 4,
@@ -339,10 +446,12 @@ async function seedData() {
       name: 'Tieguanyin',
       type: TeaType.Oolong,
       style: style('Tieguanyin'),
-      description: 'Fujian province oolong with intense floral aromas and a buttery texture. Semi-oxidised, sitting between green and black tea.',
+      description:
+        'Fujian province oolong with intense floral aromas and a buttery texture. Semi-oxidised, sitting between green and black tea.',
       custom_color: '#80CBC4',
       custom_brew_color: '#E0F2F1',
-      instructions: 'Rinse the leaves for 10 seconds. Steep at 90°C for 45 seconds to 1 minute. Repeat for 4 to 6 infusions.',
+      instructions:
+        'Rinse the leaves for 10 seconds. Steep at 90°C for 45 seconds to 1 minute. Repeat for 4 to 6 infusions.',
       brewing_time: 50,
       brewing_temperature: 90,
       leaf_amount: 5,
@@ -356,10 +465,12 @@ async function seedData() {
       name: 'Pu-erh Shou',
       type: TeaType.Puerh,
       style: style('Pressed Pu-erh'),
-      description: 'Ripe pu-erh with accelerated fermentation. Earthy, forest floor and mushroom notes, with a dark and velvety liquor.',
+      description:
+        'Ripe pu-erh with accelerated fermentation. Earthy, forest floor and mushroom notes, with a dark and velvety liquor.',
       custom_color: '#3E2723',
       custom_brew_color: '#4E342E',
-      instructions: 'Rinse twice for 5 seconds each. Steep at 95-100°C. First infusion 20 seconds, increasing gradually.',
+      instructions:
+        'Rinse twice for 5 seconds each. Steep at 95-100°C. First infusion 20 seconds, increasing gradually.',
       brewing_time: 20,
       brewing_temperature: 98,
       leaf_amount: 6,
@@ -373,10 +484,12 @@ async function seedData() {
       name: 'Pure Chamomile',
       type: TeaType.Herbal,
       style: style('Floral Herbal'),
-      description: 'Infusion of dried chamomile flowers. Soothing and lightly sweet, ideal in the evening to unwind.',
+      description:
+        'Infusion of dried chamomile flowers. Soothing and lightly sweet, ideal in the evening to unwind.',
       custom_color: '#FFF176',
       custom_brew_color: '#FFFDE7',
-      instructions: 'Steep at 90°C for 5 to 7 minutes. Cover while steeping to preserve the aromas.',
+      instructions:
+        'Steep at 90°C for 5 to 7 minutes. Cover while steeping to preserve the aromas.',
       brewing_time: 360,
       brewing_temperature: 90,
       leaf_amount: 3,
@@ -389,10 +502,12 @@ async function seedData() {
       name: 'Mint Lemon',
       type: TeaType.Herbal,
       style: style('Plant Herbal'),
-      description: 'A fresh blend of mint and lemon. Digestive and invigorating, perfect hot or as a cold brew.',
+      description:
+        'A fresh blend of mint and lemon. Digestive and invigorating, perfect hot or as a cold brew.',
       custom_color: '#66BB6A',
       custom_brew_color: '#E8F5E9',
-      instructions: 'Steep at 90°C for 5 minutes. Excellent as iced tea with a few fresh mint leaves.',
+      instructions:
+        'Steep at 90°C for 5 minutes. Excellent as iced tea with a few fresh mint leaves.',
       brewing_time: 300,
       brewing_temperature: 90,
       leaf_amount: 4,
@@ -405,10 +520,12 @@ async function seedData() {
       name: 'Vanilla Rooibos',
       type: TeaType.Herbal,
       style: style('Plant Herbal'),
-      description: 'South African rooibos flavoured with natural vanilla. Naturally caffeine-free, smooth and lightly sweet.',
+      description:
+        'South African rooibos flavoured with natural vanilla. Naturally caffeine-free, smooth and lightly sweet.',
       custom_color: '#BF360C',
       custom_brew_color: '#FFAB91',
-      instructions: 'Steep at 95°C for 5 to 8 minutes. Enjoy plain or with milk, hot or cold.',
+      instructions:
+        'Steep at 95°C for 5 to 8 minutes. Enjoy plain or with milk, hot or cold.',
       brewing_time: 420,
       brewing_temperature: 95,
       leaf_amount: 4,
@@ -447,19 +564,64 @@ async function seedData() {
   // System tea ingredient data
   const teaIngredientsData = [
     // Earl Grey → cornflower (color and aroma)
-    { tea: tea('Earl Grey'), ingredient: ingredient('Cornflower'), quantity: 1, optional: true },
+    {
+      tea: tea('Earl Grey'),
+      ingredient: ingredient('Cornflower'),
+      quantity: 1,
+      optional: true,
+    },
     // Chaï Masala → spices
-    { tea: tea('Masala Chai'), ingredient: ingredient('Cinnamon'), quantity: 2, optional: false },
-    { tea: tea('Masala Chai'), ingredient: ingredient('Cardamom'), quantity: 1, optional: false },
-    { tea: tea('Masala Chai'), ingredient: ingredient('Ginger'), quantity: 1, optional: false },
-    { tea: tea('Masala Chai'), ingredient: ingredient('Clove'), quantity: 1, optional: true },
+    {
+      tea: tea('Masala Chai'),
+      ingredient: ingredient('Cinnamon'),
+      quantity: 2,
+      optional: false,
+    },
+    {
+      tea: tea('Masala Chai'),
+      ingredient: ingredient('Cardamom'),
+      quantity: 1,
+      optional: false,
+    },
+    {
+      tea: tea('Masala Chai'),
+      ingredient: ingredient('Ginger'),
+      quantity: 1,
+      optional: false,
+    },
+    {
+      tea: tea('Masala Chai'),
+      ingredient: ingredient('Clove'),
+      quantity: 1,
+      optional: true,
+    },
     // Pure Chamomile
-    { tea: tea('Pure Chamomile'), ingredient: ingredient('Chamomile'), quantity: 5, optional: false },
+    {
+      tea: tea('Pure Chamomile'),
+      ingredient: ingredient('Chamomile'),
+      quantity: 5,
+      optional: false,
+    },
     // Mint Lemon
-    { tea: tea('Mint Lemon'), ingredient: ingredient('Mint'), quantity: 3, optional: false },
-    { tea: tea('Mint Lemon'), ingredient: ingredient('Lemon'), quantity: 2, optional: false },
+    {
+      tea: tea('Mint Lemon'),
+      ingredient: ingredient('Mint'),
+      quantity: 3,
+      optional: false,
+    },
+    {
+      tea: tea('Mint Lemon'),
+      ingredient: ingredient('Lemon'),
+      quantity: 2,
+      optional: false,
+    },
     // Vanilla Rooibos
-    { tea: tea('Vanilla Rooibos'), ingredient: ingredient('Vanilla'), quantity: 1, optional: false },
+    {
+      tea: tea('Vanilla Rooibos'),
+      ingredient: ingredient('Vanilla'),
+      quantity: 1,
+      optional: false,
+    },
   ];
 
   // Insère les TeaIngredients
@@ -469,14 +631,21 @@ async function seedData() {
       continue;
     }
     const existing = await teaIngredientRepository.findOne({
-      where: { tea: { id: tiData.tea.id }, ingredient: { id: tiData.ingredient.id } },
+      where: {
+        tea: { id: tiData.tea.id },
+        ingredient: { id: tiData.ingredient.id },
+      },
     });
     if (!existing) {
       const ti = teaIngredientRepository.create(tiData);
       await teaIngredientRepository.save(ti);
-      console.log(`Inserted ingredient ${tiData.ingredient.name} for tea ${tiData.tea.name}`);
+      console.log(
+        `Inserted ingredient ${tiData.ingredient.name} for tea ${tiData.tea.name}`,
+      );
     } else {
-      console.log(`Ingredient ${tiData.ingredient.name} already linked to tea ${tiData.tea.name}`);
+      console.log(
+        `Ingredient ${tiData.ingredient.name} already linked to tea ${tiData.tea.name}`,
+      );
     }
   }
 

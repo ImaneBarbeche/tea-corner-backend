@@ -40,7 +40,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
-  
+
   @ApiProperty({ example: '2026-03-08T12:00:00.000Z' })
   @IsOptional()
   @IsDateString()

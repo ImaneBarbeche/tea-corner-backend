@@ -8,7 +8,10 @@ export class TeaStyleController {
   constructor(private teaStyleService: TeaStyleService) {}
 
   @ApiOperation({ summary: 'Get all tea styles' })
-  @ApiResponse({ status: 200, description: 'List of all tea styles returned successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all tea styles returned successfully',
+  })
   @ApiResponse({ status: 404, description: 'No tea styles found' })
   @Get('/all')
   async findAllTeaStyles(): Promise<TeaStyle[] | null> {
@@ -22,7 +25,11 @@ export class TeaStyleController {
   }
 
   @ApiOperation({ summary: 'Get a tea style by ID' })
-  @ApiParam({ name: 'id', description: 'UUID of the tea style', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the tea style',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  })
   @ApiResponse({ status: 200, description: 'Tea style returned successfully' })
   @ApiResponse({ status: 404, description: 'Tea style not found' })
   @Get(':id')

@@ -170,7 +170,6 @@ export class UserService {
       });
 
       await this.emailService.sendVerificationEmail(updatedUser, rawToken);
-
     } catch (error) {
       console.error('Failed to send verification email:', error);
     }
@@ -222,7 +221,6 @@ export class UserService {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async cleanupDeletedUsers() {
-
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 

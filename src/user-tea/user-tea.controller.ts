@@ -33,8 +33,14 @@ export class UserTeaController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get all user-tea entries (admin only)' })
-  @ApiResponse({ status: 200, description: 'List of all user-tea entries returned successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all user-tea entries returned successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 403, description: 'Forbidden — admin role required' })
   @Get('/all')
   @Roles(Role.Admin)
@@ -52,10 +58,17 @@ export class UserTeaController {
   @ApiCookieAuth()
   @ApiOperation({
     summary: "Get the current user's tea library",
-    description: 'Returns all teas added to the user\'s library — system teas, public teas, and their own creations.',
+    description:
+      "Returns all teas added to the user's library — system teas, public teas, and their own creations.",
   })
-  @ApiResponse({ status: 200, description: "User's tea library returned successfully" })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 200,
+    description: "User's tea library returned successfully",
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('/library')
   @UseGuards(AuthGuard)
@@ -65,9 +78,19 @@ export class UserTeaController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Get a user-tea entry by ID' })
-  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
-  @ApiResponse({ status: 200, description: 'User-tea entry returned successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the user-tea entry',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User-tea entry returned successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
@@ -78,12 +101,22 @@ export class UserTeaController {
 
   @ApiCookieAuth()
   @ApiOperation({
-    summary: 'Add a tea to the user\'s library',
-    description: 'Links a tea to the current user with optional custom brewing parameters and inventory tracking.',
+    summary: "Add a tea to the user's library",
+    description:
+      'Links a tea to the current user with optional custom brewing parameters and inventory tracking.',
   })
-  @ApiResponse({ status: 201, description: 'Tea added to library successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error — invalid request body' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiResponse({
+    status: 201,
+    description: 'Tea added to library successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid request body',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @Post('/create')
   @UseGuards(AuthGuard)
   async createTea(
@@ -100,10 +133,23 @@ export class UserTeaController {
 
   @ApiCookieAuth()
   @ApiOperation({ summary: 'Update a user-tea entry' })
-  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry to update', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
-  @ApiResponse({ status: 200, description: 'User-tea entry updated successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error — invalid request body' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the user-tea entry to update',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User-tea entry updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid request body',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
@@ -117,10 +163,20 @@ export class UserTeaController {
   }
 
   @ApiCookieAuth()
-  @ApiOperation({ summary: 'Remove a tea from the user\'s library' })
-  @ApiParam({ name: 'id', description: 'UUID of the user-tea entry to delete', example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' })
-  @ApiResponse({ status: 200, description: 'Tea removed from library successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized — missing or invalid session' })
+  @ApiOperation({ summary: "Remove a tea from the user's library" })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID of the user-tea entry to delete',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Tea removed from library successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
   @ApiResponse({ status: 404, description: 'User-tea entry not found' })
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
