@@ -1,28 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import type { User } from '../user/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { createTransport, type Transporter } from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
-  private transporter: Transporter;
+  private resend: Resend;
+  private from = '"TeaCorner" <noreply@teacorner.app>';
 
   constructor(private configService: ConfigService) {
-    this.transporter = createTransport({
-      host: this.configService.getOrThrow<string>('MAIL_HOST'),
-      port: this.configService.get<number>('MAIL_PORT'),
-      auth: {
-        user: this.configService.getOrThrow<string>('MAIL_USER'),
-        pass: this.configService.getOrThrow<string>('MAIL_PASS'),
-      },
-    });
+    this.resend = new Resend(
+      this.configService.getOrThrow<string>('RESEND_API_KEY'),
+    );
   }
 
   async sendVerificationEmail(user: User, token: string) {
     const url = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/verify-email?token=${token}`;
 
-    await this.transporter.sendMail({
-      from: '"TeaCorner" <no-reply@teacorner.com>',
+    await this.resend.emails.send({
+      from: this.from,
       to: user.email,
       subject: 'Vérifiez votre email',
       html: `
@@ -51,8 +47,8 @@ export class EmailService {
   async sendResetEmail(user: User, password_token: string) {
     const url = `${this.configService.getOrThrow<string>('FRONTEND_URL')}/reset-password?token=${password_token}`;
 
-    await this.transporter.sendMail({
-      from: '"TeaCorner" <no-reply@teacorner.com>',
+    await this.resend.emails.send({
+      from: this.from,
       to: user.email,
       subject: 'Réinitialisation de votre mot de passe',
       html: `
@@ -67,8 +63,8 @@ export class EmailService {
   }
 
   async sendDeletionNotification(user: User, deleteScheduledAt: Date) {
-    await this.transporter.sendMail({
-      from: '"TeaCorner" <no-reply@teacorner.com>',
+    await this.resend.emails.send({
+      from: this.from,
       to: user.email,
       subject: 'Suppression de votre compte TeaCorner',
       html: `
@@ -78,6 +74,7 @@ export class EmailService {
         <p>Cordialement,<br/>L'équipe TeaCorner</p>
       `,
     });
+
     console.log('Email de suppression envoyé à :', user.email);
   }
 }
