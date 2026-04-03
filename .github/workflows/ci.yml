@@ -1,47 +1,46 @@
 name: CI/CD
-# Run the script every time there is a push or pull request on the staging branch
+
 on:
   push:
     branches: [ staging ]
   pull_request:
     branches: [ staging ]
 
-# What the script needs to execute
 jobs:
   test:
-    # Creating a VM (Ubuntu) to execute the test job
     runs-on: ubuntu-latest
-    steps: 
-      # GitHub copies the code from the repo into the VM
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      # Installing Node.js version 22
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 22
-      
+
       - name: Install dependencies
         run: npm install
-      
-      # allow CI to run through lint errors
+
       - name: Lint code
         run: npm run lint
-        continue-on-error: true
-      
+
       - name: Run tests
         run: npm test
 
-# CD part (Continuous Deployment)
   deploy:
-    # Only deploys if the 'test' job passes AND only when a push is made (not on PRs)
-    needs: test  
+    needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    
+
     steps:
-      # Calls Render's deploy hook (stored securely in GitHub secrets) via HTTP POST
-      - name: Deploy to Render
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Deploy to Hetzner
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/tea-corner-backend
+            git pull origin staging
+            docker compose down
+            docker compose up -d --build
