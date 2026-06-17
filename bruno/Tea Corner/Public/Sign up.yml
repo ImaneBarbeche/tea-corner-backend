@@ -1,0 +1,28 @@
+info:
+  name: Sign up
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: https://tea-corner-backend.onrender.com/auth/signup
+  body:
+    type: json
+    data: "{\r
+
+      \  \"display_name\": \"MinouTheDeployed\",\r
+
+      \  \"user_name\": \"minouthedeployed\",\r
+
+      \  \"email\": \"minoulaunched@example.com\",\r
+
+      \  \"password\": \"password123\"\r
+
+      }"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

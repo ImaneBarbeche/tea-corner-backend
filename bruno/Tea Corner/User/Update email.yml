@@ -1,0 +1,24 @@
+info:
+  name: Update email
+  type: http
+  seq: 3
+
+http:
+  method: PATCH
+  url: http://localhost:3000/user/email
+  body:
+    type: json
+    data: "{\r
+
+      \  \"email\": \"minouthecat@example.com\",\r
+
+      \  \"current_password\": \"password123\"\r
+
+      }"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

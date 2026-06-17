@@ -1,0 +1,19 @@
+info:
+  name: All profiles
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: http://localhost:3000/flavour-profile/all?flavourTypeName=f
+  params:
+    - name: flavourTypeName
+      value: f
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,32 @@
+info:
+  name: Create
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:3000/tea/create
+  body:
+    type: json
+    data: "{\r
+
+      \  \"name\": \"Russian\",\r
+
+      \  \"type\": \"black\",\r
+
+      \  \"brewing_time\": 300,\r
+
+      \  \"brewing_temperature\": 90,\r
+
+      \  \"caffeine_level\": \"none\",\r
+
+      \  \"source\": \"Maison\"\r
+
+      }"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

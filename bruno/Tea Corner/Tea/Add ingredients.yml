@@ -1,0 +1,26 @@
+info:
+  name: Add ingredients
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://localhost:3000/tea/142203c0-20bc-45ae-a7c0-ab80ea394541/ingredient
+  body:
+    type: json
+    data: "{\r
+
+      \  \"ingredientId\": \"9601c40f-b542-4ae9-9152-2533091db6a9\",\r
+
+      \  \"quantity\": 2,\r
+
+      \  \"optional\": false\r
+
+      }\r\n"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
