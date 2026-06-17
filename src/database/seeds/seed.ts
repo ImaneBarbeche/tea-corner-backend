@@ -259,19 +259,19 @@ async function seedData() {
       color: '#80CBC4',
       type: TeaType.Oolong,
     },
-    // Pu-erh
-    {
-      name: 'Pressed Pu-erh',
-      description: 'Pu-erh compressed into a cake or brick, refined over time.',
-      color: '#3E2723',
-      type: TeaType.Puerh,
-    },
-    {
-      name: 'Loose Pu-erh',
-      description: 'Loose-leaf pu-erh, naturally fermented.',
-      color: '#4E342E',
-      type: TeaType.Puerh,
-    },
+    // // Pu-erh
+    // {
+    //   name: 'Pressed Pu-erh',
+    //   description: 'Pu-erh compressed into a cake or brick, refined over time.',
+    //   color: '#3E2723',
+    //   type: TeaType.Puerh,
+    // },
+    // {
+    //   name: 'Loose Pu-erh',
+    //   description: 'Loose-leaf pu-erh, naturally fermented.',
+    //   color: '#4E342E',
+    //   type: TeaType.Puerh,
+    // },
     // Herbal
     {
       name: 'Floral Herbal',
@@ -460,25 +460,25 @@ async function seedData() {
       source: 'China / Fujian',
       is_public: true,
     },
-    // Pu-erh
-    {
-      name: 'Pu-erh Shou',
-      type: TeaType.Puerh,
-      style: style('Pressed Pu-erh'),
-      description:
-        'Ripe pu-erh with accelerated fermentation. Earthy, forest floor and mushroom notes, with a dark and velvety liquor.',
-      custom_color: '#3E2723',
-      custom_brew_color: '#4E342E',
-      instructions:
-        'Rinse twice for 5 seconds each. Steep at 95-100°C. First infusion 20 seconds, increasing gradually.',
-      brewing_time: 20,
-      brewing_temperature: 98,
-      leaf_amount: 6,
-      water_amount: 150,
-      caffeine_level: caffeineLevel.Medium,
-      source: 'China / Yunnan',
-      is_public: true,
-    },
+    // // Pu-erh
+    // {
+    //   name: 'Pu-erh Shou',
+    //   type: TeaType.Puerh,
+    //   style: style('Pressed Pu-erh'),
+    //   description:
+    //     'Ripe pu-erh with accelerated fermentation. Earthy, forest floor and mushroom notes, with a dark and velvety liquor.',
+    //   custom_color: '#3E2723',
+    //   custom_brew_color: '#4E342E',
+    //   instructions:
+    //     'Rinse twice for 5 seconds each. Steep at 95-100°C. First infusion 20 seconds, increasing gradually.',
+    //   brewing_time: 20,
+    //   brewing_temperature: 98,
+    //   leaf_amount: 6,
+    //   water_amount: 150,
+    //   caffeine_level: caffeineLevel.Medium,
+    //   source: 'China / Yunnan',
+    //   is_public: true,
+    // },
     // Herbal teas
     {
       name: 'Pure Chamomile',
