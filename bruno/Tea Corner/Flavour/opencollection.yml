@@ -1,0 +1,21 @@
+opencollection: 1.0.0
+
+info:
+  name: Flavour
+
+request:
+  scripts:
+    - type: before-request
+      code: "req.getHeaders().add({\r
+
+        \    key: 'x-csrf-token',\r
+
+        \    value: bru.getEnvVar('csrfToken')\r
+
+        });"
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

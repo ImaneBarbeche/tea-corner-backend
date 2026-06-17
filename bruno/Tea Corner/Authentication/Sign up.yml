@@ -1,0 +1,28 @@
+info:
+  name: Sign up
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:3000/auth/signup
+  body:
+    type: json
+    data: "{\r
+
+      \  \"display_name\": \"Alice\",\r
+
+      \  \"user_name\": \"alicetdesdfttealover\",\r
+
+      \  \"email\": \"alicddfes@example.com\",\r
+
+      \  \"password\": \"password123\"\r
+
+      }"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

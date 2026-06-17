@@ -1,0 +1,15 @@
+info:
+  name: One profile
+  type: http
+  seq: 4
+
+http:
+  method: GET
+  url: http://localhost:3000/flavour-profile/33b47928-10f2-423a-af90-96aa04fd03a0
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

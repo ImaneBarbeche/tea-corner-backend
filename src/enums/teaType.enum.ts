@@ -4,7 +4,6 @@ export enum TeaType {
   Herbal = 'herbal',
   White = 'white',
   Oolong = 'oolong',
-  Puerh = 'pu-erh',
   Yellow = 'yellow',
   Dark = 'dark',
 }

@@ -1,0 +1,24 @@
+info:
+  name: Update
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: http://localhost:3000/ingredient/192d878b-187f-41ac-9af9-921bd7215476
+  body:
+    type: json
+    data: "{\r
+
+      \    \"name\": \"banana-im-not-the-creator-stop\"\r
+
+      \    // \"type\": \"fruit\"\r
+
+      }"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

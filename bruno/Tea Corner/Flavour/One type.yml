@@ -1,0 +1,15 @@
+info:
+  name: One type
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:3000/flavour-type/2693af3c-650b-4fa1-a3ab-15e86f907706
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
