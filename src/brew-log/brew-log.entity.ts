@@ -48,9 +48,6 @@ export class BrewLog {
   water_amount: number;
 
   @Column('integer', { nullable: true })
-  @Min(0)
-  @Max(5)
-  // TODO:  could belong to the DTO
   rating: number;
 
   @Column('text', {
