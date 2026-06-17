@@ -13,6 +13,7 @@ import {
 import { Tea } from '../tea/tea.entity';
 import { UserTea } from '../user-tea/user-tea.entity';
 import { Ingredient } from '../ingredient/ingredient.entity';
+import { BrewLog } from '../brew-log/brew-log.entity';
 
 @Entity()
 export class User {
@@ -73,6 +74,9 @@ export class User {
 
   @OneToMany(() => UserTea, (userTea) => userTea.user)
   userTeas: UserTea[];
+
+  @OneToMany(() => BrewLog, (log) => log.user)
+  logs: BrewLog[];
 
   @OneToMany(() => Ingredient, (ingredient) => ingredient.user)
   ingredients: Ingredient[];

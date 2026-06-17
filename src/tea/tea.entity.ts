@@ -15,6 +15,7 @@ import { caffeineLevel } from '../enums/caffeineLevel.enum';
 import { TeaStyle } from '../tea-style/tea-style.entity';
 import { TeaIngredient } from '../ingredient/tea-ingredient.entity';
 import { UserTea } from '../user-tea/user-tea.entity';
+import { BrewLog } from '../brew-log/brew-log.entity';
 
 @Entity()
 export class Tea {
@@ -27,6 +28,9 @@ export class Tea {
 
   @OneToMany(() => TeaIngredient, (teaIngredient) => teaIngredient.tea)
   public ingredients: TeaIngredient[];
+
+  @OneToMany(() => BrewLog, (log) => log.tea)
+  logs: BrewLog[];
 
   @Column('varchar', { length: 30 })
   name: string;
