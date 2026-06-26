@@ -45,10 +45,6 @@ export class BrewLogService {
       order: { created_at: 'DESC' },
     });
 
-    if (!userLogs) {
-      throw new NotFoundException(`No logs were found for this user`);
-    }
-
     return userLogs;
   }
 
@@ -60,17 +56,33 @@ export class BrewLogService {
     return await this.brewLogRepository.save(log);
   }
 
-  // async update(
-  //   id: string,
-  //   dto: UpdateBrewLogDto,
-  //   userId: string,
-  // ): Promise<BrewLog> {
-  //   const brewLog = await this.brewLogRepository.findOne(
-  //     {
-  //       where: { id: }
-  //     }
-  //   )
-  // }
+  async update(
+    id: string,
+    dto: UpdateBrewLogDto,
+    userId: string,
+  ): Promise<BrewLog> {
+    const brewLog = await this.brewLogRepository.findOne({
+      where: { id, user: { id: userId } },
+      relations: ['tea', 'tea.style', 'tea.author'],
+    });
+
+    if (!brewLog) {
+      throw new NotFoundException(`brew log with ID ${id} could not be found`);
+    }
+
+    Object.assign(brewLog, dto);
+
+    return await this.brewLogRepository.save(brewLog);
+  }
+
+  async remove(id: string, userId: string): Promise<void> {
+    const brewLog = await this.brewLogRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
+    if (!brewLog)
+      throw new NotFoundException(`brew log with ID ${id} could not be found`);
+    await this.brewLogRepository.softDelete(id);
+  }
 }
 
 // For the brew logs
@@ -79,5 +91,5 @@ export class BrewLogService {
 // find all by user (personal entries) ✅
 // Find one? Only in case we add a system where you can comment etc where it would help to be able to show just one log.
 // add one ✅
-// Update one
-// Delete one
+// Update one ✅
+// Delete one ✅
