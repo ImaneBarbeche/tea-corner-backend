@@ -1,0 +1,18 @@
+info:
+  name: Update log
+  type: http
+
+http:
+  method: PATCH
+  url: http://localhost:3000/brew-log/:id
+  params:
+    - name: id
+      value: ""
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

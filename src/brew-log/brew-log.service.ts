@@ -4,12 +4,14 @@ import { BrewLog } from './brew-log.entity';
 import { Repository } from 'typeorm';
 import { CreateBrewLogDto } from './create-brew-log.dto';
 import { UpdateBrewLogDto } from './update-brew-log.dto';
+import { TeaService } from '../tea/tea.service';
 
 @Injectable()
 export class BrewLogService {
   constructor(
     @InjectRepository(BrewLog)
     private brewLogRepository: Repository<BrewLog>,
+    private teaService: TeaService,
   ) {}
 
   // admin
@@ -48,7 +50,14 @@ export class BrewLogService {
     return userLogs;
   }
 
-  async create(dto: CreateBrewLogDto): Promise<BrewLog> {
+  async create(dto: CreateBrewLogDto, userId: string): Promise<BrewLog> {
+    // checking whether the tea exists and whether the user has access to it
+    const tea = await this.teaService.findOne(dto.tea_id, userId);
+
+    if (!tea) {
+      throw new NotFoundException(`tea with ID ${dto.tea_id} not found`);
+    }
+
     const log = this.brewLogRepository.create({
       ...dto,
       tea: { id: dto.tea_id },
