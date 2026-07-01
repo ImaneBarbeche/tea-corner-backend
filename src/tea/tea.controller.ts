@@ -159,9 +159,11 @@ export class TeaController {
     @Body() createTeaDto: CreateTeaDto,
     @Request() req,
   ): Promise<Tea> {
+    const isAdmin = req.user.role === Role.Admin;
+
     const teaData = {
       ...createTeaDto,
-      author: { id: req.user.sub },
+      author: isAdmin ? null : { id: req.user.sub },
       style: createTeaDto.style_id ? { id: createTeaDto.style_id } : undefined,
     };
 
