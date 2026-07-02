@@ -17,6 +17,14 @@ http:
         "water_amount": 180,
         "rating": 4,
         "notes": "OOF",
+        "tastes":
+        [
+          {
+            "taste": "sweet",
+          "intensity": "low"
+          }
+          
+        ],
         "focused": false,
         "is_public": true
       }
@@ -27,3 +35,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+​

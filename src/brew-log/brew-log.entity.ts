@@ -5,12 +5,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Tea } from '../tea/tea.entity';
 import { User } from '../user/user.entity';
 import { IsInt, Max, Min } from 'class-validator';
+import { BrewLogTaste } from './brew-log-taste.entity';
 
 @Entity()
 export class BrewLog {
@@ -54,6 +56,10 @@ export class BrewLog {
     nullable: true,
   })
   notes: string;
+
+  @OneToMany(() => BrewLogTaste, (brewLogTaste) => brewLogTaste.brew_log)
+  // optional by default (e.g returns an empty array)
+  tastes: BrewLogTaste[];
 
   @Column('boolean', { default: false })
   focused: boolean;

@@ -5,18 +5,23 @@ import { Repository } from 'typeorm';
 import { CreateBrewLogDto } from './create-brew-log.dto';
 import { UpdateBrewLogDto } from './update-brew-log.dto';
 import { TeaService } from '../tea/tea.service';
+import { BrewLogTaste } from './brew-log-taste.entity';
 
 @Injectable()
 export class BrewLogService {
   constructor(
     @InjectRepository(BrewLog)
     private brewLogRepository: Repository<BrewLog>,
+    @InjectRepository(BrewLogTaste)
+    private brewLogTasteRepository: Repository<BrewLogTaste>,
     private teaService: TeaService,
   ) {}
 
   // admin
   async findAll(): Promise<BrewLog[]> {
-    return await this.brewLogRepository.find();
+    return await this.brewLogRepository.find({
+      relations: ['tea', 'tea.style', 'tea.author', 'user', 'tastes'],
+    });
   }
 
   async findPublicBrewLogs(
@@ -27,7 +32,7 @@ export class BrewLogService {
       where: {
         is_public: true,
       },
-      relations: ['tea', 'tea.style', 'tea.author', 'user'],
+      relations: ['tea', 'tea.style', 'tea.author', 'user', 'tastes'],
       take: limit,
       skip: (page - 1) * limit,
       order: { created_at: 'DESC' },
@@ -41,7 +46,7 @@ export class BrewLogService {
   ): Promise<BrewLog[]> {
     const userLogs = await this.brewLogRepository.find({
       where: { user: { id: userId } },
-      relations: ['tea', 'tea.style', 'tea.author'],
+      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
       take: limit,
       skip: (page - 1) * limit,
       order: { created_at: 'DESC' },
@@ -58,11 +63,28 @@ export class BrewLogService {
       throw new NotFoundException(`tea with ID ${dto.tea_id} not found`);
     }
 
+    const { tastes, ...brewLogData } = dto;
+
     const log = this.brewLogRepository.create({
-      ...dto,
+      ...brewLogData,
       tea: { id: dto.tea_id },
     });
-    return await this.brewLogRepository.save(log);
+    const saved = await this.brewLogRepository.save(log);
+
+    if (tastes?.length) {
+      const brewLogTastes = tastes.map((t) =>
+        this.brewLogTasteRepository.create({
+          brew_log: { id: saved.id },
+          taste: t.taste,
+          intensity: t.intensity,
+        }),
+      );
+      await this.brewLogTasteRepository.save(brewLogTastes);
+    }
+    return (await this.brewLogRepository.findOne({
+      where: { id: saved.id },
+      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
+    }))!;
   }
 
   async update(
@@ -72,16 +94,37 @@ export class BrewLogService {
   ): Promise<BrewLog> {
     const brewLog = await this.brewLogRepository.findOne({
       where: { id, user: { id: userId } },
-      relations: ['tea', 'tea.style', 'tea.author'],
+      // relations: ['tea', 'tea.style', 'tea.author'],
     });
 
     if (!brewLog) {
       throw new NotFoundException(`brew log with ID ${id} could not be found`);
     }
 
-    Object.assign(brewLog, dto);
+    const { tastes, ...brewLogData } = dto;
 
-    return await this.brewLogRepository.save(brewLog);
+    Object.assign(brewLog, brewLogData);
+
+    await this.brewLogRepository.save(brewLog);
+
+    if (tastes) {
+      await this.brewLogTasteRepository.delete({ brew_log: { id } });
+      if (tastes.length) {
+        const brewLogTastes = tastes.map((t) =>
+          this.brewLogTasteRepository.create({
+            brew_log: { id },
+            taste: t.taste,
+            intensity: t.intensity,
+          }),
+        );
+        await this.brewLogTasteRepository.save(brewLogTastes);
+      }
+    }
+
+    return (await this.brewLogRepository.findOne({
+      where: { id },
+      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
+    }))!;
   }
 
   async remove(id: string, userId: string): Promise<void> {

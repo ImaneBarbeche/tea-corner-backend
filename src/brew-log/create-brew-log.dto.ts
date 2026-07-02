@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
@@ -7,7 +9,9 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
+import { CreateBrewLogTasteDto } from './create-brew-log-taste.dto';
 
 export class CreateBrewLogDto {
   @ApiProperty({
@@ -68,6 +72,12 @@ export class CreateBrewLogDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsOptional()
+  @Type(() => CreateBrewLogTasteDto)
+  tastes?: CreateBrewLogTasteDto[];
 
   @ApiProperty({
     example: 'true',
