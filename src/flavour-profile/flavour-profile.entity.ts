@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { FlavourType } from '../flavour-type/flavour-type.entity';
+import { TeaFlavourProfile } from './tea-flavour-profile.entity';
 
 @Entity('flavour_profile')
 export class FlavourProfile {
@@ -20,6 +22,12 @@ export class FlavourProfile {
   })
   @JoinColumn({ name: 'flavour_type_id' })
   flavourType: FlavourType;
+
+  @OneToMany(
+    () => TeaFlavourProfile,
+    (teaFlavourProfile) => teaFlavourProfile.tea,
+  )
+  public teaFlavourProfiles: TeaFlavourProfile[];
 
   @Column('varchar', { length: 30 })
   name: string; // e.g rose
