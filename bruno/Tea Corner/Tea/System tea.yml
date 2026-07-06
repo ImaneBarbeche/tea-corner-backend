@@ -5,7 +5,11 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/tea/system
+  url: http://localhost:3000/tea/system?styleIds=33adac3d-1135-4a41-a80d-6b7c49d3cc0e
+  params:
+    - name: styleIds
+      value: 33adac3d-1135-4a41-a80d-6b7c49d3cc0e
+      type: query
   auth: inherit
 
 settings:

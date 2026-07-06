@@ -8,17 +8,13 @@ http:
   url: http://localhost:3000/auth/signup
   body:
     type: json
-    data: "{\r
-
-      \  \"display_name\": \"Alice\",\r
-
-      \  \"user_name\": \"alicetdesdfttealover\",\r
-
-      \  \"email\": \"alicddfes@example.com\",\r
-
-      \  \"password\": \"password123\"\r
-
-      }"
+    data: |-
+      {
+        "display_name": "Imane",
+        "user_name": "imanetealover",
+        "email": "barbecheimane@gmail.com",
+        "password": "password123"
+      }
   auth: inherit
 
 settings:

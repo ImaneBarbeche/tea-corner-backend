@@ -33,6 +33,7 @@ import { UpdateTeaDto } from './update-tea.dto';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { Public } from '../decorators/auth.decorator';
 import { TeaType } from '../enums/teaType.enum';
+import { FilterTeaDto } from './filter-tea.dto';
 
 @Controller('tea')
 export class TeaController {
@@ -73,11 +74,8 @@ export class TeaController {
   @ApiQuery({ name: 'type', required: false, enum: TeaType })
   @Get('/system')
   @Public()
-  async findSystemTeas(
-    @Query('search') search?: string,
-    @Query('type') type?: TeaType,
-  ): Promise<Tea[]> {
-    return this.teaService.findSystemTeas(search, type);
+  async findSystemTeas(@Query() filters: FilterTeaDto): Promise<Tea[]> {
+    return this.teaService.findSystemTeas(filters);
   }
 
   @ApiCookieAuth()
@@ -109,11 +107,8 @@ export class TeaController {
   @ApiQuery({ name: 'type', required: false, enum: TeaType })
   @Get('/public')
   @UseGuards(AuthGuard)
-  async findPublicTea(
-    @Query('search') search?: string,
-    @Query('type') type?: TeaType,
-  ): Promise<Tea[]> {
-    return this.teaService.findPublicTeas(search, type);
+  async findPublicTea(@Query() filters: FilterTeaDto): Promise<Tea[]> {
+    return this.teaService.findPublicTeas(filters);
   }
 
   @ApiCookieAuth()

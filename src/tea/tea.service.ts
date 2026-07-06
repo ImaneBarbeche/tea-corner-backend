@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tea } from './tea.entity';
-import { ILike, IsNull, Not, Repository } from 'typeorm';
-import { TeaType } from '../enums/teaType.enum';
+import { IsNull, Not, Repository } from 'typeorm';
 import {
   ConflictException,
   ForbiddenException,
@@ -16,6 +15,7 @@ import { UpdateTeaDto } from './update-tea.dto';
 import { TeaStyleService } from '../tea-style/tea-style.service';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { FilterTeaDto } from './filter-tea.dto';
 
 @Injectable()
 export class TeaService {
@@ -34,34 +34,17 @@ export class TeaService {
     return await this.teaRepository.find();
   }
 
-  async findSystemTeas(search?: string, type?: TeaType): Promise<Tea[]> {
-    const nameFilter = search ? ILike(`%${search}%`) : undefined;
-    const typeFilter = type ? { type } : {};
-
-    return this.teaRepository.find({
-      where: {
-        author: IsNull(),
-        ...typeFilter,
-        ...(nameFilter ? { name: nameFilter } : {}),
-      },
-      relations: ['style'],
-    });
+  async findSystemTeas(filters: FilterTeaDto): Promise<Tea[]> {
+    return this.buildTeaQuery(filters).andWhere('tea.author IS NULL').getMany();
   }
 
   // returns community teas (not system ones)
-  async findPublicTeas(search?: string, type?: TeaType): Promise<Tea[]> {
-    const nameFilter = search ? ILike(`%${search}%`) : undefined;
-    const typeFilter = type ? { type } : {};
-
-    return this.teaRepository.find({
-      where: {
-        is_public: true,
-        author: Not(IsNull()),
-        ...typeFilter,
-        ...(nameFilter ? { name: nameFilter } : {}),
-      },
-      relations: ['style', 'author'],
-    });
+  async findPublicTeas(filters: FilterTeaDto): Promise<Tea[]> {
+    return this.buildTeaQuery(filters)
+      .leftJoinAndSelect('tea.author', 'author') // public teas ont besoin de l'auteur
+      .andWhere('tea.is_public = true')
+      .andWhere('tea.author IS NOT NULL')
+      .getMany();
   }
 
   async findOne(id: string, userId?: string): Promise<Tea | null> {
@@ -84,6 +67,36 @@ export class TeaService {
     }
 
     return tea;
+  }
+
+  private buildTeaQuery(filters: FilterTeaDto) {
+    const query = this.teaRepository
+      .createQueryBuilder('tea')
+      .leftJoinAndSelect('tea.style', 'style'); // remplace relations: ['style']
+
+    if (filters.search) {
+      query.andWhere('tea.name ILIKE :search', {
+        search: `%${filters.search}%`,
+      });
+    }
+
+    if (filters.types && filters.types.length > 0) {
+      query.andWhere('tea.type IN (:...types)', { types: filters.types });
+    }
+
+    if (filters.styleIds && filters.styleIds.length > 0) {
+      query.andWhere('tea.style_id IN (:...styleIds)', {
+        styleIds: filters.styleIds,
+      });
+    }
+
+    if (filters.caffeineLevels && filters.caffeineLevels.length > 0) {
+      query.andWhere('tea.caffeine_level IN (:...caffeineLevels)', {
+        caffeineLevels: filters.caffeineLevels,
+      });
+    }
+
+    return query;
   }
 
   private dailyTeaId: string;
