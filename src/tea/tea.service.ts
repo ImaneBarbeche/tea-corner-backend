@@ -72,7 +72,7 @@ export class TeaService {
   private buildTeaQuery(filters: FilterTeaDto) {
     const query = this.teaRepository
       .createQueryBuilder('tea')
-      .leftJoinAndSelect('tea.style', 'style'); // remplace relations: ['style']
+      .leftJoinAndSelect('tea.style', 'style');
 
     if (filters.search) {
       query.andWhere('tea.name ILIKE :search', {
@@ -94,6 +94,43 @@ export class TeaService {
       query.andWhere('tea.caffeine_level IN (:...caffeineLevels)', {
         caffeineLevels: filters.caffeineLevels,
       });
+    }
+
+    if (filters.ingredientIds && filters.ingredientIds.length > 0) {
+      query
+        .leftJoin('tea.ingredients', 'ti')
+        .leftJoin('ti.ingredient', 'ingredient')
+        .andWhere('ingredient.id IN (:...ingredientIds)', {
+          ingredientIds: filters.ingredientIds,
+        });
+    }
+
+    if (filters.ingredientTypes && filters.ingredientTypes.length > 0) {
+      query
+        .leftJoin('tea.ingredients', 'ti2')
+        .leftJoin('ti2.ingredient', 'ingredient2')
+        .andWhere('ingredient2.type IN (:...ingredientTypes)', {
+          ingredientTypes: filters.ingredientTypes,
+        });
+    }
+
+    if (filters.flavourProfileIds && filters.flavourProfileIds.length > 0) {
+      query
+        .leftJoin('tea.teaFlavourProfiles', 'tfp')
+        .leftJoin('tfp.flavourProfile', 'fp')
+        .andWhere('fp.id IN (:...flavourProfileIds)', {
+          flavourProfileIds: filters.flavourProfileIds,
+        });
+    }
+
+    if (filters.flavourTypeIds && filters.flavourTypeIds.length > 0) {
+      query
+        .leftJoin('tea.teaFlavourProfiles', 'tfp2')
+        .leftJoin('tfp2.flavourProfile', 'fp2')
+        .leftJoin('fp2.flavourType', 'ft')
+        .andWhere('ft.id IN (:...flavourTypeIds)', {
+          flavourTypeIds: filters.flavourTypeIds,
+        });
     }
 
     return query;
