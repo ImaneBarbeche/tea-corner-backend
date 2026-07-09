@@ -25,6 +25,11 @@ http:
           }
           
         ],
+        "flavour_profiles": [
+          {
+            "flavour_profile_id": "f1a92542-b5f5-4682-ad54-4933f0506a72"
+          }
+        ],
         "focused": false,
         "is_public": true
       }

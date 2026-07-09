@@ -12,6 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateBrewLogTasteDto } from './create-brew-log-taste.dto';
+import { CreateBrewLogFlavourProfileDto } from './create-brew-log-flavour-profile.dto';
 
 export class CreateBrewLogDto {
   @ApiProperty({
@@ -78,6 +79,12 @@ export class CreateBrewLogDto {
   @IsOptional()
   @Type(() => CreateBrewLogTasteDto)
   tastes?: CreateBrewLogTasteDto[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateBrewLogFlavourProfileDto)
+  flavour_profiles?: CreateBrewLogFlavourProfileDto[];
 
   @ApiProperty({
     example: 'true',

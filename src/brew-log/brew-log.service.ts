@@ -6,6 +6,7 @@ import { CreateBrewLogDto } from './create-brew-log.dto';
 import { UpdateBrewLogDto } from './update-brew-log.dto';
 import { TeaService } from '../tea/tea.service';
 import { BrewLogTaste } from './brew-log-taste.entity';
+import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
 
 @Injectable()
 export class BrewLogService {
@@ -14,6 +15,8 @@ export class BrewLogService {
     private brewLogRepository: Repository<BrewLog>,
     @InjectRepository(BrewLogTaste)
     private brewLogTasteRepository: Repository<BrewLogTaste>,
+    @InjectRepository(BrewLogFlavourProfile)
+    private brewLogFlavourProfileRepository: Repository<BrewLogFlavourProfile>,
     private teaService: TeaService,
   ) {}
 
@@ -63,7 +66,7 @@ export class BrewLogService {
       throw new NotFoundException(`tea with ID ${dto.tea_id} not found`);
     }
 
-    const { tastes, ...brewLogData } = dto;
+    const { tastes, flavour_profiles, ...brewLogData } = dto;
 
     const log = this.brewLogRepository.create({
       ...brewLogData,
@@ -81,9 +84,27 @@ export class BrewLogService {
       );
       await this.brewLogTasteRepository.save(brewLogTastes);
     }
+
+    if (flavour_profiles?.length) {
+      const bfp = flavour_profiles.map((f) =>
+        this.brewLogFlavourProfileRepository.create({
+          brew_log: { id: saved.id },
+          flavour_profile: { id: f.flavour_profile_id },
+        }),
+      );
+      await this.brewLogFlavourProfileRepository.save(bfp);
+    }
+
     return (await this.brewLogRepository.findOne({
       where: { id: saved.id },
-      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
+      relations: [
+        'tea',
+        'tea.style',
+        'tea.author',
+        'tastes',
+        'flavour_profiles',
+        'flavour_profiles.flavour_profile',
+      ],
     }))!;
   }
 
