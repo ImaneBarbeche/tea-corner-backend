@@ -122,7 +122,7 @@ export class BrewLogService {
       throw new NotFoundException(`brew log with ID ${id} could not be found`);
     }
 
-    const { tastes, ...brewLogData } = dto;
+    const { tastes, flavour_profiles, ...brewLogData } = dto;
 
     Object.assign(brewLog, brewLogData);
 
@@ -142,9 +142,29 @@ export class BrewLogService {
       }
     }
 
+    if (flavour_profiles) {
+      await this.brewLogFlavourProfileRepository.delete({ brew_log: { id } });
+      if (flavour_profiles.length) {
+        const bfp = flavour_profiles.map((f) =>
+          this.brewLogFlavourProfileRepository.create({
+            brew_log: { id },
+            flavour_profile: { id: f.flavour_profile_id },
+          }),
+        );
+        await this.brewLogFlavourProfileRepository.save(bfp);
+      }
+    }
+
     return (await this.brewLogRepository.findOne({
       where: { id },
-      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
+      relations: [
+        'tea',
+        'tea.style',
+        'tea.author',
+        'tastes',
+        'flavour_profiles',
+        'flavour_profiles.flavour_profile',
+      ],
     }))!;
   }
 

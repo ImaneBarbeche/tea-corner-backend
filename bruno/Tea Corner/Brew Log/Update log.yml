@@ -1,14 +1,20 @@
 info:
   name: Update log
   type: http
+  seq: 1
 
 http:
   method: PATCH
-  url: http://localhost:3000/brew-log/:id
-  params:
-    - name: id
-      value: ""
-      type: path
+  url: http://localhost:3000/brew-log/f4d2d0c3-4601-419b-82b3-bf90c4a32e8a
+  body:
+    type: json
+    data: |-
+      {
+        "flavourProfiles": [
+          { "flavor_profile_id": "f1a92542-b5f5-4682-ad54-4933f0506a73" },
+          { "flavor_profile_id": "b1c2d3e4-...b04" }
+        ]
+      }
   auth: inherit
 
 settings:
@@ -16,4 +22,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​
