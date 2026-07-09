@@ -11,8 +11,9 @@ import {
 } from 'typeorm';
 import { Tea } from '../tea/tea.entity';
 import { User } from '../user/user.entity';
-import { IsInt, Max, Min } from 'class-validator';
 import { BrewLogTaste } from './brew-log-taste.entity';
+import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
+import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
 
 @Entity()
 export class BrewLog {
@@ -60,6 +61,12 @@ export class BrewLog {
   @OneToMany(() => BrewLogTaste, (brewLogTaste) => brewLogTaste.brew_log)
   // optional by default (e.g returns an empty array)
   tastes: BrewLogTaste[];
+
+  @OneToMany(
+    () => BrewLogFlavourProfile,
+    (brewLogFlavourProfile) => brewLogFlavourProfile.brew_log,
+  )
+  flavour_profiles: BrewLogFlavourProfile[];
 
   @Column('boolean', { default: false })
   focused: boolean;

@@ -6,10 +6,11 @@ import { BrewLog } from './brew-log.entity';
 import { AuthModule } from '../auth/auth.module';
 import { TeaModule } from '../tea/tea.module';
 import { BrewLogTaste } from './brew-log-taste.entity';
+import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BrewLog, BrewLogTaste]),
+    TypeOrmModule.forFeature([BrewLog, BrewLogTaste, BrewLogFlavourProfile]),
     forwardRef(() => AuthModule),
     TeaModule,
   ],
