@@ -41,7 +41,7 @@ export class TeaService {
   // returns community teas (not system ones)
   async findPublicTeas(filters: FilterTeaDto): Promise<Tea[]> {
     return this.buildTeaQuery(filters)
-      .leftJoinAndSelect('tea.author', 'author') // public teas ont besoin de l'auteur
+      .leftJoinAndSelect('tea.author', 'author')
       .andWhere('tea.is_public = true')
       .andWhere('tea.author IS NOT NULL')
       .getMany();
