@@ -10,6 +10,7 @@ import { Ingredient } from '../ingredient/ingredient.entity';
 
 import { TeaStyleService } from '../tea-style/tea-style.service';
 import { TeaStyle } from '../tea-style/tea-style.entity';
+import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TeaStyle } from '../tea-style/tea-style.entity';
       Ingredient,
       TeaStyle,
       TeaFlavourProfile,
+      FlavourProfile,
     ]),
     forwardRef(() => AuthModule),
   ],

@@ -16,6 +16,9 @@ import { TeaStyleService } from '../tea-style/tea-style.service';
 import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { FilterTeaDto } from './filter-tea.dto';
+import { AddFlavourProfileDto } from './add-flavour-profile.dto';
+import { TeaFlavourProfile } from '../flavour-profile/tea-flavour-profile.entity';
+import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
 
 @Injectable()
 export class TeaService {
@@ -26,6 +29,10 @@ export class TeaService {
     private teaIngredientRepository: Repository<TeaIngredient>,
     @InjectRepository(Ingredient)
     private ingredientRepository: Repository<Ingredient>,
+    @InjectRepository(TeaFlavourProfile)
+    private teaFlavourProfileRepository: Repository<TeaFlavourProfile>,
+    @InjectRepository(FlavourProfile)
+    private flavourProfileRepository: Repository<FlavourProfile>,
     private teaStyleService: TeaStyleService,
   ) {}
 
@@ -259,5 +266,38 @@ export class TeaService {
       );
     }
     await this.teaIngredientRepository.delete(teaIngredientId);
+  }
+
+  async addFlavourProfile(
+    teaId: string,
+    dto: AddFlavourProfileDto,
+  ): Promise<TeaFlavourProfile> {
+    const tea = await this.teaRepository.findOne({ where: { id: teaId } });
+    if (!tea) throw new NotFoundException(`Tea ${teaId} not found`);
+    const flavourProfile = await this.flavourProfileRepository.findOne({
+      where: { id: dto.flavourProfileId },
+    });
+
+    if (!flavourProfile)
+      throw new NotFoundException(
+        `FlavourProfile ${dto.flavourProfileId} not found`,
+      );
+
+    const existing = await this.teaFlavourProfileRepository.findOne({
+      where: {
+        tea: { id: teaId },
+        flavourProfile: { id: dto.flavourProfileId },
+      },
+    });
+    if (existing) {
+      throw new ConflictException(
+        'This flavour profile is already in this tea',
+      );
+    }
+    const teaFlavourProfile = this.teaFlavourProfileRepository.create({
+      tea: { id: teaId },
+      flavourProfile: { id: dto.flavourProfileId },
+    });
+    return this.teaFlavourProfileRepository.save(teaFlavourProfile);
   }
 }
