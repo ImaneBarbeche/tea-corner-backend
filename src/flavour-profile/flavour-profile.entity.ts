@@ -25,7 +25,7 @@ export class FlavourProfile {
 
   @OneToMany(
     () => TeaFlavourProfile,
-    (teaFlavourProfile) => teaFlavourProfile.tea,
+    (teaFlavourProfile) => teaFlavourProfile.flavourProfile,
   )
   public teaFlavourProfiles: TeaFlavourProfile[];
 

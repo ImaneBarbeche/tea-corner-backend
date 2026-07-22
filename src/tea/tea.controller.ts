@@ -34,6 +34,8 @@ import { UpdateTeaIngredientDto } from './update-tea-ingredient.dto';
 import { Public } from '../decorators/auth.decorator';
 import { TeaType } from '../enums/teaType.enum';
 import { FilterTeaDto } from './filter-tea.dto';
+import { AddFlavourProfileDto } from './add-flavour-profile.dto';
+import { TeaFlavourProfile } from '../flavour-profile/tea-flavour-profile.entity';
 
 @Controller('tea')
 export class TeaController {
@@ -188,6 +190,34 @@ export class TeaController {
     }
 
     await this.teaService.remove(id);
+  }
+
+  @ApiCookieAuth()
+  @ApiOperation({ summary: 'Add a flavour profile to a tea' })
+  @ApiParam({
+    name: 'teaId',
+    description: 'UUID of the tea',
+    example: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Flavour profile added to tea successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error — invalid request body',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized — missing or invalid session',
+  })
+  @Post(':teaId/flavour-profile')
+  @UseGuards(AuthGuard)
+  async addFlavourProfile(
+    @Param('teaId') teaId: string,
+    @Body() dto: AddFlavourProfileDto,
+  ): Promise<TeaFlavourProfile> {
+    return this.teaService.addFlavourProfile(teaId, dto);
   }
 
   @ApiCookieAuth()

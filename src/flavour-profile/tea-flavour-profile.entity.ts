@@ -1,4 +1,10 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { FlavourProfile } from './flavour-profile.entity';
 import { Tea } from '../tea/tea.entity';
 
@@ -12,8 +18,10 @@ export class TeaFlavourProfile {
     () => FlavourProfile,
     (flavourProfile) => flavourProfile.teaFlavourProfiles,
   )
+  @JoinColumn({ name: 'flavour_profile_id' })
   public flavourProfile: FlavourProfile;
 
   @ManyToOne(() => Tea, (tea) => tea.teaFlavourProfiles)
+  @JoinColumn({ name: 'tea_id' })
   public tea: Tea;
 }

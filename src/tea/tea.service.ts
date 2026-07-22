@@ -57,9 +57,16 @@ export class TeaService {
   async findOne(id: string, userId?: string): Promise<Tea | null> {
     const tea = await this.teaRepository.findOne({
       where: { id },
-      relations: ['style', 'author', 'ingredients', 'ingredients.ingredient'],
+      relations: [
+        'style',
+        'author',
+        'ingredients',
+        'ingredients.ingredient',
+        'teaFlavourProfiles',
+        'teaFlavourProfiles.flavourProfile',
+      ],
     });
-
+    console.log('teaFlavourProfiles:', JSON.stringify(tea?.teaFlavourProfiles));
     if (!tea) {
       throw new NotFoundException(`Tea with ID ${id} not found`);
     }
