@@ -1,0 +1,22 @@
+info:
+  name: Create user tea
+  type: http
+  seq: 1
+http:
+  method: POST
+  url: http://localhost:3000/user-tea/create
+  body:
+    type: json
+    data: "{\r
+      \  \"teaId\": \"\",\r
+      \  \"customBrewTemp\": null,\r
+      \  \"customBrewTime\": null,\r
+      \  \"quantity\": null,\r
+      \  \"notes\": \"\"\r
+      }"
+  auth: inherit
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

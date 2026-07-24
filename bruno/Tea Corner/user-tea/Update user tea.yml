@@ -1,0 +1,26 @@
+info:
+  name: Update user tea
+  type: http
+  seq: 4
+http:
+  method: PATCH
+  url: http://localhost:3000/user-tea/:id
+  params:
+    - name: id
+      value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      in: path
+      active: true
+  body:
+    type: json
+    data: "{\r
+      \  \"customBrewTemp\": null,\r
+      \  \"customBrewTime\": null,\r
+      \  \"quantity\": null,\r
+      \  \"notes\": \"\"\r
+      }"
+  auth: inherit
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

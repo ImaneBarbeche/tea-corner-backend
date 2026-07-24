@@ -1,0 +1,14 @@
+info:
+  name: Public logs
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:3000/brew-log/public
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

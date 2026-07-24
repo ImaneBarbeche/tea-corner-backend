@@ -1,0 +1,20 @@
+info:
+  name: Get user tea
+  type: http
+  seq: 2
+http:
+  method: GET
+  url: http://localhost:3000/user-tea/:id
+  params:
+    - name: id
+      value: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+      in: path
+      active: true
+  body:
+    type: none
+  auth: inherit
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

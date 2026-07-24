@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "user_name": "imanetealover",
+        "user_name": "imane",
         "password": "password123"
       }
   auth: inherit
@@ -20,4 +20,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​
