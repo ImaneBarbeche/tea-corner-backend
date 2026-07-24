@@ -67,7 +67,6 @@ export class UserController {
     @Request() req,
     @Body() UpdateUserDto: UpdateUserDto,
   ): Promise<User> {
-    console.log(req.user);
     return this.userService.update(req.user.sub, UpdateUserDto);
   }
 

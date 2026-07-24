@@ -66,7 +66,6 @@ export class TeaService {
         'teaFlavourProfiles.flavourProfile',
       ],
     });
-    console.log('teaFlavourProfiles:', JSON.stringify(tea?.teaFlavourProfiles));
     if (!tea) {
       throw new NotFoundException(`Tea with ID ${id} not found`);
     }
