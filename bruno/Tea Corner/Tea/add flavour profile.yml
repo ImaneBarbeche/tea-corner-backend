@@ -1,14 +1,17 @@
 info:
   name: add flavour profile
   type: http
+  seq: 1
 
 http:
   method: POST
-  url: http://localhost:3000/tea/:teaId/flavour-profile
-  params:
-    - name: teaId
-      value: ""
-      type: path
+  url: http://localhost:3000/tea/5e058d92-f91c-465c-98f0-f09f18e4241a/flavour-profile
+  body:
+    type: json
+    data: |-
+      {
+        "flavourProfileId": "0a885335-ad98-4f7b-8795-f9c7ed1e5726"
+      }
   auth: inherit
 
 settings:
@@ -16,4 +19,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​

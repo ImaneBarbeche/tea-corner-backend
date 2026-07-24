@@ -4,12 +4,11 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BrewLog } from './brew-log.entity';
 import { TasteType } from '../enums/tasteType.enum';
-import { IsEnum, isEnum } from 'class-validator';
+import { IsEnum } from 'class-validator';
 import { caffeineLevel } from '../enums/caffeineLevel.enum';
 
 @Entity()

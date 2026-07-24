@@ -10,24 +10,27 @@ http:
     type: json
     data: |-
       {
-        "tea_id": "f1a92542-b5f5-4682-ad54-4933f0506a70",
+        "tea_id": "5e058d92-f91c-465c-98f0-f09f18e4241a",
         "brewing_time": 200,
         "brewing_temperature": 98,
         "leaf_amount": 4,
         "water_amount": 180,
         "rating": 4,
-        "notes": "OOF",
+        "notes": "A little bit too bitter for me",
         "tastes":
         [
           {
+            "taste": "bitter",
+          "intensity": "medium"
+          },
+           {
             "taste": "sweet",
           "intensity": "low"
           }
-          
         ],
         "flavour_profiles": [
           {
-            "flavour_profile_id": "f1a92542-b5f5-4682-ad54-4933f0506a72"
+            "flavour_profile_id": "0a885335-ad98-4f7b-8795-f9c7ed1e5726"
           }
         ],
         "focused": false,

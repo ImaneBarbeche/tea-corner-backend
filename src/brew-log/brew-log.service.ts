@@ -6,7 +6,7 @@ import { CreateBrewLogDto } from './create-brew-log.dto';
 import { UpdateBrewLogDto } from './update-brew-log.dto';
 import { TeaService } from '../tea/tea.service';
 import { BrewLogTaste } from './brew-log-taste.entity';
-import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
+import { BrewLogFlavourProfile } from './brew-log-flavour-profile';
 
 @Injectable()
 export class BrewLogService {

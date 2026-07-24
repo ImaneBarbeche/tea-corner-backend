@@ -6,7 +6,7 @@ import { BrewLog } from './brew-log.entity';
 import { AuthModule } from '../auth/auth.module';
 import { TeaModule } from '../tea/tea.module';
 import { BrewLogTaste } from './brew-log-taste.entity';
-import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
+import { BrewLogFlavourProfile } from './brew-log-flavour-profile';
 
 @Module({
   imports: [

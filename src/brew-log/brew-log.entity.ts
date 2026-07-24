@@ -12,8 +12,8 @@ import {
 import { Tea } from '../tea/tea.entity';
 import { User } from '../user/user.entity';
 import { BrewLogTaste } from './brew-log-taste.entity';
-import { BrewLogFlavourProfile } from './brew-log-flavour-prifle';
-import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
+import { BrewLogFlavourProfile } from './brew-log-flavour-profile';
+// import { FlavourProfile } from '../flavour-profile/flavour-profile.entity';
 
 @Entity()
 export class BrewLog {
