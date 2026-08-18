@@ -24,6 +24,6 @@ export class BrewLogFlavourProfile {
   @ManyToOne(() => FlavourProfile, {
     nullable: false,
   })
-  @JoinColumn({ name: 'flavor_profile_id' })
+  @JoinColumn({ name: 'flavour_profile_id' })
   flavour_profile: FlavourProfile;
 }

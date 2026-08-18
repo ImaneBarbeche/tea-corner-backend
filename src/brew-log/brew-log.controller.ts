@@ -26,6 +26,7 @@ import { BrewLog } from './brew-log.entity';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreateBrewLogDto } from './create-brew-log.dto';
 import { UpdateBrewLogDto } from './update-brew-log.dto';
+import { BrewLogResponseDto } from './brew-log-response.dto';
 
 @Controller('brew-log')
 export class BrewLogController {
@@ -65,7 +66,7 @@ export class BrewLogController {
   })
   @Get('/public')
   @UseGuards(AuthGuard)
-  async findPublicLogs(): Promise<BrewLog[] | null> {
+  async findPublicLogs(): Promise<BrewLogResponseDto[]> {
     return this.brewLogService.findPublicBrewLogs();
   }
 
@@ -80,7 +81,7 @@ export class BrewLogController {
   })
   @Get('/entries')
   @UseGuards(AuthGuard)
-  async findUserBrewLogs(@Request() req): Promise<BrewLog[] | null> {
+  async findUserBrewLogs(@Request() req): Promise<BrewLogResponseDto[]> {
     return this.brewLogService.findUserBrewLogs(req.user.sub);
   }
 

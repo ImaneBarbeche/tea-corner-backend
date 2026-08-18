@@ -11,8 +11,8 @@ http:
     data: |-
       {
         "flavourProfiles": [
-          { "flavor_profile_id": "f1a92542-b5f5-4682-ad54-4933f0506a73" },
-          { "flavor_profile_id": "b1c2d3e4-...b04" }
+          { "flavour_profile_id": "f1a92542-b5f5-4682-ad54-4933f0506a73" },
+          { "flavour_profile_id": "b1c2d3e4-...b04" }
         ]
       }
   auth: inherit

@@ -7,6 +7,7 @@ import { UpdateBrewLogDto } from './update-brew-log.dto';
 import { TeaService } from '../tea/tea.service';
 import { BrewLogTaste } from './brew-log-taste.entity';
 import { BrewLogFlavourProfile } from './brew-log-flavour-profile';
+import { BrewLogResponseDto } from './brew-log-response.dto';
 
 @Injectable()
 export class BrewLogService {
@@ -30,32 +31,105 @@ export class BrewLogService {
   async findPublicBrewLogs(
     page: number = 1,
     limit: number = 20,
-  ): Promise<BrewLog[]> {
-    return this.brewLogRepository.find({
+  ): Promise<BrewLogResponseDto[]> {
+    const logs = await this.brewLogRepository.find({
       where: {
         is_public: true,
       },
-      relations: ['tea', 'tea.style', 'tea.author', 'user', 'tastes'],
+      relations: [
+        'tea',
+        'tea.style',
+        'tea.author',
+        'user',
+        'tastes',
+        'flavour_profiles',
+        'flavour_profiles.flavour_profile',
+        'flavour_profiles.flavour_profile.flavourType',
+      ],
       take: limit,
       skip: (page - 1) * limit,
       order: { created_at: 'DESC' },
     });
+    return logs.map((log) => this.toResponseDto(log));
   }
 
   async findUserBrewLogs(
     userId: string,
     page: number = 1,
     limit: number = 20,
-  ): Promise<BrewLog[]> {
-    const userLogs = await this.brewLogRepository.find({
+  ): Promise<BrewLogResponseDto[]> {
+    const logs = await this.brewLogRepository.find({
       where: { user: { id: userId } },
-      relations: ['tea', 'tea.style', 'tea.author', 'tastes'],
+      relations: [
+        'tea',
+        'tea.style',
+        'tea.author',
+        'tastes',
+        'flavour_profiles',
+        'flavour_profiles.flavour_profile',
+        'flavour_profiles.flavour_profile.flavourType',
+      ],
       take: limit,
       skip: (page - 1) * limit,
       order: { created_at: 'DESC' },
     });
 
-    return userLogs;
+    return logs.map((log) => this.toResponseDto(log));
+  }
+
+  private toResponseDto(log: BrewLog): BrewLogResponseDto {
+    return {
+      id: log.id,
+      brewing_time: log.brewing_time,
+      brewing_temperature: log.brewing_temperature,
+      leaf_amount: log.leaf_amount,
+      water_amount: log.water_amount,
+      rating: log.rating,
+      notes: log.notes,
+      focused: log.focused,
+      is_public: log.is_public,
+      created_at: log.created_at,
+      tea: {
+        id: log.tea.id,
+        name: log.tea.name,
+        type: log.tea.type,
+        custom_color: log.tea.custom_color,
+        custom_brew_color: log.tea.custom_brew_color,
+        style: log.tea.style
+          ? {
+              id: log.tea.style.id,
+              name: log.tea.style.name,
+              color: log.tea.style.color,
+            }
+          : null,
+      },
+      tastes:
+        log.tastes?.map((t) => ({
+          id: t.id,
+          taste: t.taste,
+          intensity: t.intensity,
+        })) ?? [],
+      flavour_profiles:
+        log.flavour_profiles?.map((fp) => ({
+          id: fp.id,
+          flavour_profile: {
+            id: fp.flavour_profile?.id,
+            name: fp.flavour_profile?.name,
+            flavourType: fp.flavour_profile?.flavourType
+              ? {
+                  color: fp.flavour_profile.flavourType.color,
+                }
+              : null,
+          },
+        })) ?? [],
+      user: log.user
+        ? {
+            display_name: log.user.display_name,
+            user_name: log.user.user_name,
+            avatar_url: log.user.avatar_url,
+          }
+        : null,
+    };
   }
 
   async create(dto: CreateBrewLogDto, userId: string): Promise<BrewLog> {
